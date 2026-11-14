@@ -98,3 +98,8 @@
 - N3on's Excuse After Losing AGAIN 💀 (R3born chatgpt)
 - N3on vs Sarah… FINAL Score 💀 (R3born reveal)
 - Nobody Expected THIS NBA GOAT Pick 💀 (tv goat VverPaldo)
+- The Moment N3on Got WAXED 💀 (R3born rip)
+- N3on Hanging UPSIDE DOWN 💀 (R3born spider)
+- N3on's REAL Reason for Getting Jacked 💀 (R3born pretty)
+- Who Can Hold It LONGER? 💀 (R3born tuck)
+- She Roasted His Transformation 💀 (R3born skinny)

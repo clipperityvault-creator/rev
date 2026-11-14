@@ -10,7 +10,8 @@ ATW = {(619.2, 'spider'): 'Spider-Man', (619.4, '-man'): '', (482.4, 'and'): '',
        (684.8, 'the'): 'What the', (687.4, 'cuz'): "'cause"}
 def crops(eid, a, b):
     c = [x for x in CR[eid] if a - 0.01 <= x[0] < b]; prev = [x for x in CR[eid] if x[0] <= a]
-    return ([(a, prev[-1][1])] if prev else []) + [x for x in c if x[0] > a + 0.01]
+    first = prev[-1][1] if prev else (c[0][1] if c else 960)
+    return [(a, first)] + [x for x in c if x[0] > a + 0.01]
 RW = 12
 EDITS = {
  'r3stakes': [('hook', 40.15, 41.75), ('rw', 41.75, 27.50, None), ('c1', 27.50, 44.20)],
