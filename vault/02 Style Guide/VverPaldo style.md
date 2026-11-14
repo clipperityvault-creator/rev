@@ -6,7 +6,8 @@ The style used for the "Guess the fake millionaire" and Trevor stream edits (Nov
 ## Structure (retention)
 - **Hook in the first 1–3 s:** open on the wildest / most specific line (numbers, a shocking answer). Speech on frame 1, a person on screen.
 - **Story, in order, with a payoff or a cliffhanger.** 15–22 s total. Cut dead air and repeated lines (when one person talks and nothing moves, cut it).
-- Optional **rewind** (12-frame reverse scrub with ◀◀ + scanlines) when the hook comes from later in the source than the story.
+- **Default now: "WAIT FOR IT" teaser** (replaces hook + rewind): the story starts on frame 1 while the payoff loops muted in a red-bordered PiP (top-right, "WAIT FOR IT 👀"); at the payoff word the PiP blasts full-screen into the real moment (+ shock SFX). Thin red progress bar along the bottom. No repeated footage, so clips run 2–3 s shorter. (cfg `teaser: {a, b, x, z, y, until}`)
+- Old option: hook replay + **rewind** (12-frame reverse scrub with ◀◀ + scanlines).
 - End on the payoff, or cut mid-sentence before it resolves so it loops / sends people to the full video.
 
 ## Camera (who's speaking)
