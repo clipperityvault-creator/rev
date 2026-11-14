@@ -5,7 +5,7 @@
 // long enough to actually read on a phone (v1 was 6 single frames = 0.2 s and got lost).
 import {loadFont} from '@remotion/fonts';
 import React from 'react';
-import {AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, Series, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Audio, Img, Loop, OffthreadVideo, Sequence, Series, interpolate, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import GEN from './edits.gen.json';
 import HULK from './tracks/hulk.json';
 import THANOS from './tracks/thanos.json';
@@ -24,7 +24,8 @@ const BOX_TOP = 417, BOX_BOTTOM = 1494, BOX_H = BOX_BOTTOM - BOX_TOP, K = BOX_H 
 const GREEN = 'rgb(167,234,4)', RED = 'rgb(244,3,5)';
 type Ref = [string, string?, number?];   // [scene] = scene start, [scene, word, nth] = that word
 type Cfg = {top: string; cta: string; label: string; track: Record<string, number[]>; calls: [number, number, string?][]; tints: [Ref, string][]; rizz: Ref[];
-  punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; music: number; loop?: boolean; ctaAt?: Ref; musicVol?: number; subBand?: [number, number]; blurOff?: [number, number][]; musicFile?: string; hl?: Record<string, string>; pushIn?: boolean; src?: string};
+  punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; music: number; loop?: boolean; ctaAt?: Ref; musicVol?: number; subBand?: [number, number]; blurOff?: [number, number][]; musicFile?: string; hl?: Record<string, string>; pushIn?: boolean; src?: string;
+  teaser?: {a: number; b: number; x: number; z: number; y: number; until: Ref}};
 
 export const EDITS: Record<string, Cfg> = {
   bowling: {top: 'Guess the LARPER millionaire', cta: '*real millionaire or LARP?*', label: '*Hulk*', track: HULK, music: 20,
@@ -121,8 +122,8 @@ import T_CLOWN_SOL from './tracks/clown_sol.json';
 const V5_TRACKS: Record<string, Record<string, number[]>> = {iron: IRONREVEAL as Record<string, number[]>, gift: T_GIFT, merch: T_MERCH, pissed: T_PISSED, hulk: HULK,
   chant_iron: T_CHANT_IRON, solstice: T_CLOWN_SOL};
 Object.entries({...V5, ...V6, ...R3, ...TV, ...R3B} as unknown as Record<string, {top: string; hl: Record<string, string>; cta: string; music: [string, number]; ctaAt: Ref; track: string; calls: [number, number, string][];
-  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string}>).forEach(([id, a]) => {
-  EDITS[id] = {src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
+  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string; teaser?: Cfg['teaser']}>).forEach(([id, a]) => {
+  EDITS[id] = {teaser: a.teaser, src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
     ctaAt: a.ctaAt, calls: a.calls, tints: a.tints.map(([r, c]) => [r, c === 'G' ? GREEN : RED] as [Ref, string]), rizz: a.rizz, punch: a.punch,
     blowouts: a.blowouts, blackFlash: a.blackFlash, streaks: a.streaks};
 });
@@ -210,6 +211,7 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
   const RAW: [string, number, number][] = [
     ...SCENES.filter((s) => (s as SceneConfig & {rewind?: unknown}).rewind).map((s): [string, number, number] => ['flash.mp3', START[s.id], 0.45]),
     ...callStarts.map((t): [string, number, number] => ['flash.mp3', t, 0.4]),
+    ...(cfg.teaser ? [['shock.mp3', at(cfg.teaser.until), 0.55] as [string, number, number]] : []),
     ...BLACK.map((t): [string, number, number] => ['shock.mp3', t, 0.5]),
     ...TINTS.filter(([, c]) => c === GREEN).map(([t]): [string, number, number] => ['rizz.mp3', t, 0.42]),
     ...RIZZ.map((t): [string, number, number] => ['rizz.mp3', t, 0.42]),
@@ -236,6 +238,22 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
       </AbsoluteFill>
       {tint && <AbsoluteFill style={{background: tint[1], opacity: tint[0], mixBlendMode: 'multiply'}} />}
       {bfa > 0 && <AbsoluteFill style={{background: '#000', opacity: bfa}} />}
+      {/* "WAIT FOR IT" teaser (replaces hook+rewind): payoff loops muted in a PiP from frame 0, then blasts full-screen into the real moment */}
+      {cfg.teaser && (() => {
+        const T = cfg.teaser!, until = at(T.until), len = Math.max(6, Math.round((T.b - T.a) * fps));
+        if (f >= until + 8) return null;
+        const k = f < until ? 0 : (f - until) / 8, W = 330, H = 400, sc = 1 + k * 2.2;
+        const vw = 1920 * (H / 1080) * T.z, vl = W / 2 - T.x * (H / 1080) * T.z, vt = H / 2 - T.y * (H / 1080) * T.z;
+        const pop = f < 6 ? interpolate(f, [0, 6], [0.4, 1], clamp) : 1;
+        return <div style={{position: 'absolute', right: 26, top: 26, width: W, height: H, transform: `scale(${sc * pop}) translate(${-k * 120}px, ${k * 160}px)`, transformOrigin: '70% 30%', opacity: 1 - k}}>
+          <div style={{position: 'absolute', inset: 0, borderRadius: 22, overflow: 'hidden', border: '6px solid #FF2A2A', boxShadow: '0 8px 30px rgba(0,0,0,0.6)', background: '#000'}}>
+            <Loop durationInFrames={len}><OffthreadVideo src={staticFile(cfg.src ?? 'source.mp4')} muted startFrom={Math.round(T.a * fps)} style={{position: 'absolute', left: Math.min(0, Math.max(W - vw, vl)), top: Math.min(0, Math.max(H - H * T.z, vt)), width: vw, height: H * T.z}} /></Loop>
+          </div>
+          <div style={{position: 'absolute', left: -20, right: -20, bottom: -54, textAlign: 'center', fontFamily: MONT, fontWeight: 800, fontStyle: 'italic', fontSize: 38, color: '#FFE14A', WebkitTextStroke: '6px #000', paintOrder: 'stroke fill', transform: `rotate(-3deg) scale(${1 + 0.06 * Math.sin(f / 4)})`}}>WAIT FOR IT 👀</div>
+        </div>;
+      })()}
+      {/* thin progress bar (finish-the-video pull) */}
+      {cfg.teaser && <div style={{position: 'absolute', left: 0, bottom: 0, height: 9, width: `${(100 * f) / END}%`, background: '#FF2A2A', boxShadow: '0 0 8px rgba(255,42,42,0.8)'}} />}
       {(sc as SceneConfig & {rewind?: [number, number]}).rewind && <AbsoluteFill style={{background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0 3px, transparent 3px 7px)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <div style={{fontFamily: MONT, fontWeight: 800, fontSize: 170, color: '#fff', WebkitTextStroke: '8px #000', paintOrder: 'stroke fill', transform: `translateX(${-lf * 6}px)`, opacity: 0.92}}>◀◀</div>
       </AbsoluteFill>}

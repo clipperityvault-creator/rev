@@ -20,6 +20,16 @@ EDITS = {  # id: (source, [(scene, a, b) | (rw, from, to, None)])
      ('rw', 15.40, 0.0, None),
      ('s1', 0.00, 8.60, [(0.00, 720, 1.15, 480), (4.60, 1000, 1.6, 460), (5.60, 440, 1.6, 490), (7.10, 1000, 1.5, 460)]),
      ('s2', 12.40, 18.81, [(12.40, 1000, 1.65, 460), (13.45, 1000, 1.9, 450), (14.95, 1000, 1.0, 540), (17.10, 1300, 1.25, 480)])]),
+ 'tvredeem3': ('u3_redemptions', [
+     ('s1', 0.00, 5.90, [(0.00, 680, 1.15, 360), (2.05, 975, 1.75, 430), (4.95, 700, 1.1, 400)]),
+     ('s2', 7.00, 13.00, [(7.00, 975, 1.6, 430), (9.55, 600, 1.12, 440)]),
+     ('s3', 24.15, 28.35, [(24.15, 975, 1.45, 430), (27.15, 975, 1.85, 420), (27.95, 600, 1.12, 440)]),
+     ('s4', 28.55, 33.95, [(28.55, 600, 1.12, 440), (31.45, 975, 1.9, 420)])]),
+ 'tvgoat': ('goat_input', [
+     ('hook', 13.45, 15.40, [(13.45, 1000, 1.9, 450)]),
+     ('rw', 15.40, 0.0, None),
+     ('s1', 0.00, 8.60, [(0.00, 720, 1.15, 480), (4.60, 1000, 1.6, 460), (5.60, 440, 1.6, 490), (7.10, 1000, 1.5, 460)]),
+     ('s2', 12.40, 18.81, [(12.40, 1000, 1.65, 460), (13.45, 1000, 1.9, 450), (14.95, 1000, 1.0, 540), (17.10, 1300, 1.25, 480)])]),
  'tvcelly': ('u2_psa10_celly', [('hook', 25.45, 28.85), ('rw', 28.85, 14.95, None), ('c1', 14.95, 32.4)]),
 }
 gen = json.load(open('src/edits.gen.json'))
@@ -68,6 +78,14 @@ CFG = {
    punch=[['hook', '$20,000'], ['hook', '$500'], ['c1', 'sign'], ['c1', 'time'], ['c1', 'finish'], ['c1', 'packed'], ['c2', 'ripped'], ['c2', 'expensive'], ['c2', 'ever']],
    blowouts=[['c2', 'expensive']], blackFlash=[['c1']], streaks=[['c2']]),
  'tvredeem2': dict(top='$20,000 card… now worth $500?!', hl={'$20,000': '#58EE28', '$500?!': '#FF2A2A'}, cta='*would you buy redemptions?*', music=['goodbye_n', 60], ctaAt=['s3', 'oh'], src='u3_redemptions.mp4',
+   tints=[[['s1', '$20,000'], G], [['s1', '$500'], R], [['s2', 'time'], R], [['s3', 'dislike'], R], [['s4', 'expensive'], G]], rizz=[['s1', '$20,000']],
+   punch=[['s1', '$20,000'], ['s1', 'now'], ['s1', '$500'], ['s2', 'redeem'], ['s2', 'sign'], ['s2', 'time'], ['s3', 'dislike'], ['s3', 'really'], ['s4', 'ripped'], ['s4', 'expensive'], ['s4', 'ever']],
+   blowouts=[['s4', 'expensive']], blackFlash=[['s2']], streaks=[['s3'], ['s4']]),
+ 'tvgoat': dict(top='Nobody expected THIS NBA GOAT pick', hl={'THIS': '#FF2A2A'}, cta='*who is YOUR NBA GOAT?*', music=['phonk_n', 78], ctaAt=['s2', 'oh'], src='goat_input.mp4',
+   tints=[[['hook', 'matthew'], G], [['s1', 'goat'], G], [['s2', 'dellavedova'], G], [['s2', 'no'], R]], rizz=[['s2', 'dellavedova']],
+   punch=[['hook', 'matthew'], ['hook', 'dellavedova'], ['s1', 'nba'], ['s1', 'goat?'], ['s1', 'goat?', 1], ['s1', 'greatest'], ['s2', 'matthew'], ['s2', 'dellavedova'], ['s2', 'no'], ['s2', 'tension']],
+   blowouts=[['s2', 'dellavedova']], blackFlash=[['s2']], streaks=[['s2']]),
+ 'tvredeem3': dict(top='$20,000 card… now worth $500?!', hl={'$20,000': '#58EE28', '$500?!': '#FF2A2A'}, cta='*would you buy redemptions?*', music=['goodbye_n', 60], ctaAt=['s3', 'oh'], src='u3_redemptions.mp4', teaser=dict(a=31.60, b=33.95, x=975, z=1.9, y=420, until=['s4', 'most']),
    tints=[[['s1', '$20,000'], G], [['s1', '$500'], R], [['s2', 'time'], R], [['s3', 'dislike'], R], [['s4', 'expensive'], G]], rizz=[['s1', '$20,000']],
    punch=[['s1', '$20,000'], ['s1', 'now'], ['s1', '$500'], ['s2', 'redeem'], ['s2', 'sign'], ['s2', 'time'], ['s3', 'dislike'], ['s3', 'really'], ['s4', 'ripped'], ['s4', 'expensive'], ['s4', 'ever']],
    blowouts=[['s4', 'expensive']], blackFlash=[['s2']], streaks=[['s3'], ['s4']]),

@@ -26,6 +26,15 @@ EDITS = {
  'r3reveal': [('hook', 736.90, 738.30), ('rw', 738.30, 718.75, None), ('c1', 718.75, 731.20), ('c2', 736.90, 741.90)],
 }
 SRCMAP = {'r3stakes': 'stakes', 'r3hand': 'handstand', 'r3reformer': 'reformer', 'r3chatgpt': 'genes', 'r3reveal': 'reveal', 'r3rip': 'rip', 'r3tuck': 'tuck', 'r3pretty': 'pretty', 'r3spider': 'spider', 'r3skinny': 'skinny'}
+# --- "WAIT FOR IT" teaser versions (no hook/rewind): story only + payoff PiP; cues inherited minus hook refs
+NEW = {
+ 'r3ripT': ('r3rip', 'rip', [('c1', 753.05, 769.40), ('c2', 773.45, 776.60)], dict(a=759.95, b=762.30, x=960, z=1.0, y=540, until=['c1', 'one'])),
+ 'r3cheatT': ('r3cheat', 'cheat', [('c1', 639.35, 641.95), ('c2', 659.41, 661.95), ('c3', 683.98, 694.62)], dict(a=684.60, b=686.80, x=960, z=1.0, y=540, until=['c3', 'what'])),
+ 'r3poleT': ('r3pole', 'pole', [('c1', 331.75, 340.92), ('c2', 349.39, 356.60)], dict(a=353.10, b=355.20, x=1010, z=1.0, y=540, until=['c2', 'whoa'])),
+ 'r3chatgptT': ('r3chatgpt', 'genes', [('c1', 430.55, 439.80), ('c2', 448.15, 457.45)], dict(a=455.60, b=457.40, x=960, z=1.0, y=540, until=['c2', 'comeback'])),
+ 'r3handT': ('r3hand', 'handstand', [('c1', 379.55, 391.50), ('c2', 397.80, 402.40)], dict(a=389.30, b=391.40, x=960, z=1.0, y=540, until=['c1', 'nothing'])),
+}
+for nid, (base, crk, scenes, tz) in NEW.items(): EDITS[nid] = scenes; SRCMAP[nid] = crk
 gen = json.load(open('src/edits.gen.json'))
 for eid, plan in EDITS.items():
     scenes = []
@@ -89,6 +98,13 @@ CFG = {
    punch=[['hook', '389'], ['hook', 'dumba**'], ['c1', 'stripper'], ['c1', 'won'], ['c1', 'grand'], ['c1', '326'], ['c1', 'dumba**'], ['c2', '389'], ['c2', 'eyebrow'], ['c2', 'calf']],
    blowouts=[['c2', '389']], blackFlash=[['c1']], streaks=[['c2']]),
 }
+BASE = {**json.load(open('src/r3.cfg.json')), **CFG}
+for nid, (base, crk, scenes, tz) in NEW.items():
+    b = json.loads(json.dumps(BASE[base])); ok = lambda r: r[0] not in ('hook', 'rw')
+    for k in ('rizz', 'punch', 'blowouts', 'blackFlash', 'streaks'): b[k] = [r for r in b[k] if ok(r)]
+    b['tints'] = [t for t in b['tints'] if ok(t[0])]
+    if not ok(b['ctaAt']): b['ctaAt'] = ['c1']
+    b['teaser'] = tz; CFG[nid] = b
 for eid, c in CFG.items():
     c.update(cta=CTA, track='none', calls=[], src='r3ep2.mp4', intro=True)
     sc = {s['id']: s for s in gen[eid]}
