@@ -4,8 +4,8 @@ import json, sys
 W = [w for s in json.load(open(sys.argv[1])) for w in s['w']]
 A = json.load(open('src/tracks/r3b/auto_edits.json'))
 CR = {k: [tuple(c) for c in v['crops']] for k, v in A.items()}
-FIX = {'fuck': 'f***', 'fucking': 'f***ing', 'shitting': 'sh*tting', 'shit': 'sh*t', 'dumbass': 'dumba**'}
-ATW = {(148.8, 'lot'): 'lat?', (436.8, 'bring'): 'burned', (720.6, 'pool'): 'pole', (450.8, 'chat'): 'ChatGPT', (451.0, 'gpt'): '', (247.3, 'hold'): 'Pole', (247.9, 'answer'): 'dancer?', (252.7, 'put'): 'pole', (252.8, 'answer'): 'dance', (253.6, 'it'): '', (259.4, 'throwing'): 'thrown at',
+FIX = {'neon': 'N3on', 'fuck': 'f***', 'fucking': 'f***ing', 'shitting': 'sh*tting', 'shit': 'sh*t', 'dumbass': 'dumba**'}
+ATW = {(619.2, 'spider'): 'Spider-Man', (619.4, '-man'): '', (482.4, 'and'): '', (482.7, 'women'): '', (482.8, 'himself'): '…', (148.8, 'lot'): 'lat?', (436.8, 'bring'): 'burned', (720.6, 'pool'): 'pole', (450.8, 'chat'): 'ChatGPT', (451.0, 'gpt'): '', (247.3, 'hold'): 'Pole', (247.9, 'answer'): 'dancer?', (252.7, 'put'): 'pole', (252.8, 'answer'): 'dance', (253.6, 'it'): '', (259.4, 'throwing'): 'thrown at',
        (213.4, "i'd"): "I", (213.8, 'hundred'): '100…', (214.0, 'hundred'): '', (213.7, 'a'): '', (215.1, 'hundred'): '103', (215.3, 'and'): '', (215.5, 'three'): '',
        (684.8, 'the'): 'What the', (687.4, 'cuz'): "'cause"}
 def crops(eid, a, b):
@@ -17,9 +17,14 @@ EDITS = {
  'r3hand': [('hook', 387.40, 388.90), ('rw', 388.90, 379.55, None), ('c1', 379.55, 391.50), ('c2', 397.80, 402.40)],
  'r3reformer': [('hook', 159.40, 160.60), ('rw', 160.60, 132.00, None), ('c1', 132.00, 137.50), ('c2', 145.50, 160.60)],
  'r3chatgpt': [('hook', 436.25, 439.80), ('rw', 439.80, 430.55, None), ('c1', 430.55, 439.80), ('c2', 448.15, 457.45)],
+ 'r3rip': [('hook', 759.25, 762.60), ('rw', 762.60, 754.95, None), ('c1', 754.95, 769.40), ('c2', 773.45, 776.60)],
+ 'r3tuck': [('hook', 567.90, 570.00), ('rw', 570.00, 548.00, None), ('c1', 548.00, 556.50), ('c2', 565.60, 574.45)],
+ 'r3pretty': [('hook', 480.30, 484.00), ('rw', 484.00, 467.80, None), ('c1', 467.80, 469.00), ('c2', 475.70, 487.75)],
+ 'r3spider': [('hook', 616.25, 617.90), ('rw', 617.90, 601.80, None), ('c1', 601.80, 619.60)],
+ 'r3skinny': [('hook', 57.85, 58.85), ('rw', 58.85, 44.60, None), ('c1', 44.60, 47.00), ('c2', 51.45, 60.80)],
  'r3reveal': [('hook', 736.90, 738.30), ('rw', 738.30, 718.75, None), ('c1', 718.75, 731.20), ('c2', 736.90, 741.90)],
 }
-SRCMAP = {'r3stakes': 'stakes', 'r3hand': 'handstand', 'r3reformer': 'reformer', 'r3chatgpt': 'genes', 'r3reveal': 'reveal'}
+SRCMAP = {'r3stakes': 'stakes', 'r3hand': 'handstand', 'r3reformer': 'reformer', 'r3chatgpt': 'genes', 'r3reveal': 'reveal', 'r3rip': 'rip', 'r3tuck': 'tuck', 'r3pretty': 'pretty', 'r3spider': 'spider', 'r3skinny': 'skinny'}
 gen = json.load(open('src/edits.gen.json'))
 for eid, plan in EDITS.items():
     scenes = []
@@ -58,6 +63,26 @@ CFG = {
    tints=[[['hook', '50'], R], [['hook', 'crushed'], R], [['c1', 'hundred'], G], [['c2', 'chat'], G], [['c2', 'lebron'], G]], rizz=[['c2', 'chat'], ['c2', 'lebron']],
    punch=[['hook', '50'], ['hook', 'exactly'], ['hook', 'crushed'], ['c1', 'calories'], ['c1', 'hundred'], ['c1', '50'], ['c2', 'genes'], ['c2', 'chat'], ['c2', 'men'], ['c2', 'comeback'], ['c2', 'lebron']],
    blowouts=[['c2', 'lebron']], blackFlash=[['c1']], streaks=[['c2']]),
+ 'r3rip': dict(top='The moment N3on got WAXED', hl={'WAXED': '#FF2A2A'}, music=['goodbye_n', 40], ctaAt=['c1', 'wow'],
+   tints=[[['hook', 'one'], R], [['c1', 'lawyers'], G], [['c1', 'one'], R], [['c1', 'wax'], G]], rizz=[['c1', 'lawyers'], ['c1', 'wax']],
+   punch=[['hook', 'two'], ['hook', 'one'], ['c1', 'f***'], ['c1', 'lawyers'], ['c1', 'two'], ['c1', 'one'], ['c1', 'wow'], ['c1', 'wax'], ['c2', 'suffer']],
+   blowouts=[['c1', 'one']], blackFlash=[['c1', 'one']], streaks=[['c2']]),
+ 'r3tuck': dict(top='Who can hold it LONGER?', hl={'LONGER?': '#FF2A2A'}, music=['chess_n', 60], ctaAt=['c2', 'really'],
+   tints=[[['hook', 'winner'], G], [['c1', 'go'], G], [['c2', 'winner'], G], [['c2', 'really'], R]], rizz=[['c1', 'go'], ['c2', 'winner']],
+   punch=[['hook', 'winner'], ['c1', 'hold'], ['c1', 'longest'], ['c1', 'three'], ['c1', 'two'], ['c1', 'one'], ['c1', 'go'], ['c2', 'winner'], ['c2', 'really']],
+   blowouts=[['c2', 'winner']], blackFlash=[['c1']], streaks=[['c2']]),
+ 'r3pretty': dict(top="N3on's REAL reason for getting jacked", hl={'REAL': '#FF2A2A'}, music=['phonk_n', 20], ctaAt=['c2', 'i'],
+   tints=[[['hook', 'women', 1], R], [['c1', 'f***'], R], [['c2', 'jacked'], G], [['c2', 'specifically'], R]], rizz=[['c2', 'jacked']],
+   punch=[['hook', 'pretty'], ['hook', 'specifically'], ['c1', 'f***'], ['c2', 'n3on'], ['c2', 'big'], ['c2', 'jacked'], ['c2', 'pretty'], ['c2', 'specifically'], ['c2', 'idea']],
+   blowouts=[['c2', 'specifically']], blackFlash=[['c2']], streaks=[['c2']]),
+ 'r3spider': dict(top='N3on hanging UPSIDE DOWN', hl={'UPSIDE': '#FF2A2A', 'DOWN': '#FF2A2A'}, music=['goodbye_n', 10], ctaAt=['c1', 'try'],
+   tints=[[['hook', 'doing'], G], [['c1', 'sh*t'], R], [['c1', 'why'], R], [['c1', 'spider-man'], G]], rizz=[['c1', 'spider-man']],
+   punch=[['hook', 'doing'], ['c1', 'sh*t'], ['c1', 'straddle'], ['c1', 'why'], ['c1', 'why', 2], ['c1', 'legs'], ['c1', 'doing'], ['c1', 'spider-man']],
+   blowouts=[['c1', 'doing']], blackFlash=[['c1']], streaks=[['c1', 'try']]),
+ 'r3skinny': dict(top='She roasted his transformation', hl={'roasted': '#FF2A2A'}, music=['chess_n', 95], ctaAt=['c2', 'wait'],
+   tints=[[['hook', 'skinny'], R], [['c1', 'transformation'], G], [['c2', 'impressive'], R], [['c2', 'fat'], R]], rizz=[['c1', 'transformation']],
+   punch=[['hook', 'skinny'], ['hook', 'fat'], ['c1', 'transformation'], ['c2', 'beat'], ['c2', 'nothing'], ['c2', 'impressive'], ['c2', 'skinny?'], ['c2', 'skinny', 1], ['c2', 'fat']],
+   blowouts=[['c2', 'fat']], blackFlash=[['c2']], streaks=[['c2']]),
  'r3reveal': dict(top='N3on vs Sarah… FINAL score', hl={'FINAL': '#FF2A2A'}, music=['phonk_n', 40], ctaAt=['c1', 'okay'],
    tints=[[['hook', '389'], G], [['c1', 'won'], G], [['c1', '326'], R], [['c2', '389'], G]], rizz=[['c1', 'won'], ['c2', '389']],
    punch=[['hook', '389'], ['hook', 'dumba**'], ['c1', 'stripper'], ['c1', 'won'], ['c1', 'grand'], ['c1', '326'], ['c1', 'dumba**'], ['c2', '389'], ['c2', 'eyebrow'], ['c2', 'calf']],
