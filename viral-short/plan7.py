@@ -30,6 +30,12 @@ EDITS = {  # id: (source, [(scene, a, b) | (rw, from, to, None)])
      ('rw', 15.40, 0.0, None),
      ('s1', 0.00, 8.60, [(0.00, 720, 1.15, 480), (4.60, 1000, 1.6, 460), (5.60, 440, 1.6, 490), (7.10, 1000, 1.5, 460)]),
      ('s2', 12.40, 18.81, [(12.40, 1000, 1.65, 460), (13.45, 1000, 1.9, 450), (14.95, 1000, 1.0, 540), (17.10, 1300, 1.25, 480)])]),
+ 'tvredeem4': ('u3_redemptions', [   # hook = the cliffhanger; story ends right before it -> seamless loop
+     ('hook', 31.45, 33.95, [(31.45, 975, 1.9, 420)]),
+     ('s1', 0.00, 5.90, [(0.00, 680, 1.15, 360), (2.05, 975, 1.75, 430), (4.95, 700, 1.1, 400)]),
+     ('s2', 7.00, 13.00, [(7.00, 975, 1.6, 430), (9.55, 600, 1.12, 440)]),
+     ('s3', 24.15, 28.35, [(24.15, 975, 1.45, 430), (27.15, 975, 1.85, 420), (27.95, 600, 1.12, 440)]),
+     ('s4', 28.55, 31.45, [(28.55, 600, 1.12, 440)])]),
  'tvcelly': ('u2_psa10_celly', [('hook', 25.45, 28.85), ('rw', 28.85, 14.95, None), ('c1', 14.95, 32.4)]),
 }
 gen = json.load(open('src/edits.gen.json'))
@@ -93,6 +99,10 @@ CFG = {
    tints=[[['hook', 'matthew'], G], [['s1', 'goat'], G], [['s2', 'dellavedova'], G], [['s2', 'no'], R]], rizz=[['s2', 'dellavedova']],
    punch=[['hook', 'matthew'], ['hook', 'dellavedova'], ['s1', 'nba'], ['s1', 'goat?'], ['s1', 'goat?', 1], ['s1', 'greatest'], ['s2', 'matthew'], ['s2', 'dellavedova'], ['s2', 'no'], ['s2', 'tension']],
    blowouts=[['s2', 'dellavedova']], blackFlash=[['s2']], streaks=[['s2']]),
+ 'tvredeem4': dict(top='$20,000 card… now worth $500?!', hl={'$20,000': '#58EE28', '$500?!': '#FF2A2A'}, cta='*would you buy redemptions?*', music=['goodbye_n', 60], ctaAt=['s3', 'oh'], src='u3_redemptions.mp4', hardcut=True,
+   tints=[[['hook', 'expensive'], G], [['s1', '$20,000'], G], [['s1', '$500'], R], [['s2', 'time'], R], [['s3', 'dislike'], R]], rizz=[['s1', '$20,000']],
+   punch=[['hook', 'expensive'], ['hook', 'ever'], ['s1', '$20,000'], ['s1', 'now'], ['s1', '$500'], ['s2', 'redeem'], ['s2', 'sign'], ['s2', 'time'], ['s3', 'dislike'], ['s3', 'really'], ['s4', 'ripped']],
+   blowouts=[['hook', 'expensive']], blackFlash=[['s1']], streaks=[['s3'], ['s4']]),
  'tvcelly': dict(top='They invented his touchdown celly', hl={'touchdown': '#58EE28'}, cta='*would you do this celly?*', music=['phonk_n', 15], ctaAt=['c1', 'so', 1], src='u2_psa10_celly.mp4',
    tints=[[['hook', '10'], G], [['c1', 'psa'], G], [['c1', 'like', 4], G], [['c1', 'no!'], R]], rizz=[['c1', 'psa'], ['c1', 'like', 4]],
    punch=[['hook', 'point'], ['hook', '10'], ['c1', 'stadium'], ['c1', 'point'], ['c1', 'psa'], ['c1', 'best'], ['c1', '10'], ['c1', 'easy'], ['c1', 'no!']],

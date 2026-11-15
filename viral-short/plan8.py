@@ -35,6 +35,9 @@ NEW = {
  'r3handT': ('r3hand', 'handstand', [('c1', 379.55, 391.50), ('c2', 397.80, 402.40)], dict(a=389.30, b=391.40, x=960, z=1.0, y=540, until=['c1', 'nothing'])),
 }
 for nid, (base, crk, scenes, tz) in NEW.items(): EDITS[nid] = scenes; SRCMAP[nid] = crk
+# --- hook + straight cut versions (user pick after the teaser test): base edit minus the rewind scene
+HARD = {'r3ripH': 'r3rip', 'r3handH': 'r3hand', 'r3chatgptH': 'r3chatgpt'}
+for nid, base in HARD.items(): EDITS[nid] = [p for p in EDITS[base] if p[0] != 'rw']; SRCMAP[nid] = SRCMAP[base]
 gen = json.load(open('src/edits.gen.json'))
 for eid, plan in EDITS.items():
     scenes = []
@@ -105,6 +108,7 @@ for nid, (base, crk, scenes, tz) in NEW.items():
     b['tints'] = [t for t in b['tints'] if ok(t[0])]
     if not ok(b['ctaAt']): b['ctaAt'] = ['c1']
     b['teaser'] = tz; CFG[nid] = b
+for nid, base in HARD.items(): CFG[nid] = {**json.loads(json.dumps(CFG[base])), 'hardcut': True}
 for eid, c in CFG.items():
     c.update(cta=CTA, track='none', calls=[], src='r3ep2.mp4', intro=True)
     sc = {s['id']: s for s in gen[eid]}

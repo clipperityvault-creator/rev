@@ -25,7 +25,7 @@ const GREEN = 'rgb(167,234,4)', RED = 'rgb(244,3,5)';
 type Ref = [string, string?, number?];   // [scene] = scene start, [scene, word, nth] = that word
 type Cfg = {top: string; cta: string; label: string; track: Record<string, number[]>; calls: [number, number, string?][]; tints: [Ref, string][]; rizz: Ref[];
   punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; music: number; loop?: boolean; ctaAt?: Ref; musicVol?: number; subBand?: [number, number]; blurOff?: [number, number][]; musicFile?: string; hl?: Record<string, string>; pushIn?: boolean; src?: string;
-  teaser?: {a: number; b: number; x: number; z: number; y: number; until: Ref}};
+  teaser?: {a: number; b: number; x: number; z: number; y: number; until: Ref}; hardcut?: boolean};
 
 export const EDITS: Record<string, Cfg> = {
   bowling: {top: 'Guess the LARPER millionaire', cta: '*real millionaire or LARP?*', label: '*Hulk*', track: HULK, music: 20,
@@ -122,8 +122,8 @@ import T_CLOWN_SOL from './tracks/clown_sol.json';
 const V5_TRACKS: Record<string, Record<string, number[]>> = {iron: IRONREVEAL as Record<string, number[]>, gift: T_GIFT, merch: T_MERCH, pissed: T_PISSED, hulk: HULK,
   chant_iron: T_CHANT_IRON, solstice: T_CLOWN_SOL};
 Object.entries({...V5, ...V6, ...R3, ...TV, ...R3B} as unknown as Record<string, {top: string; hl: Record<string, string>; cta: string; music: [string, number]; ctaAt: Ref; track: string; calls: [number, number, string][];
-  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string; teaser?: Cfg['teaser']}>).forEach(([id, a]) => {
-  EDITS[id] = {teaser: a.teaser, src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
+  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string; teaser?: Cfg['teaser']; hardcut?: boolean}>).forEach(([id, a]) => {
+  EDITS[id] = {hardcut: a.hardcut, teaser: a.teaser, src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
     ctaAt: a.ctaAt, calls: a.calls, tints: a.tints.map(([r, c]) => [r, c === 'G' ? GREEN : RED] as [Ref, string]), rizz: a.rizz, punch: a.punch,
     blowouts: a.blowouts, blackFlash: a.blackFlash, streaks: a.streaks};
 });
@@ -178,6 +178,7 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
     if (fi < 16) p.push(`brightness(${interpolate(f, [0, 5, 10, 16], [2.5, 1.9, 1.3, 1], clamp)}) contrast(${interpolate(f, [0, 16], [0.75, 1], clamp)})`);
     const s = near(STREAKS, f, 4); if (s !== undefined) p.push(`brightness(${[1.5, 1.3, 1.15, 1.05][s]})`);
     const w = near(BLOW, f, WB.length); if (w !== undefined && WB[w]) p.push(WB[w]);
+    if (cfg.hardcut && SCENES[1]) { const d = f - START[SCENES[1].id]; if (d >= 0 && d < 3) p.push(['brightness(2.4) contrast(0.9)', 'brightness(1.6)', 'brightness(1.15)'][d]); }
     return p.join(' ');
   })();
   const pu = near(PUNCH, f, 12), punch = pu === undefined ? 1 : interpolate(pu, [0, 2, 12], [1.13, 1.11, 1], clamp);
@@ -212,6 +213,7 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
     ...SCENES.filter((s) => (s as SceneConfig & {rewind?: unknown}).rewind).map((s): [string, number, number] => ['flash.mp3', START[s.id], 0.45]),
     ...callStarts.map((t): [string, number, number] => ['flash.mp3', t, 0.4]),
     ...(cfg.teaser ? [['shock.mp3', at(cfg.teaser.until), 0.55] as [string, number, number]] : []),
+    ...(cfg.hardcut && SCENES[1] ? [['flash.mp3', START[SCENES[1].id], 0.45] as [string, number, number]] : []),
     ...BLACK.map((t): [string, number, number] => ['shock.mp3', t, 0.5]),
     ...TINTS.filter(([, c]) => c === GREEN).map(([t]): [string, number, number] => ['rizz.mp3', t, 0.42]),
     ...RIZZ.map((t): [string, number, number] => ['rizz.mp3', t, 0.42]),

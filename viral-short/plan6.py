@@ -20,6 +20,8 @@ EDITS = {
  'r3pilates': [('hook', 212.15, 216.60), ('rw', 216.60, 208.30, None), ('c1', 208.30, 222.40)],
 }
 SRCMAP = {'r3wax': 'wax', 'r3cheat': 'cheat', 'r3pole': 'pole', 'r3money': 'stripper', 'r3pilates': 'pilates'}
+HARD = {'r3cheatH': 'r3cheat', 'r3poleH': 'r3pole'}   # hook + straight cut (no rewind)
+for nid, base in HARD.items(): EDITS[nid] = [p for p in EDITS[base] if p[0] != 'rw']; SRCMAP[nid] = SRCMAP[base]
 gen = json.load(open('src/edits.gen.json'))
 for eid, plan in EDITS.items():
     scenes = []
@@ -63,6 +65,7 @@ CFG = {
    punch=[['hook', 'malfunction'], ['hook', '103'], ['hook', 'impossible'], ['c1', 'calories'], ['c1', 'embarrassing'], ['c1', 'malfunction'], ['c1', '103'], ['c1', 'impossible'], ['c1', 'generous'], ['c1', '161']],
    blowouts=[['c1', '161']], blackFlash=[['c1']], streaks=[['c1', 'actually']]),
 }
+for nid, base in HARD.items(): CFG[nid] = {**json.loads(json.dumps(CFG[base])), 'hardcut': True}
 for eid, c in CFG.items():
     c.update(cta=CTA, track='none', calls=[], src='r3ep2.mp4')
     sc = {s['id']: s for s in gen[eid]}
