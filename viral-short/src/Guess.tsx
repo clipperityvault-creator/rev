@@ -25,7 +25,8 @@ const GREEN = 'rgb(167,234,4)', RED = 'rgb(244,3,5)';
 type Ref = [string, string?, number?];   // [scene] = scene start, [scene, word, nth] = that word
 type Cfg = {top: string; cta: string; label: string; track: Record<string, number[]>; calls: [number, number, string?][]; tints: [Ref, string][]; rizz: Ref[];
   punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; music: number; loop?: boolean; ctaAt?: Ref; musicVol?: number; subBand?: [number, number]; blurOff?: [number, number][]; musicFile?: string; hl?: Record<string, string>; pushIn?: boolean; src?: string;
-  teaser?: {a: number; b: number; x: number; z: number; y: number; until: Ref}; hardcut?: boolean};
+  teaser?: {a: number; b: number; x: number; z: number; y: number; until: Ref}; hardcut?: boolean;
+  extras?: {at: Ref; kind: 'png' | 'ov' | 'sfx'; file: string; v?: number; dur?: number; x?: number; y?: number; size?: number}[]; cutSfx?: string};
 
 export const EDITS: Record<string, Cfg> = {
   bowling: {top: 'Guess the LARPER millionaire', cta: '*real millionaire or LARP?*', label: '*Hulk*', track: HULK, music: 20,
@@ -116,14 +117,15 @@ import T_PISSED from './tracks/auto5/pissed.json';
 import V6 from './v6.cfg.json';
 import R3 from './r3.cfg.json';
 import TV from './tv.cfg.json';
+import X from './x.cfg.json';
 import R3B from './r3b.cfg.json';
 import T_CHANT_IRON from './tracks/chant_iron.json';
 import T_CLOWN_SOL from './tracks/clown_sol.json';
 const V5_TRACKS: Record<string, Record<string, number[]>> = {iron: IRONREVEAL as Record<string, number[]>, gift: T_GIFT, merch: T_MERCH, pissed: T_PISSED, hulk: HULK,
   chant_iron: T_CHANT_IRON, solstice: T_CLOWN_SOL};
-Object.entries({...V5, ...V6, ...R3, ...TV, ...R3B} as unknown as Record<string, {top: string; hl: Record<string, string>; cta: string; music: [string, number]; ctaAt: Ref; track: string; calls: [number, number, string][];
-  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string; teaser?: Cfg['teaser']; hardcut?: boolean}>).forEach(([id, a]) => {
-  EDITS[id] = {hardcut: a.hardcut, teaser: a.teaser, src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
+Object.entries({...V5, ...V6, ...R3, ...TV, ...R3B, ...X} as unknown as Record<string, {top: string; hl: Record<string, string>; cta: string; music: [string, number]; ctaAt: Ref; track: string; calls: [number, number, string][];
+  tints: [Ref, string][]; rizz: Ref[]; punch: Ref[]; blowouts: Ref[]; blackFlash: Ref[]; streaks: Ref[]; src?: string; teaser?: Cfg['teaser']; hardcut?: boolean; extras?: Cfg['extras']; cutSfx?: string}>).forEach(([id, a]) => {
+  EDITS[id] = {extras: a.extras, cutSfx: a.cutSfx, hardcut: a.hardcut, teaser: a.teaser, src: a.src, subBand: a.src ? [1, 0] : undefined, top: a.top, hl: a.hl, cta: a.cta, label: '', track: V5_TRACKS[a.track] ?? {}, music: a.music[1], musicFile: a.music[0], musicVol: 0.53, loop: !(a as {intro?: boolean}).intro, pushIn: true,
     ctaAt: a.ctaAt, calls: a.calls, tints: a.tints.map(([r, c]) => [r, c === 'G' ? GREEN : RED] as [Ref, string]), rizz: a.rizz, punch: a.punch,
     blowouts: a.blowouts, blackFlash: a.blackFlash, streaks: a.streaks};
 });
@@ -213,7 +215,7 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
     ...SCENES.filter((s) => (s as SceneConfig & {rewind?: unknown}).rewind).map((s): [string, number, number] => ['flash.mp3', START[s.id], 0.45]),
     ...callStarts.map((t): [string, number, number] => ['flash.mp3', t, 0.4]),
     ...(cfg.teaser ? [['shock.mp3', at(cfg.teaser.until), 0.55] as [string, number, number]] : []),
-    ...(cfg.hardcut && SCENES[1] ? [['flash.mp3', START[SCENES[1].id], 0.45] as [string, number, number]] : []),
+    ...(cfg.hardcut && SCENES[1] ? [[cfg.cutSfx ?? 'flash.mp3', START[SCENES[1].id], 0.45] as [string, number, number]] : []),
     ...BLACK.map((t): [string, number, number] => ['shock.mp3', t, 0.5]),
     ...TINTS.filter(([, c]) => c === GREEN).map(([t]): [string, number, number] => ['rizz.mp3', t, 0.42]),
     ...RIZZ.map((t): [string, number, number] => ['rizz.mp3', t, 0.42]),
@@ -224,6 +226,7 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
   ];
   const FX: [string, number, number][] = [];
   RAW.forEach((x) => { if (x[1] >= 0 && !FX.some((y) => Math.abs(y[1] - x[1]) < 5)) FX.push(x); });
+  (cfg.extras ?? []).filter((e) => e.kind === 'sfx').forEach((e) => FX.push([e.file, at(e.at), e.v ?? 0.45]));
   return <AbsoluteFill style={{backgroundColor: '#000'}}>
     <svg width="0" height="0" style={{position: 'absolute'}}><filter id="hblur" x="-10%" y="0" width="120%" height="100%"><feGaussianBlur stdDeviation={`${hblur} 1.5`} /></filter></svg>
     <div style={{position: 'absolute', left: 0, top: BOX_TOP, width: 1080, height: BOX_H, overflow: 'hidden', clipPath: `inset(${top - BOX_TOP}px 0 ${BOX_BOTTOM - bot}px 0)`}}>
@@ -240,6 +243,8 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
       </AbsoluteFill>
       {tint && <AbsoluteFill style={{background: tint[1], opacity: tint[0], mixBlendMode: 'multiply'}} />}
       {bfa > 0 && <AbsoluteFill style={{background: '#000', opacity: bfa}} />}
+      {(cfg.extras ?? []).filter((e) => e.kind === 'ov').map((e, i) => { const t0 = at(e.at), d = e.dur ?? 34; return f >= t0 && f < t0 + d ?
+        <AbsoluteFill key={'ov' + i} style={{mixBlendMode: 'screen'}}><Sequence from={t0} durationInFrames={d} layout="none"><OffthreadVideo src={staticFile(`res/${e.file}`)} muted style={{width: 1080, height: BOX_H, objectFit: 'cover'}} /></Sequence></AbsoluteFill> : null; })}
       {/* "WAIT FOR IT" teaser (replaces hook+rewind): payoff loops muted in a PiP from frame 0, then blasts full-screen into the real moment */}
       {cfg.teaser && (() => {
         const T = cfg.teaser!, until = at(T.until), len = Math.max(6, Math.round((T.b - T.a) * fps));
@@ -265,11 +270,14 @@ export const Guess: React.FC<{edit: string}> = ({edit}) => {
         {cfg.top.split(' ').slice(0, -1).map((w, i) => <span key={i} style={{color: cfg.hl?.[w] ?? 'white'}}>{w} </span>)}<span style={{whiteSpace: 'nowrap', color: cfg.hl?.[cfg.top.split(' ').pop()!] ?? 'white'}}>{cfg.top.split(' ').pop()}<Img src={staticFile('res/skull.png')} style={{width: 50, height: 50, verticalAlign: '-6px', marginLeft: 4}} /></span>
       </div>
     </div>
+    {(cfg.extras ?? []).filter((e) => e.kind === 'png').map((e, i) => { const t0 = at(e.at), d = e.dur ?? 36, k = f - t0; if (k < 0 || k >= d) return null;
+      const sc = k < 6 ? interpolate(k, [0, 3, 6], [0.2, 1.25, 1], clamp) : 1, op = k > d - 6 ? (d - k) / 6 : 1, sz = e.size ?? 210;
+      return <Img key={'png' + i} src={staticFile(`res/${e.file}`)} style={{position: 'absolute', left: (e.x ?? 800) - sz / 2, top: (e.y ?? 880) - sz / 2, width: sz, height: sz, objectFit: 'contain', opacity: op, transform: `scale(${sc}) rotate(${8 * Math.sin(k / 3)}deg)`, filter: 'drop-shadow(0 6px 10px rgba(0,0,0,0.5))'}} />; })}
     {word && <div style={{position: 'absolute', left: 0, width: 1080, top: 1060, textAlign: 'center', ...(wk < 2 ? {transform: `scaleX(${wk === 0 ? 1.35 : 1.15})`, filter: `blur(${wk === 0 ? 5 : 2.5}px)`, opacity: 0.85} : {})}}>
       <span style={{fontFamily: MONT, fontWeight: 800, fontSize: 68, color: '#FFFFFF', WebkitTextStroke: '7px #000', paintOrder: 'stroke fill', textShadow: '0 3px 8px rgba(0,0,0,0.7)'}}>{word.word}</span>
     </div>}
     {f >= ctaFrom && f < ctaTo && <div style={{position: 'absolute', left: 0, width: 1080, top: 1250, textAlign: 'center', fontFamily: MONT, fontWeight: 800, fontStyle: 'italic', fontSize: 42, color: '#fff', WebkitTextStroke: '5px #000', paintOrder: 'stroke fill', opacity: Math.min(1, (f - ctaFrom) / 5)}}>{cfg.cta}</div>}
-    <Audio src={staticFile(`res/${cfg.musicFile ?? 'goodbye'}.mp3`)} startFrom={cfg.music * fps} volume={cfg.musicVol ?? 0.09} />
+    <Audio src={staticFile(`res/${cfg.musicFile ?? 'goodbye'}.mp3`)} startFrom={cfg.music * fps} volume={cfg.musicVol ?? 0.09} loop />
     {FX.map(([file, t, v], i) => <Sequence key={i} from={Math.max(0, t)}><Audio src={staticFile(`res/${file}`)} volume={v} /></Sequence>)}
   </AbsoluteFill>;
 };
