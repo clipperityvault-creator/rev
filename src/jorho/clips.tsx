@@ -1108,7 +1108,7 @@ const Stack = ({o, title, rows, x, y, to}: {o: number; title: string; rows: [at:
       const p = pop(o, at);
       return <div key={i} style={{display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(0,0,0,.78)', borderRadius: 14, padding: '8px 18px 8px 10px',
         transform: `translateX(${(1 - Math.min(1, (o - at) / 160)) * -60}px) scale(${p})`, transformOrigin: '0 50%', borderLeft: '6px solid #58EE28', alignSelf: 'flex-start'}}>
-        {emo(code, 58)}<span style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 38, color: '#fff'}}>{label}</span><span style={{fontSize: 34, color: '#58EE28', fontFamily: 'Montserrat', fontWeight: 900}}>✓</span>
+        {emo(code, 58)}<span style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 38, color: '#fff'}}>{label}</span>{code !== '274c' && <span style={{fontSize: 34, color: '#58EE28', fontFamily: 'Montserrat', fontWeight: 900}}>✓</span>}
       </div>;
     })}
   </div>;
@@ -1117,7 +1117,7 @@ const Stack = ({o, title, rows, x, y, to}: {o: number; title: string; rows: [at:
 const Pop = ({o, at, to, code, x, y, size}: {o: number; at: number; to: number; code: string; x: number; y: number; size: number}) => {
   if (o < at || o >= to) return null;
   const s = pop(o, at) * (1 + 0.05 * Math.sin((o - at) / 120));
-  return <div style={{position: 'absolute', left: x, top: y, transform: `scale(${s}) rotate(${Math.sin((o - at) / 260) * 8}deg)`}}>{emo(code, size)}</div>;
+  return <div style={{position: 'absolute', left: x, top: y, transform: `scale(${s}) rotate(${Math.sin((o - at) / 260) * 8}deg)`, filter: 'drop-shadow(0 0 10px rgba(255,255,255,.85))'}}>{emo(code, size)}</div>;
 };
 
 // ---- #9 · Grant gifts Trevor the Tiger Woods game-worn auto he kept 4 years -----------------------------------
@@ -1196,3 +1196,176 @@ const PACK32: Spec = {
     sfx('record-scratch', KP.card - 60, 0.3), sfx('meme-dundun', KP.pause - 150, 0.3, 700), sfx('taco-bell-bong', KP.interesting + 650, 0.3, 1500)],
 };
 export const JorhoPack32 = () => <Jorho s={PACK32} />;
+
+// ==== v33 (2026-11-15): batch of 5 clips × 3 Jorho variants (user: "for each clip three edits"; v28 rule: same Jorho
+// frame, vary the details). Per clip the timeline, captions and verified shots stay; each variant changes the hook
+// line, the song (drop on the payoff), the SFX palette and the graphic gag:
+//   A = meme SFX (bonk/orch/violin/lwk/tada) + labels and cut-outs
+//   B = game-show SFX (ding/error/clock/wow) + a checklist that builds
+//   C = cinematic SFX (riser/heartbeat/soft boom/shimmer) + a suspense device (beep, "who?", freeze)
+// Every variant keeps a silent music beat right before its payoff.
+const NAME = (o: number, to: number) => <Lbl o={o} at={350} to={to} x={430} y={40}>TREVOR LAWRENCE · NFL QB</Lbl>;
+const Lb33 = (o: number, at: number, to: number, text: string, code?: string) => <Lbl o={o} at={at} to={to} x={40} y={40}><>{text}{code ? <> {emo(code, 34)}</> : null}</></Lbl>;
+const quietBefore = (pay: number, base: number, after: number, gap = 450) => (o: number) => (o >= pay - gap && o < pay ? 0 : o >= pay ? after : base);
+
+// ---- t1 · "his autograph looks like an ant" → Peyton told him a nice signature matters ---------------------------
+const T1B = {tl: tTl, src: 'pod/t1_tiger_auto_pen.mp4', track: t1Track as unknown as Track, wordY: 1170, wideX: 1285, push: true,
+  wideXAt: (o: number) => (o < S[1] ? 1400 : 1285),
+  words: wordsFrom(t1Words, tTl, {goaded: 'goated', "Richardson's,": "Richardson's", auto: 'autograph', hobby: ''},
+    {Anthony: '#21F5E6', "Richardson's": '#21F5E6', ant: '#58EE28', goated: '#58EE28', Peyton: '#F9FC35', Manning: '#F9FC35', signature: '#58EE28'}),
+  shots: [[0, 'W'], [S[1], 'W'], [T.haven, 'M'], [T.his, 'R'], [S[2], 'R'], [S[3], 'W'], [S[4], 'M']] as Shot[], swish: [] as number[]};
+const T1_ANT = 6500, T1_PEY = 16500, T1_SIG = 22100;
+const T1A: Spec = {...T1B, top: "This QB's autograph got called an ANT", strobes: [T1_ANT - STROBE_CUT, T1_PEY - STROBE_CUT],
+  tints: [[T1_ANT, GREEN], [9800, RED], [T1_PEY, GREEN]], swish: [3100, T1_PEY],
+  cut: {file: 'richardson.png', from: 3100, to: 6400, x: 640, h: 540},
+  music: {file: 'du-bist-full.mp3', from: 42500 - T1_ANT, level: 0.12}, musicLevel: quietBefore(T1_ANT, 0.12, 0.15),
+  box: (o) => <>{NAME(o, 3000)}{Lb33(o, 3100, T1_ANT, "ANTHONY RICHARDSON'S AUTOGRAPH:", '1f50d')}
+    <Pop o={o} at={T1_ANT} to={7700} code="1f41c" x={70} y={170} size={230} />
+    {Lb33(o, 7700, 10200, "IT'S JUST AN 'A' AND AN 'R'", '270d')}{Lb33(o, 13200, T1_PEY, 'WHO TAUGHT HIM THAT?', '1f440')}
+    {Lb33(o, T1_PEY, 20300, 'PEYTON MANNING CALLED HIM', '1f4de')}{Lb33(o, 20300, PEN_MS, 'LESSON: SIGN IT NICE', '270d')}
+    {o >= T1_PEY && o < 20300 && <Cutout o={o} file="peyton.png" from={T1_PEY} to={20100} x={640} h={540} />}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-dundun', 5300, 0.35, 900), sfx('meme-violin', T1_ANT, 0.35, 1100), sfx('meme-bonk', 7700, 0.4), sfx('meme-bonk', 8200, 0.4),
+    sfx('meme-trombone', 8800, 0.4, 1300), sfx('meme-lwk', 13200, 0.35), sfx('meme-orch', T1_PEY, 0.45), sfx('jorho-ring', 17700 + 2000, 0.25, 1500), sfx('meme-tada', T1_SIG, 0.4)],
+};
+const T1Bv: Spec = {...T1B, top: 'Peyton Manning called him about THIS', strobes: [T1_PEY - STROBE_CUT], tints: [[T1_ANT, RED], [13200, GREEN], [T1_PEY, GREEN]], swish: [T1_PEY],
+  music: {file: 'joyful-chess-slowed.mp3', from: 84700 - T1_PEY, level: 0.12}, musicLevel: quietBefore(T1_PEY, 0.12, 0.16),
+  box: (o) => <>{NAME(o, 3000)}
+    <Stack o={o} to={T1_PEY} title="AUTOGRAPH CHECK:" x={40} y={40} rows={[[T1_ANT, '274c', 'RICHARDSON: LOOKS LIKE AN ANT'], [13200, '1f4af', "TREVOR: A 'GOATED PEN'"]]} />
+    {Lb33(o, T1_PEY, 20300, 'WHO TOLD HIM? PEYTON MANNING', '1f451')}{Lb33(o, 20300, PEN_MS, 'RULE #1: A NICE SIGNATURE', '270d')}
+    <Pop o={o} at={T1_ANT} to={9800} code="1f41c" x={70} y={330} size={170} /><Pop o={o} at={17700} to={20300} code="1f4de" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('clock-tick', 3100, 0.3), sfx('error', T1_ANT, 0.3), sfx('record-scratch', 8800, 0.3), sfx('ding-2', 13200, 0.3, 1400),
+    sfx('anime-wow', T1_PEY, 0.25, 1600), sfx('jorho-ring', 17700 + 2000, 0.25, 1500), sfx('cha-ching', T1_SIG, 0.3)],
+};
+const T1C: Spec = {...T1B, top: 'What Peyton Manning told him about autographs', strobes: [T1_PEY - STROBE_CUT], tints: [[T1_PEY, GREEN]], swish: [10200],
+  beeps: [T1_PEY - 570], music: {file: 'interstellar-piano.mp3', from: 232200 - T1_PEY, level: 0.16}, musicLevel: quietBefore(T1_PEY, 0.16, 0.2, 700),
+  box: (o) => <>{NAME(o, 3000)}{Lb33(o, T1_ANT, 10200, 'THE ROAST', '1f41c')}{Lb33(o, 14100, T1_PEY, 'GUESS WHO TOLD HIM', '2753')}
+    <Burst o={o} at={T1_PEY} x={880} y={860} />{o >= T1_PEY && <Cutout o={o} file="peyton.png" from={T1_PEY} to={20300} x={640} h={540} />}
+    {Lb33(o, T1_PEY, PEN_MS, '5× MVP PEYTON MANNING', '1f3c6')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('mg-whoosh', T1_ANT, 0.3), sfx('mg-click', 7700, 0.25), sfx('mg-click', 8200, 0.25), sfx('mg-whoosh', 10200, 0.25),
+    sfx('cinematic-suspense-riser', T1_PEY, 0.28), sfx('heartbeat-loud', 14100, 0.18, 2400), sfx('mg-boom', T1_PEY, 0.2), sfx('mg-shimmer', T1_SIG, 0.3)],
+};
+export const JorhoAntA = () => <Jorho s={T1A} />; export const JorhoAntB = () => <Jorho s={T1Bv} />; export const JorhoAntC = () => <Jorho s={T1C} />;
+
+// ---- t3 · Traveling Trevors: "these guys are whacked" → "pretty funny" → "we need more Jax fans" ---------------------
+const TTB = {tl: tt, src: 'pod/t3_traveling_trevors.mp4', track: t3Track as unknown as Track, wordY: 1170, wideX: 990, push: true,
+  wideXAt: (o: number) => (o < TTS[1] ? 715 : 990),
+  words: wordsFrom(t3Words, tt, {traveling: 'Traveling', trevers: 'Trevors', instagram: 'Instagram', i: 'I'},
+    {Traveling: '#F9FC35', Trevors: '#F9FC35', algorithm: '#58EE28', Instagram: '#58EE28', whacked: '#FF5A5A', funny: '#58EE28', Jax: '#21F5E6', pumped: '#F9FC35'}),
+  shots: [[0, 'W'], [TTS[1], 'M']] as Shot[]};
+const TT_W = 13600, TT_F = 15800, TT_J = 17200;
+const TTA: Spec = {...TTB, top: 'Two grown men dress like him at every game', strobes: [TT_W - STROBE_CUT], tints: [[TT_W, RED], [TT_F, GREEN]], swish: [900, TT_F],
+  music: {file: 'du-bist-full.mp3', from: 42500 - TT_W, level: 0.12}, musicLevel: quietBefore(TT_W, 0.12, 0.15),
+  box: (o) => <>{NAME(o, 900)}{Lb33(o, 900, TTS[1], 'THE TRAVELING TREVORS = 2 FANS IN TREVOR WIGS', '1f3c8')}
+    <Pop o={o} at={8600} to={10300} code="1f4f1" x={780} y={600} size={170} /><Pop o={o} at={10300} to={TT_W} code="1f9d0" x={780} y={600} size={170} />
+    {Lb33(o, TT_W, TT_F, 'VIDEO 1: "WHACKED"', '1f480')}{Lb33(o, TT_F, TT_J, 'VIDEO 2: "PRETTY FUNNY"', '1f602')}{Lb33(o, TT_J, TT11_MS, 'NOW: "WE NEED MORE JAX FANS"', '1f525')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', 900, 0.3, 900), sfx('jorho-pop', 8600, 0.3), sfx('meme-dundun', 12300, 0.3, 800), sfx('meme-violin', TT_W, 0.3, 1000),
+    sfx('meme-tada', TT_F, 0.4), sfx('meme-orch', TT_J, 0.35), sfx('meme-impact', 19600, 0.3)],
+};
+const TTBv: Spec = {...TTB, top: 'He thought these fans were whacked… then this', strobes: [TT_F - STROBE_CUT], tints: [[TT_W, RED], [TT_F, GREEN]], swish: [TT_F],
+  music: {file: 'Monkeys_Spinning_Monkeys.mp3', from: 0, level: 0.14}, musicLevel: quietBefore(TT_F, 0.14, 0.16),
+  box: (o) => <>{NAME(o, 4000)}
+    <Stack o={o} to={TT11_MS} title="HIS REVIEW OF THE FANS:" x={40} y={40} rows={[[TT_W, '1f480', 'VIDEO 1: WHACKED'], [TT_F, '1f602', 'VIDEO 2: FUNNY'], [TT_J, '1f525', 'VERDICT: MORE JAX FANS']]} />
+    <Pop o={o} at={4800} to={9100} code="1f4f1" x={780} y={600} size={160} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('mg-click', 4800, 0.3), sfx('mg-click', 8600, 0.3), sfx('clock-tick', 11000, 0.3), sfx('error', TT_W, 0.3), sfx('ding-2', TT_F, 0.3, 1400),
+    sfx('anime-wow', TT_J, 0.22, 1500), sfx('crowd-cheer', 18900, 0.12, 1200)],
+};
+const TTC: Spec = {...TTB, top: 'When the guy you dress up as finds your videos', strobes: [TT_W - STROBE_CUT, TT_F - STROBE_CUT], tints: [[TT_W, RED], [TT_F, GREEN]], swish: [TTS[1]],
+  music: {file: 'funk-sigilo.mp3', from: 36900 - TT_F, level: 0.11}, musicLevel: (o) => (o >= TT_W - 400 && o < TT_W ? 0 : o >= TT_F - 300 && o < TT_F ? 0 : o >= TT_F ? 0.16 : 0.11),
+  box: (o) => <>{NAME(o, 4000)}{Lb33(o, 4000, 9100, 'HE FOLLOWS THEM', '1f440')}{Lb33(o, 9100, TT_W, 'HIS FIRST THOUGHT…', '23f3')}
+    {Lb33(o, TT_W, TT_F, 'WHACKED', '1f480')}{Lb33(o, TT_F, TT11_MS, 'GROWING ON HIM', '1f979')}
+    <Burst o={o} at={TT_F} x={880} y={860} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('mg-whoosh', 4000, 0.25), sfx('cinematic-suspense-riser', TT_W, 0.25), sfx('heartbeat-loud', 10600, 0.16, 2800), sfx('mg-boom', TT_W, 0.2),
+    sfx('meme-build2', TT_F - 550, 0.3), sfx('mg-shimmer', TT_F, 0.3), sfx('mg-boom', TT_J, 0.15)],
+};
+export const JorhoFansA = () => <Jorho s={TTA} />; export const JorhoFansB = () => <Jorho s={TTBv} />; export const JorhoFansC = () => <Jorho s={TTC} />;
+
+// ---- t4 · a ticket from his own title game, signed by him, gifted to him --------------------------------------------
+const G7B = {tl: g7, src: 'pod/t4_natty_ticket.mp4', track: t4Track as unknown as Track, wordY: 1170, wideX: 700, push: true,
+  words: wordsFrom(t4Words, g7, {auto: 'autograph', into: 'in'}, {gift: '#F9FC35', weird: '#F9FC35', ticket: '#F9FC35', national: '#58EE28', championship: '#58EE28', signature: '#21F5E6', autograph: '#F9FC35', sweet: '#58EE28'}),
+  shots: [[0, 'W'], [G7[5], 'M']] as Shot[]};
+const G_TK = 6300, G_YOU = 12100, G_SW = 20500;
+const G7A: Spec = {...G7B, top: 'Gifting someone their OWN autograph is wild', strobes: [G_TK - STROBE_CUT, G7[5] - STROBE_CUT], tints: [[G_TK, GREEN], [16900, RED], [G_SW, GREEN]], swish: [G7[5]],
+  music: {file: 'blue-yung-kai.mp3', from: 58270 - G_YOU, level: 0.11}, musicLevel: quietBefore(G_YOU, 0.11, 0.18),
+  box: (o) => <>{NAME(o, 1700)}{Lb33(o, 1700, G_TK, "A GIFT… THAT'S HIM?", '1f381')}<Pop o={o} at={G_TK} to={G_YOU} code="1f39f" x={760} y={600} size={190} />
+    {Lb33(o, 7900, 10000, '2019 NATIONAL TITLE GAME', '1f3c6')}{Lb33(o, 10000, G7[5], 'SIGNED BY… HIM', '1f923')}
+    {Lb33(o, G7[5], 17900, 'GIVING SOMEONE HIS OWN AUTOGRAPH?', '1f62c')}{Lb33(o, 17900, GIFT7_MS, 'HE NEVER KEPT ONE', '2764-fe0f-200d-1fa79')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-impact', 1700, 0.3), sfx('meme-lwk', 2500, 0.35), sfx('meme-build2', G_TK - 550, 0.3), sfx('meme-orch', G_TK, 0.4),
+    sfx('meme-bonk', 10000, 0.35), sfx('meme-tada', G_YOU, 0.4), sfx('meme-dundun', 14900, 0.3, 800), sfx('meme-lwk', 16900, 0.3), sfx('mg-shimmer', G_SW, 0.3)],
+};
+const G7Bv: Spec = {...G7B, top: 'His own signature came back to him as a gift', strobes: [G_TK - STROBE_CUT], tints: [[G_TK, GREEN], [G_SW, GREEN]], swish: [G7[5]],
+  music: {file: 'joyful-chess-slowed.mp3', from: 40500 - G_TK, level: 0.11}, musicLevel: quietBefore(G_TK, 0.11, 0.14),
+  box: (o) => <>{NAME(o, 1700)}
+    <Stack o={o} to={GIFT7_MS} title="WHAT'S IN THE GIFT:" x={40} y={40} rows={[[G_TK, '1f39f', 'TITLE GAME TICKET'], [10000, '270d', 'HIS SIGNATURE ON IT'], [11700, '1f3c6', 'CLEMSON 2019'], [19000, '1f979', 'THE ONE HE NEVER HAD']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', 1700, 0.25, 1300), sfx('clock-tick', 4900, 0.3), sfx('cha-ching', G_TK, 0.3), sfx('jorho-pop', 10000, 0.3), sfx('jorho-pop', 11700, 0.3),
+    sfx('anime-wow', G_YOU, 0.22, 1500), sfx('record-scratch', 16300, 0.25), sfx('jorho-pop', 19000, 0.3), sfx('ding-2', G_SW, 0.28, 1400)],
+};
+const G7C: Spec = {...G7B, top: 'The one ticket he never kept for himself', strobes: [G_YOU - STROBE_CUT], tints: [[G_YOU, GREEN], [G_SW, GREEN]], swish: [G7[2]],
+  music: {file: 'experience-einaudi.mp3', from: 44000, level: 0.16}, musicLevel: quietBefore(G_YOU, 0.16, 0.2, 500),
+  box: (o) => <>{NAME(o, 1700)}{Lb33(o, 1700, G_YOU, 'WAIT FOR HIS FACE', '1f440')}<Pop o={o} at={G_TK} to={G_YOU} code="1f39f" x={760} y={600} size={170} />
+    {Lb33(o, G_YOU, 17900, 'SIGNED BY HIM. GIFTED TO HIM.', '1f381')}{Lb33(o, 17900, GIFT7_MS, "HE DIDN'T HAVE ONE", '2764-fe0f-200d-1fa79')}<Burst o={o} at={G_YOU} x={880} y={860} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('mg-whoosh', 1700, 0.25), sfx('camera-shutter', G_TK, 0.3), sfx('cinematic-suspense-riser', G_YOU, 0.25), sfx('heartbeat-loud', 9300, 0.15, 2700),
+    sfx('mg-boom', G_YOU, 0.18), sfx('mg-whoosh', 17900, 0.2), sfx('mg-shimmer', G_SW, 0.32)],
+};
+export const JorhoTicketA = () => <Jorho s={G7A} />; export const JorhoTicketB = () => <Jorho s={G7Bv} />; export const JorhoTicketC = () => <Jorho s={G7C} />;
+
+// ---- t5 · pulls a true-gold Josh Allen… the OTHER Josh Allen (Hines-Allen) ------------------------------------------
+const J5B = {src: 'pod/t5_ex_teammate.mp4', track: t5Track as unknown as Track, wordY: 1170, wideX: 880, push: true, shots: [[0, 'W']] as Shot[]};
+const J5W = (tl: TL) => wordsFrom(t5Words, tl, {Heinz: 'Hines'}, {gold: '#F9FC35', Josh: '#21F5E6', Allen: '#21F5E6', Hines: '#58EE28', fire: '#F9FC35', teal: '#21F5E6'});
+const J_JO = 5600, J_NOT = 10200, J_REAL = 13100, J_HI = 13900;
+const J5A: Spec = {...J5B, tl: j3, words: J5W(j3), top: "Pulled a Josh Allen… but it's the WRONG Josh Allen", strobes: [J_REAL - STROBE_CUT], tints: [[J_JO, GREEN], [J_NOT, RED], [J_REAL, GREEN]], swish: [J_JO],
+  music: {file: 'du-bist-full.mp3', from: 42500 - J_REAL, level: 0.12}, musicLevel: quietBefore(J_REAL, 0.12, 0.16),
+  cut: {file: 'josh_allen.png', from: J_JO, to: J_NOT, x: 640, h: 540},
+  box: (o) => <>{NAME(o, 400)}{Lb33(o, 400, J_JO, 'GOLD OR TEAL?', '1f914')}{Lb33(o, J_JO, J_NOT, 'JOSH ALLEN?!', '1f525')}{Lb33(o, J_NOT, J_REAL, 'NOT THAT JOSH ALLEN', '274c')}
+    {Lb33(o, J_REAL, JOSH3D_MS, 'JOSH HINES-ALLEN · JAGUARS', '1f4af')}{o >= J_REAL && <Cutout o={o} file="hines_allen.png" from={J_REAL} to={JOSH3D_MS + 500} x={640} h={540} />}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', 400, 0.3, 900), sfx('meme-bonk', 2500, 0.35), sfx('meme-orch', J_JO, 0.4), sfx('meme-jet', 8000, 0.3, 900),
+    sfx('record-scratch', J_NOT, 0.3), sfx('meme-dundun', 11400, 0.3, 800), sfx('meme-tada', J_REAL, 0.4), sfx('meme-impact', 15900, 0.3)],
+};
+const J5Bv: Spec = {...J5B, tl: j3, words: J5W(j3), top: 'There are TWO NFL players named Josh Allen', strobes: [J_REAL - STROBE_CUT], tints: [[J_NOT, RED], [J_REAL, GREEN]], swish: [J_JO],
+  music: {file: 'joyful-chess-slowed.mp3', from: 40500 - J_REAL, level: 0.12}, musicLevel: quietBefore(J_REAL, 0.12, 0.15),
+  box: (o) => <>{NAME(o, J_JO)}
+    <Stack o={o} to={JOSH3D_MS} title="JOSH ALLEN COUNT:" x={40} y={40} rows={[[J_JO, '1f3c8', '#1: BILLS QUARTERBACK'], [J_HI, '1f6e1', "#2: JAGUARS, HIS TEAMMATE"]]} />
+    <Pop o={o} at={J_NOT} to={J_REAL} code="1f633" x={780} y={600} size={170} /><Pop o={o} at={J_REAL} to={JOSH3D_MS} code="1f92f" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', 400, 0.25, 1200), sfx('cha-ching', J_JO, 0.3), sfx('ding-2', 8000, 0.25, 1200), sfx('error', J_NOT, 0.3),
+    sfx('clock-tick', 12300, 0.3), sfx('anime-wow', J_REAL, 0.22, 1500), sfx('jorho-pop', J_HI, 0.3)],
+};
+// C: 400 ms freeze right before "the real Josh Hines-Allen"
+const j5c = timeline([[1600, 3500], [5300, 7950], [11500, 13150], [14050, 14600], [15050, 16650], [17100, 18950], [19100, 21950, 400], [21950, 25750]]);
+const J5C_MS = j5c.total, JC_REAL = j5c.segOut[7] + 50;
+const J5C: Spec = {...J5B, tl: j5c, words: J5W(j5c), top: 'He thought he hit the jackpot… then read the name', strobes: [JC_REAL - STROBE_CUT], tints: [[JC_REAL, GREEN]], swish: [J_JO],
+  beeps: [JC_REAL - 570], music: {file: 'eclipser.mp3', from: 15800 - JC_REAL, level: 0.11}, musicLevel: quietBefore(JC_REAL, 0.11, 0.16, 700),
+  box: (o) => <>{NAME(o, J_JO)}{Lb33(o, J_JO, J_NOT, 'JACKPOT?', '1f3b0')}{Lb33(o, J_NOT, JC_REAL, 'READ THE NAME AGAIN…', '1f50d')}
+    {Lb33(o, JC_REAL, J5C_MS, 'JOSH HINES-ALLEN', '1f4af')}<Burst o={o} at={JC_REAL} x={880} y={860} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('mg-whoosh', J_JO, 0.25), sfx('cinematic-suspense-riser', JC_REAL, 0.25), sfx('heartbeat-loud', 9600, 0.16, 3500),
+    sfx('mg-boom', JC_REAL, 0.18), sfx('mg-shimmer', JC_REAL + 2700, 0.3)],
+};
+export const JorhoJoshA = () => <Jorho s={J5A} />; export const JorhoJoshB = () => <Jorho s={J5Bv} />; export const JorhoJoshC = () => <Jorho s={J5C} />;
+export const JOSHC_MS = J5C_MS;
+
+// ---- t6 · "Ew… he's got a longer neck than Mike Glennon" --------------------------------------------------------------
+const N6B = {tl: n7, src: 'pod/t6_davis_mills_joke.mp4', track: t5Track as unknown as Track, wordY: 1170, wideX: 700, push: false, shots: [[0, 'W']] as Shot[],
+  wideXAt: NECK7.wideXAt, words: NECK7.words};
+const N_DM = 4300, N_EW = 5400, N_NECK = 8400, N_GL = 8900, N_OH = 12800;
+const N6A: Spec = {...N6B, top: 'Worst way to find out your neck is famous', strobes: [N_DM - STROBE_CUT], tints: [[N_EW, RED], [N_GL, GREEN]], swish: [N_EW - 150, N_OH - 150],
+  music: {file: 'du-bist-full.mp3', from: 42500 - N_NECK, level: 0.12}, musicLevel: quietBefore(N_NECK, 0.12, 0.16, 350),
+  cut: {file: 'mills.png', from: N_DM, to: N_GL - 100, x: 640, h: 540},
+  box: (o) => <>{NAME(o, 1900)}{Lb33(o, 1900, N_DM, 'PACK OPENING', '1f3c8')}{Lb33(o, N_EW, N_GL, 'DAVIS MILLS', '1f62c')}{Lb33(o, N_GL, N_OH, 'NECK CHECK: MIKE GLENNON', '1f992')}
+    {o >= N_GL && <Cutout o={o} file="glennon.png" from={N_GL} to={N_OH} x={640} h={540} />}{Lb33(o, N_OH, NECK7_MS, 'NO MERCY', '1f480')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), ...[1900, 2900, 3600].map((t) => sfx('meme-bonk', t, 0.3)), sfx('meme-orch', N_DM, 0.4), sfx('meme-violin', N_EW, 0.3, 1000),
+    sfx('meme-dundun', 7700, 0.3, 700), sfx('meme-impact', N_GL, 0.35), sfx('meme-lwk', 10400, 0.3), sfx('meme-trombone', 15000, 0.3, 900)],
+};
+const N6Bv: Spec = {...N6B, top: 'This pack opening turned into a neck roast', strobes: [N_EW - STROBE_CUT], tints: [[N_EW, RED], [N_GL, GREEN]], swish: [N_OH - 150],
+  music: {file: 'Fluffing_a_Duck.mp3', from: 0, level: 0.13}, musicLevel: quietBefore(N_EW, 0.13, 0.15, 350),
+  box: (o) => <>{NAME(o, 1900)}
+    <Stack o={o} to={N_NECK} title="PULLS:" x={40} y={40} rows={[[1900, '1f3c8', 'CARD 1'], [2900, '1f3c8', 'CARD 2'], [3600, '1f3c8', 'CARD 3'], [N_DM, '1f62c', 'DAVIS MILLS']]} />
+    <Pop o={o} at={N_NECK} to={N_OH} code="1f992" x={760} y={580} size={200} />{Lb33(o, N_GL, N_OH, '"LONGER NECK THAN MIKE GLENNON"', '1f923')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), ...[1900, 2900, 3600].map((t) => sfx('ding-2', t, 0.2, 700)), sfx('jorho-pop', N_DM, 0.3), sfx('error', N_EW, 0.35), sfx('record-scratch', 8200, 0.28),
+    sfx('anime-wow', N_GL, 0.2, 1400), sfx('cha-ching', 10400, 0.2), sfx('spongebob-boowomp', 15000, 0.3)],
+};
+const N6C: Spec = {...N6B, top: "Nobody's neck is safe at this table", strobes: [N_GL - STROBE_CUT], tints: [[N_EW, RED], [N_GL, GREEN]], swish: [N_OH - 150],
+  beeps: [N_DM - 570], music: {file: 'Sneaky_Snitch.mp3', from: 0, level: 0.12}, musicLevel: (o) => (o >= N_EW && o < N_GL ? 0 : 0.12),
+  box: (o) => <>{NAME(o, 1900)}{Lb33(o, 1900, N_DM, 'NEXT CARD IS…', '2753')}{Lb33(o, N_DM, N_EW, 'DAVIS MILLS', '1f3c8')}{Lb33(o, N_EW, N_GL, 'THE VERDICT…', '23f3')}
+    {Lb33(o, N_GL, N_OH, 'TALLER NECK THAN MIKE GLENNON', '1f992')}<Burst o={o} at={N_GL} x={880} y={860} /><Pop o={o} at={N_OH} to={NECK7_MS} code="1f62d" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), ...[1900, 2900, 3600].map((t) => sfx('mg-click', t, 0.25)), sfx('mg-whoosh', N_DM, 0.25), sfx('cinematic-suspense-riser', N_GL, 0.25),
+    sfx('heartbeat-loud', 5600, 0.15, 3000), sfx('mg-boom', N_GL, 0.18), sfx('mg-shimmer', N_OH, 0.25)],
+};
+export const JorhoNeckA = () => <Jorho s={N6A} />; export const JorhoNeckB = () => <Jorho s={N6Bv} />; export const JorhoNeckC = () => <Jorho s={N6C} />;
