@@ -110,3 +110,5 @@
 - N3on's ChatGPT Excuse Is CRAZY 💀 (R3born chatgpt X)
 - N3on's Biggest Fear Doing a HANDSTAND 💀 (R3born handstand X)
 - He Picked WHO as the NBA GOAT? 💀 (tv goat X, sharp/sat 77)
+- He Kept Tiger's Shirt in a Card for 4 Years… Then Gave It Away 🎁 (JorhoTiger32, s9 tiger slab)
+- Imagine Every Card in Your Pack Is HIM 💀 (JorhoPack32, s15 T-Law packs)

@@ -9,6 +9,7 @@ This repo is a **Remotion + Whisper Shorts editing setup**, and this `vault/` fo
 Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot clipping style**, copying the references they gave and the patterns from researching 50 top Shorts. They give feedback on each version, so check the feedback log in the project note before editing again.
 
 ## User preferences
+- **Retention sound design on every video (2026-11-15):** "the videos must have sound effects that can make people who are watching stay and watch til the end" + background music. Every beat gets a purposeful myinstants SFX (no dead stretches), with a riser/build into the payoff, and a music bed throughout.
 - **Frame the person who is ACTUALLY talking (2026-11-01).** Before picking shots, check who speaks each line: run `scripts/voice_diarize.py` (voice clusters) + `scripts/speaker_check.py` (mouth motion per seat), then confirm with a frame strip. Laughing fools the mouth check. If unsure, use the wide shot.
 - **Plain words only on screen (2026-11-01).** Captions and 3D text use words an average viewer knows. Swap hobby slang (auto → autograph, redeem → "why the wait", prism, numbered, etc.) for everyday words, or cut the line.
 - **Every title + description must be brand new (2026-11-01).** Never reuse or lightly reword one sent before, even for a re-send. Check `vault/04 Projects/Titles used.md` first and add each new one there.
@@ -68,6 +69,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 1 - 6 big pulls + 6 Trevor clips]]: 12 Shorts from the sheet, how the batch pipeline works, titles/descriptions
   - [[Batch 2 - 6 big pulls + 6 Trevor clips]]: hooks, mood music, face tracking
   - [[Batch 3 - Edit3 4 cards + 4 Trevor]]: Edit3 style on black bars + card pulls, titles/descriptions
+  - [[Batch 4 - Jorho v32 Tiger gift + T-Law packs]]: two unused sheet clips, retention sound pass
 
 ## Quick start (new session)
 1. Read [[NBA GOAT pick]] (feedback log) and [[Caption style]].

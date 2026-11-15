@@ -1089,3 +1089,110 @@ const GOAT31: Spec = {...GOAT26, top: 'He picked this guy over MJ and LeBron �
   tints: [[K26.della, '#FF4DCB'], [K26.tension, '#2b6cff']], music: {file: 'Sneaky_Snitch.mp3', from: 0, level: 0.12}};
 export const GOAT31_MS = GOAT26_MS;
 export const JorhoGoat31 = () => <Jorho s={GOAT31} />;
+
+// ==== v32 (2026-11-15): two never-used sheet clips, Jorho goat19 formula + a retention sound pass (user: "sound effects
+// that make people stay until the end" + background music). Every beat gets one purposeful SFX; a riser / silent beat
+// carries into each payoff.
+import s9Words from '../plans/data/s9_tiger_slab.words.json';
+import s9Track from '../plans/data/s9_tiger_slab.seats.json';
+import s15Words from '../plans/data/s15_backyard_packs.words.json';
+import s15Track from '../plans/data/s15_backyard_packs.seats.json';
+
+// rows that stack in one by one (the list IS the build-up)
+const Stack = ({o, title, rows, x, y, to}: {o: number; title: string; rows: [at: number, code: string, label: string][]; x: number; y: number; to: number}) => {
+  if (o < rows[0][0] - 250 || o >= to) return null;
+  return <div style={{position: 'absolute', left: x, top: y, display: 'flex', flexDirection: 'column', gap: 12}}>
+    <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 30, color: '#F9FC35', background: 'rgba(0,0,0,.78)', padding: '8px 16px', borderRadius: 10, alignSelf: 'flex-start'}}>{title}</div>
+    {rows.map(([at, code, label], i) => {
+      if (o < at) return null;
+      const p = pop(o, at);
+      return <div key={i} style={{display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(0,0,0,.78)', borderRadius: 14, padding: '8px 18px 8px 10px',
+        transform: `translateX(${(1 - Math.min(1, (o - at) / 160)) * -60}px) scale(${p})`, transformOrigin: '0 50%', borderLeft: '6px solid #58EE28', alignSelf: 'flex-start'}}>
+        {emo(code, 58)}<span style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 38, color: '#fff'}}>{label}</span><span style={{fontSize: 34, color: '#58EE28', fontFamily: 'Montserrat', fontWeight: 900}}>✓</span>
+      </div>;
+    })}
+  </div>;
+};
+// a big emoji that pops and bobs
+const Pop = ({o, at, to, code, x, y, size}: {o: number; at: number; to: number; code: string; x: number; y: number; size: number}) => {
+  if (o < at || o >= to) return null;
+  const s = pop(o, at) * (1 + 0.05 * Math.sin((o - at) / 120));
+  return <div style={{position: 'absolute', left: x, top: y, transform: `scale(${s}) rotate(${Math.sin((o - at) / 260) * 8}deg)`}}>{emo(code, size)}</div>;
+};
+
+// ---- #9 · Grant gifts Trevor the Tiger Woods game-worn auto he kept 4 years -----------------------------------
+const t32 = timeline([[2450, 4150], [4250, 7100], [8050, 11350], [17950, 23450], [24050, 29550]]);
+export const TIGER32_MS = t32.total;
+const S32 = t32.segOut, o32 = t32.out;
+const K32 = {years: o32(4100), tiger: o32(6480), game: o32(8160), nine: o32(9920), auto: o32(18600), shirt: o32(20900), tag: o32(21500), glove: o32(22200),
+  cap: o32(22600), care: o32(24300), forMe: o32(26100), yeah: o32(26800), golfer: o32(27900), awesome: o32(28800)};
+const TIGER32: Spec = {
+  tl: t32, src: 'pod/s9_tiger_slab.mp4', track: s9Track as unknown as Track, top: "Tiger's real shirt, glove AND hat are inside this card", wordY: 1170, wideX: 700, push: true,
+  words: wordsFrom(s9Words, t32, {PC: 'collection', '9': '9.5', '5': '', Auto: 'autograph', offer: 'golfer', an: 'a', Exquisite: 'Exquisite'},
+    {Tiger: '#F9FC35', "Tiger's": '#F9FC35', years: '#21F5E6', '9.5': '#58EE28', golfer: '#58EE28', awesome: '#58EE28'}),
+  shots: [[0, 'W'], [K32.tiger - 400 + STROBE_CUT, 'M'], [S32[2], 'W'], [S32[3], 'M'], [S32[4], 'W'], [K32.forMe - 60, 'M'], [K32.yeah - STROBE_CUT + STROBE_CUT, 'W'], [K32.awesome - 80, 'M']],
+  strobes: [K32.tiger - 400, K32.yeah - STROBE_CUT],
+  tints: [[K32.tiger, GREEN], [K32.nine, GREEN], [K32.yeah, GREEN]], swish: [K32.tiger, K32.nine, S32[3]],
+  cut: {file: 'tiger.png', from: K32.tiger, to: S32[2] + 900, x: 620, h: 560},
+  music: {file: 'blue-yung-kai.mp3', from: 58270 - K32.yeah, level: 0.12},
+  // bed under the talk, out for the silent beat on "That's for me?", back fuller when the gift lands
+  musicLevel: (o) => (o >= K32.forMe - 250 && o < K32.yeah ? 0 : o >= K32.yeah ? 0.2 : 0.12),
+  box: (o) => <>
+    <Lbl o={o} at={350} to={K32.years - 200} x={430} y={40}>TREVOR LAWRENCE · NFL QB</Lbl>
+    <Lbl o={o} at={K32.years} to={K32.tiger - 400} x={40} y={40}><>KEPT IN HIS COLLECTION 4 YEARS {emo('1f512', 34)}</></Lbl>
+    <Lbl o={o} at={K32.nine} to={S32[3]} x={40} y={40}><>GRADED 9.5 OUT OF 10 {emo('2728', 34)}</></Lbl>
+    <Stack o={o} to={S32[4]} title="WORN BY TIGER WOODS:" x={40} y={40} rows={[[K32.shirt, '1f455', 'SHIRT'], [K32.tag, '1f3f7-fe0f', 'LAUNDRY TAG'], [K32.glove, '1f9e4', 'GLOVE'], [K32.cap, '1f9e2', 'CAP']]} />
+    {o >= S32[4] && o < K32.yeah && <Lbl o={o} at={S32[4] + 150} to={K32.yeah} x={40} y={40}><>WAIT… WHO IS IT FOR? {emo('1f440', 34)}</></Lbl>}
+    <Lbl o={o} at={K32.yeah} to={t32.total} x={40} y={40}><>GIFTED TO TREVOR {emo('1f381', 34)}</></Lbl>
+    <Pop o={o} at={K32.yeah + 60} to={K32.awesome} code="1f381" x={760} y={620} size={190} />
+    <Pop o={o} at={K32.awesome} to={t32.total} code="26f3" x={780} y={620} size={170} />
+  </>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('clock-tick', K32.years - 150, 0.3, 700), sfx('rev-whoosh', K32.tiger - 1400, 0.35), sfx('meme-orch', K32.tiger, 0.4),
+    sfx('ding-2', K32.nine, 0.3, 1500), ...[K32.shirt, K32.tag, K32.glove, K32.cap].map((t) => sfx('jorho-pop', t, 0.32)), sfx('anime-wow', K32.cap + 450, 0.22, 1600),
+    sfx('meme-build2', K32.care, 0.3), sfx('meme-dundun', K32.forMe - 200, 0.3, 800), sfx('meme-tada', K32.yeah, 0.45), sfx('mg-shimmer', K32.awesome, 0.3),
+    sfx('ding-2', K32.awesome + 200, 0.25, 1400)],
+};
+export const JorhoTiger32 = () => <Jorho s={TIGER32} />;
+
+// ---- #15 · "T-Law packs": every card in the pack would be Trevor -----------------------------------------------
+const p32 = timeline([[3250, 5500], [5700, 6650], [8300, 10850], [15350, 24950, 450], [27150, 28150]]);
+export const PACK32_MS = p32.total;
+const P32 = p32.segOut, q32 = p32.out;
+const KP = {packs: q32(4500), rip: q32(6100), shipped: q32(9000), tlaw: q32(16100), made: q32(17600), every: q32(19600), trevor: q32(20700), you: q32(21800),
+  weird: q32(22400), card: q32(23300), card2: q32(24300), pause: P32[4] - 450, interesting: P32[4]};
+// fan of Trevor-only cards that keeps multiplying while they explain it
+const Fan = ({o, from, to}: {o: number; from: number; to: number}) => {
+  if (o < from || o >= to) return null;
+  const n = Math.min(9, 1 + Math.floor((o - from) / 260));
+  return <div style={{position: 'absolute', left: 0, right: 0, top: 790, height: 280}}>
+    {Array.from({length: n}, (_, i) => { const at = from + i * 260, p = pop(o, at), a = (i - 4) * 9, dx = (i - 4) * 70;
+      return <div key={i} style={{position: 'absolute', left: 540 - 80 + dx, top: 0, width: 160, height: 224, borderRadius: 14, overflow: 'hidden', background: '#0b5f66',
+        border: '6px solid #fff', boxShadow: '0 10px 26px rgba(0,0,0,.55)', transform: `rotate(${a}deg) scale(${p})`, transformOrigin: '50% 140%'}}>
+        <Img src={staticFile('img/jorho/trevor_goat.png')} style={{width: '100%', height: '82%', objectFit: 'cover', objectPosition: '50% 15%'}} />
+        <div style={{fontFamily: 'Montserrat', fontWeight: 900, fontSize: 22, color: '#F9FC35', textAlign: 'center'}}>TREVOR #16</div>
+      </div>; })}
+  </div>;
+};
+const PACK32: Spec = {
+  tl: p32, src: 'pod/s15_backyard_packs.mp4', track: s15Track as unknown as Track, top: 'Imagine every card in your pack is HIM', wordY: 1170, wideX: 700, push: true,
+  words: wordsFrom(s15Words, p32, {repacks: 'packs', '.com': '', T: 'T-LAW', L: '', wax: '', Trevor: 'Trevor', 'Lawrence': 'Lawrence'},
+    {Backyard: '#21F5E6', Packs: '#21F5E6', 'T-LAW': '#F9FC35', Trevor: '#58EE28', Lawrence: '#58EE28', weird: '#FF5A5A', every: '#F9FC35', Interesting: '#21F5E6'}),
+  shots: [[0, 'W'], [P32[2], 'L'], [P32[3], 'R'], [KP.made - 100, 'L'], [KP.trevor - STROBE_CUT + STROBE_CUT, 'M'], [KP.card2 - 80, 'L'], [KP.interesting, 'M']],
+  strobes: [KP.trevor - STROBE_CUT],
+  tints: [[KP.tlaw, GREEN], [KP.trevor, GREEN], [KP.weird, RED]], swish: [KP.tlaw, P32[2]],
+  music: {file: 'du-bist-full.mp3', from: 42500 - KP.trevor, level: 0.12},
+  musicLevel: (o) => (o >= KP.pause - 150 && o < KP.interesting + 900 ? 0 : o >= KP.trevor ? 0.16 : 0.11),
+  box: (o) => <>
+    <Lbl o={o} at={350} to={P32[1]} x={430} y={40}>TREVOR LAWRENCE · NFL QB</Lbl>
+    <Lbl o={o} at={P32[1]} to={P32[3]} x={40} y={40}><>THE PITCH: OPEN PACKS ONLINE {emo('1f4f1', 34)} → CARDS MAILED {emo('1f4e6', 34)}</></Lbl>
+    <Lbl o={o} at={KP.tlaw} to={KP.card} x={40} y={40}>T-LAW PACK = EVERY CARD IS TREVOR</Lbl>
+    <Fan o={o} from={KP.every} to={KP.weird + 150} />
+    <Lbl o={o} at={KP.card} to={KP.pause} x={40} y={40}><>EVERY. SINGLE. CARD. {emo('1f62d', 34)}</></Lbl>
+    <Pop o={o} at={KP.weird} to={KP.card2} code="1f62c" x={780} y={600} size={170} />
+    <Pop o={o} at={KP.interesting} to={p32.total} code="1f9d0" x={780} y={600} size={190} />
+  </>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('jorho-pop', P32[1], 0.3), sfx('mg-click', KP.shipped, 0.25), sfx('rev-whoosh', KP.tlaw - 1200, 0.3), sfx('meme-jet', KP.made, 0.25, 900),
+    ...Array.from({length: 9}, (_, i) => sfx('jorho-snap', KP.every + i * 260, 0.18, 400)), sfx('meme-orch', KP.trevor, 0.4), sfx('meme-lwk', KP.weird, 0.45),
+    sfx('record-scratch', KP.card - 60, 0.3), sfx('meme-dundun', KP.pause - 150, 0.3, 700), sfx('taco-bell-bong', KP.interesting + 650, 0.3, 1500)],
+};
+export const JorhoPack32 = () => <Jorho s={PACK32} />;
