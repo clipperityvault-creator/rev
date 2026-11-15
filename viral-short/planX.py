@@ -7,12 +7,12 @@ G = json.load(open('src/edits.gen.json'))
 C = {}
 for f in ['r3', 'r3b', 'tv']: C.update(json.load(open(f'src/{f}.cfg.json')))
 
-def png(at, f, x=820, y=880, size=210): return dict(at=at, kind='png', file=f, x=x, y=y, size=size)
+def png(at, f, x=870, y=1290, size=200): return dict(at=at, kind='png', file=f, x=x, y=y, size=size)
 def ov(at, f, dur=34): return dict(at=at, kind='ov', file=f, dur=dur)
 def sfx(at, f, v=0.5): return dict(at=at, kind='sfx', file=f, v=v)
 
 NEW = {
-  'tvredeemX': ('tvredeem4', dict(top='Promised $20,000… now it\'s $500', hl={'$20,000': '#58EE28', '$500': '#FF2A2A'}, music=['suspense_n', 0], cutSfx='s_camflash.mp3',
+  'tvredeemX': ('tvredeem4', dict(top='Promised $20,000… now it\'s $500', hl={'$20,000…': '#58EE28', '$500': '#FF2A2A'}, music=['suspense_n', 0], cutSfx='s_camflash.mp3',
       extras=[ov(['s1', '$20,000'], 'cashfall.mp4', 52), sfx(['s1', '$20,000'], 's_ding.mp3', 0.4), png(['s1', '$500'], 'e_sob.png'), sfx(['s1', '$500'], 's_fahhh.mp3', 0.45),
               sfx(['s3', 'really'], 's_huh.mp3', 0.5), png(['s3', 'really'], 'e_laugh.png', 260), ov(['s4', 'ripped'], 'greenflash2.mp4')])),
   'r3ripX': ('r3ripH', dict(top='"I got good lawyers" then THIS', hl={'THIS': '#FF2A2A'}, music=['sentamento_n', 55], cutSfx='s_camflash.mp3',
