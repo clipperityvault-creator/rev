@@ -24,7 +24,7 @@ The style used for the "Guess the fake millionaire" and Trevor stream edits (Nov
 - **Intro:** box opens from 609/1308 to 417/1494 over 24 frames, starting from a blown-out, horizontally smeared image.
 - Top text: Montserrat 700, 58 px, white, on the box, ending in 💀. Key word coloured (red `#FF2A2A` for the twist, green `#58EE28` for money/good).
 - Captions: one word at a time, Montserrat 800, 68 px, **white with a 7 px black stroke**, 2-frame horizontal smear on entry, y ≈ 1060. Swears starred.
-- Saturation 1.3, contrast 1.06 in the template, then the **CapCut "4K filter" grade** in the master step (user's CapCut look: 4K filter + saturation 50 + sharpness 50; **latest ask: sharpness 77 + saturation 77** → unsharp 2.0 + 0.9, saturation 1.30, contrast 1.12, glow 26 %):
+- Saturation 1.3, contrast 1.06 in the template, then the **CapCut "4K filter" grade** in the master step (user's CapCut look: 4K filter + saturation 50 + sharpness 50; **current: sharpness 67 + saturation 67** → unsharp 1.74 + 0.79, saturation 1.26, contrast 1.11, glow 24.5 %. **Grade the source footage only** (pre-graded src file, e.g. `public/goat_g67.mp4`), never the text/emojis/overlays; master with `-c:v copy`):
   soft-light glow (gblur 14, 22 %), unsharp 1.3 + 0.6, contrast 1.10, saturation 1.18, gentle S-curve. **Export stays 1080×1920 — never 4K.**
 - **Black flash 2:** constant 4 % black flash every 3 frames (0.1 s), no zoom.
 - Effects: flat green/red tints (62 % multiply), white blow-out, motion-streak cuts, punch-ins (1.13×) on key words, tracked red circle + italic name call-out on masked people, italic CTA line mid-video.
