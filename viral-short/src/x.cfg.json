@@ -1086,5 +1086,181 @@
     "size": 200
    }
   ]
+ },
+ "tvgoatX": {
+  "top": "He picked WHO as the NBA GOAT?",
+  "hl": {
+   "WHO": "#FF2A2A"
+  },
+  "cta": "*who is YOUR NBA GOAT?*",
+  "music": [
+   "empire_n",
+   20
+  ],
+  "ctaAt": [
+   "s2",
+   "oh"
+  ],
+  "src": "goat_input.mp4",
+  "tints": [
+   [
+    [
+     "hook",
+     "matthew"
+    ],
+    "G"
+   ],
+   [
+    [
+     "s1",
+     "goat"
+    ],
+    "G"
+   ],
+   [
+    [
+     "s2",
+     "dellavedova"
+    ],
+    "G"
+   ],
+   [
+    [
+     "s2",
+     "no"
+    ],
+    "R"
+   ]
+  ],
+  "rizz": [
+   [
+    "s2",
+    "dellavedova"
+   ]
+  ],
+  "punch": [
+   [
+    "hook",
+    "matthew"
+   ],
+   [
+    "hook",
+    "dellavedova"
+   ],
+   [
+    "s1",
+    "nba"
+   ],
+   [
+    "s1",
+    "goat?"
+   ],
+   [
+    "s1",
+    "goat?",
+    1
+   ],
+   [
+    "s1",
+    "greatest"
+   ],
+   [
+    "s2",
+    "matthew"
+   ],
+   [
+    "s2",
+    "dellavedova"
+   ],
+   [
+    "s2",
+    "no"
+   ],
+   [
+    "s2",
+    "tension"
+   ]
+  ],
+  "blowouts": [
+   [
+    "s2",
+    "dellavedova"
+   ]
+  ],
+  "blackFlash": [
+   [
+    "s2"
+   ]
+  ],
+  "streaks": [
+   [
+    "s2"
+   ]
+  ],
+  "track": "none",
+  "calls": [],
+  "intro": true,
+  "cutSfx": "s_camflash.mp3",
+  "hardcut": true,
+  "extras": [
+   {
+    "at": [
+     "s1",
+     "goat?"
+    ],
+    "kind": "ov",
+    "file": "greenflash2.mp4",
+    "dur": 34
+   },
+   {
+    "at": [
+     "s1",
+     "goat?"
+    ],
+    "kind": "sfx",
+    "file": "s_ding.mp3",
+    "v": 0.4
+   },
+   {
+    "at": [
+     "s2",
+     "dellavedova"
+    ],
+    "kind": "sfx",
+    "file": "s_huh.mp3",
+    "v": 0.5
+   },
+   {
+    "at": [
+     "s2",
+     "dellavedova"
+    ],
+    "kind": "png",
+    "file": "e_laugh.png",
+    "x": 870,
+    "y": 1290,
+    "size": 200
+   },
+   {
+    "at": [
+     "s2",
+     "tension"
+    ],
+    "kind": "png",
+    "file": "e_sob.png",
+    "x": 260,
+    "y": 1290,
+    "size": 200
+   },
+   {
+    "at": [
+     "s2",
+     "tension"
+    ],
+    "kind": "sfx",
+    "file": "s_awk.mp3",
+    "v": 0.45
+   }
+  ]
  }
 }

@@ -109,3 +109,4 @@
 - N3on Begged Them to STOP Him 💀 (R3born pole X)
 - N3on's ChatGPT Excuse Is CRAZY 💀 (R3born chatgpt X)
 - N3on's Biggest Fear Doing a HANDSTAND 💀 (R3born handstand X)
+- He Picked WHO as the NBA GOAT? 💀 (tv goat X, sharp/sat 77)

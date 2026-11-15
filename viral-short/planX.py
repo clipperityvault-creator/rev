@@ -30,10 +30,13 @@ NEW = {
   'r3handX': ('r3handH', dict(top='N3on\'s biggest fear doing a HANDSTAND', hl={'HANDSTAND': '#FF2A2A'}, music=['brevis_n', 4], cutSfx='s_camflash.mp3',
       extras=[ov(['c1', 'kick'], 'greenflash2.mp4'), sfx(['c1', 'butt'], 's_huh.mp3', 0.5), png(['c1', 'pop'], 'e_laugh.png'),
               sfx(['c2', 'stripper'], 's_awk.mp3', 0.45), png(['c2', 'stripper'], 'e_sob.png', 260)])),
+  'tvgoatX': ('tvgoat', dict(top='He picked WHO as the NBA GOAT?', hl={'WHO': '#FF2A2A'}, music=['empire_n', 20], cutSfx='s_camflash.mp3', hardcut=True,
+      extras=[ov(['s1', 'goat?'], 'greenflash2.mp4'), sfx(['s1', 'goat?'], 's_ding.mp3', 0.4), sfx(['s2', 'dellavedova'], 's_huh.mp3', 0.5),
+              png(['s2', 'dellavedova'], 'e_laugh.png'), png(['s2', 'tension'], 'e_sob.png', 260), sfx(['s2', 'tension'], 's_awk.mp3', 0.45)])),
 }
 out = {}
 for nid, (old, d) in NEW.items():
-    G[nid] = G[old]
+    G[nid] = [x for x in G[old] if x['id'] != 'rw'] if d.get('hardcut') else G[old]  # hook + straight cut: no rewind scene
     c = {**C[old], **d}
     sc = {s['id']: s for s in G[old]}
     for e in c['extras']:  # validate refs the same way Guess.tsx resolves them
