@@ -64,7 +64,7 @@ type Spec = {
   music: {file: string; from: number; level: number};
   box?: (o: number) => ReactNode; over?: (o: number) => ReactNode; fx?: Sfx[];
   intro?: {theme: Theme; to: number; bg: (o: number) => ReactNode; fg?: (o: number) => ReactNode};
-  wideXAt?: (o: number) => number; mattes?: Matte[]; behind?: (o: number) => ReactNode; push?: boolean; capsOff?: [number, number][]; faceY?: (o: number) => number; grade?: string; musicLevel?: (o: number) => number; noIntro?: boolean; mirror?: boolean;
+  wideXAt?: (o: number) => number; punch?: number[]; mattes?: Matte[]; behind?: (o: number) => ReactNode; push?: boolean; capsOff?: [number, number][]; faceY?: (o: number) => number; grade?: string; musicLevel?: (o: number) => number; noIntro?: boolean; mirror?: boolean;
 };
 const Jorho = ({s}: {s: Spec}) => {
   const frame = useCurrentFrame();
@@ -73,7 +73,12 @@ const Jorho = ({s}: {s: Spec}) => {
   const cam: CamCfg = {src: s.src, tl: s.tl, track: s.track, grade: s.grade ?? GRADE, box: [1080, BOX_H], baseH: 640, faceY: s.faceY ?? 0.42, wideX: s.wideXAt ? () => s.wideXAt!(o) : s.wideX,
     who: () => shotAt(s.shots, o), mattes: s.mattes,
     // slow push-in that restarts on every hard cut, so the frame never sits still
-    zoom: s.push ? () => { const st = s.shots.reduce((a, [t]) => (o >= t ? t : a), 0); return 1 + 0.07 * ease(o, st, 3500, (v) => v); } : undefined};
+    zoom: s.push || s.punch ? () => {
+      const st = s.shots.reduce((a, [t]) => (o >= t ? t : a), 0);
+      const base = s.push ? 1 + 0.07 * ease(o, st, 3500, (v) => v) : 1;
+      // retention punch-in (v34): snap to 1.13x on the word, hold, ease back over the last 200 ms
+      const pk = (s.punch ?? []).reduce((m, t) => (o >= t && o < t + 750 ? Math.max(m, o < t + 550 ? 1.13 : 1 + 0.13 * (1 - (o - t - 550) / 200)) : m), 1);
+      return base * pk; } : undefined};
   return <Frame o={o} top={s.top} noIntro={s.noIntro}
     over={<>
       {!(s.capsOff ?? []).some(([a, b]) => o >= a && o < b) && <OneWord o={o} words={s.words} y={s.wordY} />}
@@ -1369,3 +1374,191 @@ const N6C: Spec = {...N6B, top: "Nobody's neck is safe at this table", strobes: 
     sfx('heartbeat-loud', 5600, 0.15, 3000), sfx('mg-boom', N_GL, 0.18), sfx('mg-shimmer', N_OH, 0.25)],
 };
 export const JorhoNeckA = () => <Jorho s={N6A} />; export const JorhoNeckB = () => <Jorho s={N6Bv} />; export const JorhoNeckC = () => <Jorho s={N6C} />;
+
+// ==== v34 (2026-11-16): retention pass (user: "make the edit better somehow where viewers would be hooked and increase
+// retention"). Evidence from our own analytics (vault Jorho v19–v30): keep the Jorho intro (72% vs 55–58% stayed), bold-claim
+// hook lines with names win, real footage from frame 0, silent beat before the payoff, loop the ending. New levers:
+//   · punch-ins (1.13× snap) on the key words → a visual change every 1–2 s
+//   · a mid-video re-hook label around 45–55% ("wait…", the twist)
+//   · A = story order + reaction cuts; B = a question hook answered by a list that fills in; C = cold-open teaser of
+//     the most intriguing line → ◀◀ rewind → full story (payoff still lands, so the story is complete)
+const wordsAll = (raw: {text: string; startMs: number}[], tl: TL, fix: Record<string, string>, colors: Record<string, string>) =>
+  tl.segs.flatMap((sg, i) => wordsFrom(raw, {...tl, segs: [sg], out: (x: number) => tl.segOut[i] + x - sg[0]} as TL, fix, colors));
+const shiftShots = (sh: Shot[], off: number, seat: Seat): Shot[] => [[0, seat], ...sh.map(([t, w]) => [t + off, w] as Shot)];
+const Rewind = ({o, at}: {o: number; at: number}) => {
+  if (o < at || o >= at + 550) return null;
+  const k = (o - at) / 550;
+  return <div style={{position: 'absolute', inset: 0, background: 'repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 2px, transparent 2px 7px)', opacity: 1 - k * 0.5}}>
+    <svg width={260} height={150} style={{position: 'absolute', left: 60, top: 440, filter: 'drop-shadow(0 0 18px rgba(0,0,0,.6))'}}>
+      <polygon points="120,10 120,140 10,75" fill="#fff" /><polygon points="245,10 245,140 135,75" fill="#fff" /></svg>
+  </div>;
+};
+const NAMEC = (o: number, at: number, to: number) => <Lbl o={o} at={at} to={to} x={430} y={40}>TREVOR LAWRENCE · NFL QB</Lbl>;
+const Lbig = (o: number, at: number, to: number, text: string, code?: string) => <Lbl o={o} at={at} to={to} x={40} y={40}><>{text}{code ? <> {emo(code, 34)}</> : null}</></Lbl>;
+
+// ---- u4 · Peyton Manning called him about his signature; they text all season -------------------------------------
+const PA: Spec = {...PEYTON, top: 'Peyton Manning texts this QB all season long', push: true, beeps: undefined, cut: undefined, punch: [P.peyton, P.called + 200, 6400, P.text],
+  strobes: [P.called, P.text - 240], tints: [[P.peyton, GREEN], [P.nice, GREEN], [P.text, GREEN]], swish: [P.peyton, 7500],
+  music: {file: 'blue-yung-kai.mp3', from: 58270 - P.text, level: 0.11}, musicLevel: quietBefore(P.text, 0.11, 0.17),
+  box: (o) => <>{NAME(o, P.peyton)}{o >= P.peyton && <Cutout o={o} file="peyton.png" from={P.peyton} to={P.called - 100} x={640} h={540} />}
+    {Lb33(o, P.called, 5700, 'PEYTON CALLED HIM', '1f4de')}{Lb33(o, 5700, 7500, 'ABOUT HIS SIGNATURE', '270d')}
+    {Lb33(o, 7500, 10100, "WAIT… THEY'RE ACTUALLY FRIENDS?", '1f440')}{Lb33(o, 10100, PEYTON_MS, 'THEY TEXT ALL SEASON', '1f4f1')}
+    <Pop o={o} at={P.called} to={5700} code="1f4de" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-orch', P.peyton, 0.4), sfx('phone-buzz', P.called, 0.3, 900), sfx('jorho-pen', 5900, 0.3, 900), sfx('meme-dundun', 7400, 0.3, 800),
+    sfx('meme-impact', P.real, 0.3), sfx('meme-tada', P.text, 0.4), sfx('ding-2', P.great, 0.25, 900)],
+};
+const PB: Spec = {...PEYTON, top: 'Who calls an NFL QB about his autograph?', push: true, beeps: undefined, cut: undefined, punch: [P.called, P.nice, P.real, P.text],
+  strobes: [P.called, P.text - 240], tints: [[P.peyton, GREEN], [P.text, GREEN]], swish: [P.peyton],
+  music: {file: 'joyful-chess-slowed.mp3', from: 40500 - P.peyton, level: 0.11}, musicLevel: quietBefore(P.text, 0.11, 0.14),
+  box: (o) => <>{NAME(o, P.called)}
+    <Stack o={o} to={PEYTON_MS} title="PEYTON MANNING:" x={40} y={40} rows={[[P.called, '1f4de', 'CALLED HIM ONE DAY'], [P.nice, '270d', '"HAVE A NICE SIGNATURE"'], [P.text, '1f4f1', 'TEXTS HIM ALL SEASON']]} />
+    <Pop o={o} at={P.real} to={10100} code="1f91d" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', P.peyton, 0.25, 1200), sfx('phone-buzz', P.called, 0.3, 900), sfx('ding-2', P.nice, 0.25, 1200), sfx('clock-tick', P.real - 150, 0.3),
+    sfx('jorho-pop', P.real, 0.3), sfx('anime-wow', P.text, 0.22, 1500), sfx('ding-2', P.great, 0.2, 900)],
+};
+const pc = timeline([[4100, 5450], ...pTl.segs]); const PO34 = 1350;
+const PC: Spec = {...PEYTON, tl: pc, top: 'A 5× MVP calls this QB', push: true, cut: undefined, words: wordsAll(peytonWords, pc, {}, {Peyton: '#21F5E6', Manning: '#21F5E6', signature: '#58EE28'}),
+  shots: shiftShots(PEYTON.shots, PO34, 'M'), punch: [P.peyton + PO34, P.nice + PO34, P.text + PO34], beeps: [P.peyton + PO34 - 570],
+  strobes: [PO34 - STROBE_CUT, P.text - 240 + PO34], tints: [[P.peyton + PO34, GREEN]], swish: [P.peyton + PO34],
+  music: {file: 'lose-you-adturnup.mp3', from: 12000 - (P.peyton + PO34), level: 0.12}, musicLevel: quietBefore(P.peyton + PO34, 0.12, 0.15, 600),
+  box: (o) => <>{Lbig(o, 200, PO34, 'WHO CALLED HIM?', '1f440')}<Rewind o={o} at={PO34} />{NAMEC(o, PO34 + 300, P.peyton + PO34)}
+    <Burst o={o} at={P.peyton + PO34} x={880} y={860} />{o >= P.peyton + PO34 && <Cutout o={o} file="peyton.png" from={P.peyton + PO34} to={P.called + PO34 - 100} x={640} h={540} />}
+    {Lb33(o, P.called + PO34, 7500 + PO34, '5× MVP PEYTON MANNING', '1f3c6')}{Lb33(o, 7500 + PO34, pc.total, 'STILL TEXTING HIM EVERY SEASON', '1f4f1')}</>,
+  fx: [sfx('phone-buzz', 100, 0.25, 800), sfx('rev-whoosh', PO34 - 1000, 0.3), sfx('cinematic-suspense-riser', P.peyton + PO34, 0.25), sfx('mg-boom', P.peyton + PO34, 0.18),
+    sfx('mg-click', P.nice + PO34, 0.25), sfx('mg-whoosh', 7500 + PO34, 0.2), sfx('mg-shimmer', P.text + PO34, 0.3)],
+};
+export const JorhoPeytonA = () => <Jorho s={PA} />; export const JorhoPeytonB = () => <Jorho s={PB} />; export const JorhoPeytonC = () => <Jorho s={PC} />;
+export const PEYTONC_MS = pc.total;
+
+// ---- u6 · "Liam Coen taught me more in one year…" → "Yeah, definitely" (extended to a finished sentence) ------------
+const cn = timeline([[4700, 6500], [6500, 7900], [11400, 17950], [18300, 23100], [23300, 24050], [25000, 27750]]);
+export const COEN34_MS = cn.total;
+const CK = {liam: 1900, taught: 2600, more: 3200, life: 6600, wasTrue: 7800, why: 9000, yeah: 9750, definitely: 10550, half: 12650, staff: 14350, system: 15900, different: 17000};
+const CN_BASE = {tl: cn, src: 'pod2/u6_coen_duo.mp4', track: coenTrack as unknown as Track, wordY: 1170, wideX: 690, push: true,
+  words: wordsFrom(coenWords, cn, {Cohen: 'Coen'}, {Liam: '#21F5E6', Coen: '#21F5E6', definitely: '#58EE28', different: '#F9FC35'}),
+  shots: [[0, 'W'], [1800 + STROBE_CUT, 'L'], [3200, 'W'], [6200, 'M'], [CK.wasTrue, 'W'], [CK.yeah + STROBE_CUT, 'M']] as Shot[]};
+const CNA: Spec = {...CN_BASE, top: '1 year with this coach beat his whole career', punch: [CK.liam, CK.life, CK.definitely, CK.different],
+  strobes: [1800, CK.yeah], tints: [[CK.liam, GREEN], [CK.definitely, GREEN]], swish: [CK.liam, CK.system],
+  cut: {file: 'coen.png', from: CK.liam, to: CK.life - 200, x: 640, h: 540},
+  music: {file: 'tipo-insta-buzeira.mp3', from: 19300 - CK.definitely, level: 0.11}, musicLevel: quietBefore(CK.yeah, 0.11, 0.16),
+  box: (o) => <>{NAME(o, CK.liam)}{Lb33(o, CK.liam, CK.life, 'LIAM COEN · JAGUARS HEAD COACH', '1f3c8')}{Lb33(o, CK.wasTrue, CK.yeah, 'WAS THAT TRUE?', '1f440')}
+    {Lb33(o, CK.yeah, CK.system, 'HIS ANSWER: DEFINITELY', '1f4af')}{Lb33(o, CK.system, COEN34_MS, 'A SYSTEM UNLIKE ANY HE HAD', '1f9e0')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', CK.liam, 0.3, 900), sfx('meme-dundun', CK.wasTrue - 100, 0.3, 800), sfx('meme-orch', CK.definitely, 0.4), sfx('jorho-pop', CK.half, 0.25),
+    sfx('meme-impact', CK.different, 0.3)],
+};
+const CNB: Spec = {...CN_BASE, top: 'Did one coach really change his whole game?', punch: [CK.liam, CK.definitely, CK.half, CK.different],
+  strobes: [1800, CK.yeah], tints: [[CK.definitely, GREEN]], swish: [CK.liam],
+  music: {file: 'midnight-club.mp3', from: 2700 - CK.liam + 2000, level: 0.1}, musicLevel: quietBefore(CK.yeah, 0.1, 0.14),
+  box: (o) => <>{NAME(o, CK.more)}{Lb33(o, CK.more, CK.yeah, 'CLAIM: COEN TAUGHT HIM THE MOST', '1f914')}
+    <Stack o={o} to={COEN34_MS} title="HIS ANSWER:" x={40} y={40} rows={[[CK.definitely, '1f4af', '"DEFINITELY"'], [CK.half, '1f4c5', '1.5 YEARS WITH THIS STAFF'], [CK.different, '1f9e0', 'A SYSTEM LIKE NO OTHER']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', CK.liam, 0.25, 1200), sfx('clock-tick', CK.wasTrue, 0.3), sfx('clock-tick', CK.why, 0.3), sfx('ding-2', CK.definitely, 0.3, 1400),
+    sfx('jorho-pop', CK.half, 0.3), sfx('anime-wow', CK.different, 0.2, 1400)],
+};
+const cc = timeline([[6500, 7900], ...cn.segs]); const CO = 1400;
+const CNC: Spec = {...CN_BASE, tl: cc, top: 'He said this about his coach… and meant it', words: wordsAll(coenWords, cc, {Cohen: 'Coen'}, {Liam: '#21F5E6', Coen: '#21F5E6', definitely: '#58EE28'}),
+  shots: shiftShots(CN_BASE.shots, CO, 'L'), punch: [CK.liam + CO, CK.definitely + CO, CK.different + CO],
+  strobes: [CO - STROBE_CUT, CK.yeah + CO], tints: [[CK.definitely + CO, GREEN]], swish: [CK.liam + CO],
+  music: {file: 'experience-einaudi.mp3', from: 44000, level: 0.15}, musicLevel: quietBefore(CK.yeah + CO, 0.15, 0.2, 600),
+  box: (o) => <>{Lbig(o, 200, CO, 'WHO SAID THIS?', '1f914')}<Rewind o={o} at={CO} />{NAMEC(o, CO + 300, CK.wasTrue + CO)}
+    {Lb33(o, CK.wasTrue + CO, CK.yeah + CO, 'IS IT TRUE?', '23f3')}{Lb33(o, CK.yeah + CO, cc.total, 'TREVOR: "YEAH, DEFINITELY"', '1f4af')}<Burst o={o} at={CK.yeah + CO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', CO - 1000, 0.3), sfx('mg-whoosh', CK.liam + CO, 0.2), sfx('heartbeat-loud', CK.life + CO, 0.15, 3000), sfx('cinematic-suspense-riser', CK.yeah + CO, 0.25),
+    sfx('mg-boom', CK.yeah + CO, 0.18), sfx('mg-shimmer', CK.different + CO, 0.3)],
+};
+export const JorhoCoenA = () => <Jorho s={CNA} />; export const JorhoCoenB = () => <Jorho s={CNB} />; export const JorhoCoenC = () => <Jorho s={CNC} />;
+export const COENC_MS = cc.total;
+
+// ---- u2 · not a celly guy → "No." / "Maybe." → the PSA 10 celly → "I like that." --------------------------------
+const CYA: Spec = {...CELLY7, top: 'He said no to every celebration… except this one', box: undefined, punch: [KC7.no, KC7.maybe, KC7.t1, KC7.t3, KC7.iLike],
+  strobes: [C7[2] - STROBE_CUT, KC7.t1 - STROBE_CUT], tints: [[KC7.no, RED], [KC7.psa, GREEN], [KC7.iLike, GREEN]], swish: [C7[1], KC7.psa],
+  music: {file: 'du-bist-full.mp3', from: 42500 - KC7.t1, level: 0.11}, musicLevel: quietBefore(KC7.t1, 0.11, 0.15),
+  over: undefined,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-bonk', KC7.no, 0.4), sfx('meme-lwk', KC7.maybe, 0.35), sfx('meme-trombone', KC7.notGood, 0.35, 1300), sfx('meme-dundun', KC7.collectors, 0.3, 800),
+    sfx('meme-orch', KC7.psa, 0.35), ...[KC7.t1, KC7.t2, KC7.t3].map((t) => sfx('meme-impact', t, 0.3)), sfx('meme-tada', KC7.iLike, 0.4)],
+};
+CYA.box = (o) => <>{NAME(o, KC7.celly)}{Lb33(o, KC7.celly, KC7.no, 'IS HE A CELLY GUY?', '1f914')}<Pop o={o} at={KC7.no} to={KC7.gave} code="274c" x={780} y={600} size={170} />
+  <Pop o={o} at={KC7.maybe} to={C7[1]} code="1f914" x={780} y={600} size={170} />{Lb33(o, KC7.dance, C7[2], 'NO DANCES. HE\'S "NOT GOOD"', '1f62c')}
+  {Lb33(o, KC7.collectors, KC7.psa, 'THEN THEY PITCHED THIS…', '1f440')}{Lb33(o, KC7.psa, KC7.t1, 'PSA 10 = A PERFECT CARD GRADE', '1f4af')}
+  <Pop o={o} at={KC7.t1} to={KC7.itsIt} code="1f51f" x={780} y={560} size={200} />{Lb33(o, KC7.iLike, CELLY7_MS, 'CELLY APPROVED', '1f525')}</>;
+const CYB: Spec = {...CELLY7, top: 'What celebration would YOU give an NFL QB?', punch: [KC7.no, KC7.t1, KC7.iLike],
+  strobes: [C7[2] - STROBE_CUT], tints: [[KC7.no, RED], [KC7.iLike, GREEN]], swish: [C7[1]],
+  music: {file: 'Fluffing_a_Duck.mp3', from: 0, level: 0.12}, musicLevel: quietBefore(KC7.t1, 0.12, 0.14),
+  box: (o) => <>{NAME(o, KC7.dance)}
+    <Stack o={o} to={CELLY7_MS} title="CELLY IDEAS:" x={40} y={40} rows={[[KC7.no, '274c', 'ANY CELLY: "NO."'], [KC7.dance, '274c', 'A DANCE'], [KC7.t1, '1f51f', 'THE "PSA 10" POINT'], [KC7.iLike, '1f525', 'APPROVED']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('error', KC7.no, 0.3), sfx('clock-tick', KC7.maybe, 0.3), sfx('error', KC7.notGood, 0.25), sfx('ding-2', KC7.psa, 0.25, 1200),
+    ...[KC7.t1, KC7.t2, KC7.t3].map((t) => sfx('ding-2', t, 0.2, 500)), sfx('crowd-cheer', KC7.iLike, 0.12, 1500), sfx('anime-wow', KC7.yo, 0.2, 1200)],
+};
+const cyc = timeline([[27500, 28700], ...c7.segs]); const YO = 1200;
+const CYC: Spec = {...CELLY7, tl: cyc, top: 'Why is he pointing and saying "10 10 10"?', words: wordsAll(u2Words, cyc, {selly: 'celly', '1010': '10', tutti: 'TD'}, {celly: '#F9FC35', PSA: '#21F5E6', '10': '#F9FC35', easy: '#58EE28'}),
+  shots: shiftShots(CELLY7.shots, YO, 'L'), punch: [KC7.no + YO, KC7.t1 + YO, KC7.iLike + YO],
+  strobes: [YO - STROBE_CUT, KC7.t1 + YO - STROBE_CUT], tints: [[KC7.t1 + YO, GREEN]], swish: [KC7.psa + YO],
+  music: {file: 'joyful-chess-slowed.mp3', from: 84700 - (KC7.t1 + YO), level: 0.11}, musicLevel: quietBefore(KC7.t1 + YO, 0.11, 0.15, 600),
+  box: (o) => <>{Lbig(o, 200, YO, 'WAIT… WHAT IS THIS?', '1f914')}<Rewind o={o} at={YO} />{NAMEC(o, YO + 300, KC7.dance + YO)}
+    {Lb33(o, KC7.collectors + YO, KC7.t1 + YO, 'HERE COMES THE IDEA', '23f3')}{Lb33(o, KC7.t1 + YO, cyc.total, 'THE PSA 10 CELLY', '1f51f')}<Burst o={o} at={KC7.t1 + YO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', YO - 1000, 0.3), sfx('mg-click', KC7.no + YO, 0.25), sfx('mg-click', KC7.maybe + YO, 0.25), sfx('heartbeat-loud', KC7.best + YO, 0.15, 2900),
+    sfx('cinematic-suspense-riser', KC7.t1 + YO, 0.25), sfx('mg-boom', KC7.t1 + YO, 0.18), sfx('mg-shimmer', KC7.iLike + YO, 0.3)],
+};
+export const JorhoCellyA = () => <Jorho s={CYA} />; export const JorhoCellyB = () => <Jorho s={CYB} />; export const JorhoCellyC = () => <Jorho s={CYC} />;
+export const CELLYC_MS = cyc.total;
+
+// ---- u3 · $20,000 card → $500 → why redemptions are hated → twist: his most expensive sale ever ---------------------
+const RDA: Spec = {...RED25, top: 'A $20,000 card… now 500 bucks?', box: undefined, punch: [K25.k20, K25.d500, K25.see, K25.really, K25.most],
+  music: {file: 'Monkeys_Spinning_Monkeys.mp3', from: 0, level: 0.12}, musicLevel: (o) => (o >= K25.react - 100 && o < S25[2] ? 0 : o >= K25.most - 400 && o < K25.most ? 0 : o >= K25.most ? 0.16 : 0.12),
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-orch', K25.k20, 0.35), sfx('meme-trombone', K25.d500, 0.4, 1300), sfx('meme-bonk', K25.redeem, 0.3), sfx('meme-dundun', K25.see - 150, 0.3, 800),
+    sfx('meme-lwk', K25.dislike, 0.3), sfx('meme-tada', K25.most, 0.4), sfx('cha-ching', K25.sale, 0.3)],
+};
+RDA.box = (o) => <>{NAME(o, K25.k20)}{Lb33(o, K25.k20, K25.redeem, o < K25.d200 ? 'CARD VALUE: $20,000' : o < K25.d500 ? 'CARD VALUE: $200?' : 'CARD VALUE: $500', o < K25.d500 ? '1f4b0' : '1f4c9')}
+  {Lb33(o, K25.redeem, K25.onTime, 'REDEEM = MAIL IT IN FOR THE SIGNED CARD', '1f4e6')}{Lb33(o, K25.onTime, K25.dislike, 'PLAYER SIGNS LATE = CARD COMES LATE', '23f0')}
+  {Lb33(o, K25.dislike, K25.most, 'AND FANS HATE WAITING', '1f62c')}{Lb33(o, K25.most, t25.total, 'PLOT TWIST: HIS BEST SALE EVER', '1f4b0')}</>;
+const RDB: Spec = {...RED25, top: 'Why do card fans hate waiting for autographs?', punch: [K25.d500, K25.dislike, K25.most],
+  music: {file: 'Curb_Credits.mp3', from: 600, level: 0.11}, musicLevel: quietBefore(K25.most, 0.11, 0.14),
+  box: (o) => <>{NAME(o, K25.k20)}{Lb33(o, K25.k20, K25.redeem, o < K25.d500 ? 'CARD VALUE: $20,000' : 'CARD VALUE: $500?', o < K25.d500 ? '1f4b0' : '1f4c9')}
+    <Stack o={o} to={t25.total} title="HOW REDEMPTIONS WORK:" x={40} y={40} rows={[[K25.redeem, '1f4e6', 'CARD MAILED IN LATER'], [K25.onTime, '23f0', 'PLAYER SIGNS LATE = WAIT'], [K25.dislike, '274c', 'FANS HATE IT'], [K25.most, '1f4b0', 'BUT: HIS BEST SALE EVER']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('cha-ching', K25.k20, 0.3), sfx('error', K25.d500, 0.3), sfx('jorho-pop', K25.redeem, 0.3), sfx('clock-tick', K25.onTime, 0.3),
+    sfx('error', K25.dislike, 0.25), sfx('record-scratch', K25.really, 0.25), sfx('ding-2', K25.most, 0.3, 1400), sfx('cha-ching', K25.sale, 0.3)],
+};
+const rdc = timeline([[24320, 26600], ...t25.segs]); const RO = 2280;
+const RDC: Spec = {...RED25, tl: rdc, top: 'Card fans hate this one thing… and it hit HIM', words: wordsAll(redeemWords, rdc, {'20': '$20,000', '000': '', '200': '$200?', '500': '$500'}, {'$20,000': '#58EE28', '$200?': '#FF5A5A', '$500': '#FF5A5A', redeem: '#21F5E6', dislike: '#FF5A5A', expensive: '#58EE28'}),
+  wideXAt: (o) => (o < RO ? 640 : RED25.wideXAt!(o - RO)), shots: shiftShots(RED25.shots, RO, 'L'), punch: [K25.k20 + RO, K25.d500 + RO, K25.most + RO],
+  strobes: [RO - STROBE_CUT, K25.sale + RO - STROBE_CUT], tints: [[K25.d500 + RO, RED], [K25.sale + RO, GREEN]], swish: [S25[1] + RO],
+  music: {file: 'funk-abnormal.mp3', from: 43700 - (K25.most + RO), level: 0.1}, musicLevel: quietBefore(K25.most + RO, 0.1, 0.15, 600),
+  box: (o) => <>{Lbig(o, 200, RO, 'WHAT DO CARD FANS HATE?', '1f440')}<Rewind o={o} at={RO} />{NAMEC(o, RO + 300, K25.k20 + RO)}
+    {Lb33(o, K25.k20 + RO, K25.redeem + RO, o < K25.d500 + RO ? 'CARD VALUE: $20,000' : 'CARD VALUE: $500', o < K25.d500 + RO ? '1f4b0' : '1f4c9')}
+    {Lb33(o, K25.redeem + RO, K25.most + RO, 'THE WAIT FOR THE SIGNED CARD', '23f3')}{Lb33(o, K25.most + RO, rdc.total, 'BUT IT WAS HIS BEST SALE EVER', '1f4b0')}<Burst o={o} at={K25.most + RO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', RO - 1000, 0.3), sfx('mg-click', K25.k20 + RO, 0.25), sfx('mg-boom', K25.d500 + RO, 0.15), sfx('heartbeat-loud', K25.really + RO - 1500, 0.15, 2500),
+    sfx('cinematic-suspense-riser', K25.most + RO, 0.25), sfx('mg-boom', K25.most + RO, 0.18), sfx('mg-shimmer', K25.sale + RO, 0.3)],
+};
+export const JorhoRedeemA = () => <Jorho s={RDA} />; export const JorhoRedeemB = () => <Jorho s={RDB} />; export const JorhoRedeemC = () => <Jorho s={RDC} />;
+export const REDEEMC_MS = rdc.total;
+
+// ---- t2 · dream golf foursome: Jesus… then Tiger, "the goat of the golf world" ------------------------------------
+const GA: Spec = {...GOLF10, top: 'Jesus AND Tiger Woods in one golf group?!', box: undefined, punch: [KGF.jesus, GFS[4] + 100, KGF.tiger, KGF.goat],
+  strobes: [GFS[1] - STROBE_CUT, KGF.tiger - STROBE_CUT], tints: [[KGF.jesus, GREEN], [KGF.tiger, GREEN]], swish: [GFS[2], GFS[5]],
+  music: {file: 'du-bist-full.mp3', from: 42500 - KGF.tiger, level: 0.11}, musicLevel: quietBefore(KGF.tiger, 0.11, 0.15),
+  cut: {file: 'tiger.png', from: KGF.tiger, to: GOLF10_MS + 500, x: 640, h: 540},
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', KGF.card, 0.3, 900), sfx('meme-dundun', KGF.week, 0.3, 800), sfx('meme-orch', KGF.jesus, 0.4), sfx('meme-lwk', GFS[4], 0.3),
+    sfx('meme-build2', KGF.tiger - 550, 0.3), sfx('meme-tada', KGF.tiger, 0.4), sfx('meme-impact', KGF.goat, 0.3)],
+};
+GA.box = (o) => <>{NAME(o, KGF.card)}{Lb33(o, KGF.card, KGF.week, 'HIS DREAM GOLF FOURSOME?', '26f3')}{Lb33(o, KGF.week, KGF.jesus, 'FIRST PICK INCOMING…', '1f440')}
+  {Lb33(o, KGF.jesus, KGF.tiger, 'PICK #1: JESUS', '1f64f')}<Pop o={o} at={KGF.jesus} to={GFS[4]} code="1f64f" x={780} y={600} size={170} />
+  {Lb33(o, KGF.tiger, GOLF10_MS, 'PICK #2: TIGER WOODS', '1f410')}</>;
+const GB: Spec = {...GOLF10, top: 'Who would YOU put in your dream golf group?', punch: [KGF.jesus, KGF.tiger],
+  strobes: [GFS[1] - STROBE_CUT], tints: [[KGF.jesus, GREEN], [KGF.tiger, GREEN]], swish: [GFS[5]],
+  music: {file: 'Sneaky_Snitch.mp3', from: 0, level: 0.12}, musicLevel: quietBefore(KGF.jesus, 0.12, 0.13),
+  box: (o) => <>{NAME(o, KGF.card)}
+    <Stack o={o} to={GOLF10_MS} title="DREAM FOURSOME:" x={40} y={40} rows={[[KGF.card + 300, '26f3', 'SLOT 1: TREVOR'], [KGF.jesus, '1f64f', 'SLOT 2: JESUS'], [KGF.tiger, '1f410', 'SLOT 3: TIGER'], [KGF.goat + 900, '2753', 'SLOT 4: YOUR PICK?']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', KGF.card + 300, 0.25, 1200), sfx('clock-tick', KGF.week, 0.3), sfx('clock-tick', KGF.week + 500, 0.3), sfx('ding-2', KGF.jesus, 0.3, 1400),
+    sfx('anime-wow', KGF.tiger, 0.22, 1500), sfx('jorho-pop', KGF.goat + 900, 0.3)],
+};
+const gc = timeline([[33200, 34100], ...gf.segs]); const GO = 900;
+const GCv: Spec = {...GOLF10, tl: gc, top: 'His first dream golf partner is not who you think', words: wordsAll(golfWords, gc, {for: 'foursome', some: '', of: 'on'}, {dream: '#F9FC35', golf: '#58EE28', Jesus: '#F9FC35', Tiger: '#58EE28', goat: '#21F5E6'}),
+  wideXAt: (o) => (o < GFS[1] + GO ? 1250 : 1000), shots: shiftShots(GOLF10.shots, GO, 'M'), punch: [KGF.jesus + GO, KGF.tiger + GO], beeps: [KGF.tiger + GO - 570],
+  strobes: [GO - STROBE_CUT, KGF.tiger + GO - STROBE_CUT], tints: [[KGF.jesus + GO, GREEN], [KGF.tiger + GO, GREEN]], swish: [GFS[5] + GO],
+  music: {file: 'amor-na-praia.mp3', from: 13500 - (KGF.tiger + GO), level: 0.11}, musicLevel: quietBefore(KGF.tiger + GO, 0.11, 0.15, 600),
+  box: (o) => <>{Lbig(o, 150, GO, 'HIS FIRST PICK…', '1f633')}<Rewind o={o} at={GO} />{NAMEC(o, GO + 300, KGF.card + GO)}{Lb33(o, KGF.card + GO, KGF.jesus + GO, 'DREAM GOLF FOURSOME', '26f3')}
+    {Lb33(o, KGF.jesus + GO, KGF.tiger + GO, 'PICK #1: JESUS… PICK #2?', '1f64f')}{Lb33(o, KGF.tiger + GO, gc.total, 'TIGER WOODS · "THE GOAT"', '1f410')}
+    <Burst o={o} at={KGF.tiger + GO} x={880} y={860} />{o >= KGF.tiger + GO && <Cutout o={o} file="tiger.png" from={KGF.tiger + GO} to={gc.total + 500} x={640} h={540} />}</>,
+  fx: [sfx('rev-whoosh', GO - 900, 0.3), sfx('mg-click', KGF.card + GO, 0.25), sfx('mg-whoosh', KGF.jesus + GO, 0.25), sfx('heartbeat-loud', GFS[5] + GO, 0.15, 2200),
+    sfx('cinematic-suspense-riser', KGF.tiger + GO, 0.25), sfx('mg-boom', KGF.tiger + GO, 0.18), sfx('mg-shimmer', KGF.goat + GO, 0.3)],
+};
+export const JorhoGolfA = () => <Jorho s={GA} />; export const JorhoGolfB = () => <Jorho s={GB} />; export const JorhoGolfC = () => <Jorho s={GCv} />;
+export const GOLFC_MS = gc.total;

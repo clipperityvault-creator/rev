@@ -71,6 +71,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 3 - Edit3 4 cards + 4 Trevor]]: Edit3 style on black bars + card pulls, titles/descriptions
   - [[Batch 4 - Jorho v32 Tiger gift + T-Law packs]]: two unused sheet clips, retention sound pass
   - [[Batch 5 - Jorho v33 5 clips x 3 variants]]: 15 Shorts, A/B/C variant recipe
+  - [[Batch 6 - Jorho v34 retention pass]]: punch-ins, re-hook label, cold-open teaser + rewind
 
 ## Quick start (new session)
 1. Read [[NBA GOAT pick]] (feedback log) and [[Caption style]].
