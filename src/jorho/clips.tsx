@@ -1562,3 +1562,198 @@ const GCv: Spec = {...GOLF10, tl: gc, top: 'His first dream golf partner is not 
 };
 export const JorhoGolfA = () => <Jorho s={GA} />; export const JorhoGolfB = () => <Jorho s={GB} />; export const JorhoGolfC = () => <Jorho s={GCv} />;
 export const GOLFC_MS = gc.total;
+
+// ==== v35 (2026-11-16): next batch "improve quality and retention".
+// Quality: footage pre-graded with the user's CapCut "67" look (soft-light glow 24.5 %, unsharp, contrast 1.11, sat 1.26)
+// into public/g/ (crf 14) — text/emoji/overlays stay ungraded; CSS grade neutral so it isn't applied twice.
+// Retention: v34 levers (punch-ins, mid re-hook, A/B/C structures) on 5 fresh sheet clips; no player named before a reveal.
+import ntWords from '../plans/data/v_nt_rip.words.json';
+import ntTrack from '../plans/data/v_nt_rip.seats.json';
+import lairWords from '../plans/data/v_lair.words.json';
+import lairTrack from '../plans/data/v_lair.seats2.json';
+import rogWords from '../plans/data/v_rogers_realm.words.json';
+import rogTrack from '../plans/data/v_rogers_realm.seats.json';
+import psWords from '../plans/data/v_presnap.words.json';
+import psTrack from '../plans/data/v_presnap.seats.json';
+import entWords from '../plans/data/u5_trevor_enters.words.json';
+import entTrack from '../plans/data/u5_trevor_enters.seats.json';
+const NEUTRAL = 'contrast(1) saturate(1)';
+const teaserOf = (tl: TL, t: [number, number]) => timeline([t, ...tl.segs]);
+
+// ---- National Treasures rip: the card everyone chases → slide it → Justin Fields → $20,000 then, $500 now ----------
+const nt = timeline([[95300, 98300], [102900, 104350], [119150, 121300], [121300, 123800], [123850, 132300]]);
+export const NT35_MS = nt.total;
+const NK = {rpa: 1920, chase: 3620, slide: 5300, name: 6320, justin: 7100, god: 8740, back: 9170, y2021: 9950, k20: 13010, now: 13910, d200: 15590, d500: 16570};
+const NT_W = wordsFrom(ntWords, nt, {RPA: 'RPA', '$20': '$20,000', ',000.': ''}, {RPA: '#F9FC35', chase: '#21F5E6', Justin: '#58EE28', 'Fields.': '#58EE28', Fields: '#58EE28', '$20,000': '#58EE28', '$200.': '#FF5A5A', '$500': '#FF5A5A'});
+const NT_BASE = {tl: nt, src: 'g/v_nt_rip.mp4', track: ntTrack as unknown as Track, wordY: 1170, wideX: 980, push: true, grade: NEUTRAL, words: NT_W,
+  shots: [[0, 'W'], [nt.segOut[2], 'M'], [NK.back, 'W']] as Shot[]};
+const NTA: Spec = {...NT_BASE, top: 'The card everyone chases… worth WHAT now?', punch: [NK.rpa, NK.justin, NK.k20, NK.d500],
+  strobes: [NK.justin - STROBE_CUT], tints: [[NK.justin, GREEN], [NK.d200, RED]], swish: [NK.chase, NK.back],
+  music: {file: 'eclipser.mp3', from: 15800 - NK.justin, level: 0.11}, musicLevel: quietBefore(NK.justin, 0.11, 0.16, 550),
+  box: (o) => <>{NAME(o, NK.rpa)}{Lb33(o, NK.rpa, NK.chase, 'RPA = ROOKIE PATCH AUTOGRAPH', '270d')}{Lb33(o, NK.chase, NK.slide, 'THE CARD EVERYONE CHASES', '1f3af')}
+    {Lb33(o, NK.slide, NK.justin, 'WHO IS IT?', '1f440')}{Lb33(o, NK.justin, NK.y2021, 'JUSTIN FIELDS', '1f525')}<Burst o={o} at={NK.justin} x={880} y={860} />
+    {Lb33(o, NK.y2021, NK.d200, '2021 PRICE: $20,000', '1f4b0')}{Lb33(o, NK.d200, NT35_MS, 'NOW: $200… $500?', '1f4c9')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', NK.rpa, 0.3, 900), sfx('jorho-pop', NK.chase, 0.25), sfx('meme-build', NK.justin - 1450, 0.3), sfx('meme-orch', NK.justin, 0.4),
+    sfx('cha-ching', NK.k20, 0.3), sfx('meme-dundun', NK.now, 0.3, 800), sfx('meme-trombone', NK.d200, 0.35, 1300), sfx('meme-bonk', NK.d500, 0.3)],
+};
+const NTB: Spec = {...NT_BASE, top: 'Guess what this $20,000 card is worth now', punch: [NK.justin, NK.d200, NK.d500],
+  strobes: [NK.justin - STROBE_CUT], tints: [[NK.justin, GREEN], [NK.d200, RED]], swish: [NK.back],
+  music: {file: 'funk-do-balkan.mp3', from: 11900 - NK.justin, level: 0.1}, musicLevel: quietBefore(NK.justin, 0.1, 0.14, 550),
+  box: (o) => <>{NAME(o, NK.rpa)}{Lb33(o, NK.rpa, NK.slide, 'RPA = ROOKIE PATCH AUTOGRAPH', '270d')}{Lb33(o, NK.slide, NK.k20, o < NK.justin ? 'SLIDING IT OUT…' : 'JUSTIN FIELDS', o < NK.justin ? '23f3' : '1f525')}
+    <Stack o={o} to={NT35_MS} title="PRICE CHECK:" x={40} y={40} rows={[[NK.k20, '1f4b0', '2021: $20,000'], [NK.d200, '1f4c9', 'NOW: $200'], [NK.d500, '1f914', 'MAYBE $500']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', NK.rpa, 0.25, 1200), sfx('clock-tick', NK.slide, 0.3), sfx('clock-tick', NK.name, 0.3), sfx('anime-wow', NK.justin, 0.22, 1500),
+    sfx('cha-ching', NK.k20, 0.3), sfx('error', NK.d200, 0.3), sfx('record-scratch', NK.d500, 0.25)],
+};
+const ntc = teaserOf(nt, [126200, 128450]); const NO = 2250;
+const NTC: Spec = {...NT_BASE, tl: ntc, top: 'Whose card was worth $20,000?', words: wordsAll(ntWords, ntc, {'$20': '$20,000', ',000.': ''}, {RPA: '#F9FC35', Justin: '#58EE28', 'Fields.': '#58EE28', '$20,000': '#58EE28', '$200.': '#FF5A5A', '$500': '#FF5A5A'}),
+  shots: shiftShots(NT_BASE.shots, NO, 'W'), punch: [NK.justin + NO, NK.d500 + NO], beeps: [NK.justin + NO - 570],
+  strobes: [NO - STROBE_CUT, NK.justin + NO - STROBE_CUT], tints: [[NK.justin + NO, GREEN], [NK.d200 + NO, RED]], swish: [NK.back + NO],
+  music: {file: 'acido-iii.mp3', from: 21700 - (NK.justin + NO), level: 0.1}, musicLevel: quietBefore(NK.justin + NO, 0.1, 0.15, 650),
+  box: (o) => <>{Lbig(o, 750, NO, 'WHOSE CARD IS THIS?', '1f440')}<Rewind o={o} at={NO} />{NAMEC(o, NO + 300, NK.chase + NO)}
+    {Lb33(o, NK.chase + NO, NK.justin + NO, 'SLIDE IT OUT TO SEE THE NAME…', '23f3')}{Lb33(o, NK.justin + NO, ntc.total, 'JUSTIN FIELDS', '1f525')}<Burst o={o} at={NK.justin + NO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', NO - 1000, 0.3), sfx('mg-click', NK.rpa + NO, 0.25), sfx('heartbeat-loud', NK.chase + NO, 0.15, 3000), sfx('cinematic-suspense-riser', NK.justin + NO, 0.25),
+    sfx('mg-boom', NK.justin + NO, 0.18), sfx('mg-boom', NK.d200 + NO, 0.12), sfx('mg-shimmer', NK.d500 + NO, 0.25)],
+};
+export const JorhoNtA = () => <Jorho s={NTA} />; export const JorhoNtB = () => <Jorho s={NTB} />; export const JorhoNtC = () => <Jorho s={NTC} />;
+export const NTC_MS = ntc.total;
+
+// ---- Lair invite: "would you come back?" → "that'd be awesome" → "we weren't thinking about going to the Colts" -------
+const lr = timeline([[3400, 20850]]);
+export const LAIR35_MS = lr.total;
+const LK = {honestly: 1320, would: 2080, lair: 3460, florida: 4880, golf: 5260, where: 6200, fort: 7660, rip: 8800, chill: 10220, yeah: 10640, awesome: 11160, welcome: 12540, jax: 13920, appreciate: 14560, well: 15600, colts: 17120};
+const LR_BASE = {tl: lr, src: 'g/v_lair.mp4', track: lairTrack as unknown as Track, wordY: 1170, wideX: 980, push: true, grade: NEUTRAL,
+  words: wordsFrom(lairWords, lr, {}, {Lair: '#F9FC35', Florida: '#21F5E6', golf: '#58EE28', Lauderdale: '#21F5E6', awesome: '#58EE28', welcome: '#58EE28', Jacksonville: '#21F5E6', 'Colts.': '#FF5A5A', Colts: '#FF5A5A'}),
+  shots: [[0, 'W'], [1120, 'M'], [LK.would, 'L'], [LK.where, 'M'], [LK.fort, 'L'], [LK.yeah, 'M'], [LK.appreciate, 'L']] as Shot[]};
+const LRA: Spec = {...LR_BASE, top: 'They invited an NFL QB over… then said THIS', punch: [LK.lair, LK.awesome, LK.jax, LK.colts],
+  strobes: [LK.yeah - STROBE_CUT], tints: [[LK.awesome, GREEN], [LK.colts, RED]], swish: [LK.lair, LK.welcome],
+  music: {file: 'du-bist-full.mp3', from: 42500 - LK.colts, level: 0.11}, musicLevel: quietBefore(LK.colts, 0.11, 0.16),
+  box: (o) => <>{NAME(o, LK.would)}{Lb33(o, LK.lair, LK.rip, 'THE LAIR = THEIR CARD STUDIO IN FLORIDA', '1f4cd')}{Lb33(o, LK.rip, LK.awesome, 'WILL HE SAY YES?', '1f440')}
+    {Lb33(o, LK.awesome, LK.colts, 'HE\'S IN', '1f525')}{Lb33(o, LK.colts, LAIR35_MS, 'THE COLTS?? (HIS RIVAL)', '1f480')}<Pop o={o} at={LK.colts} to={LAIR35_MS} code="1f923" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', LK.lair, 0.3, 900), sfx('jorho-pop', LK.golf, 0.25), sfx('meme-dundun', LK.rip, 0.3, 800), sfx('meme-tada', LK.awesome, 0.4),
+    sfx('jorho-pop', LK.jax, 0.25), sfx('record-scratch', LK.colts, 0.3), sfx('meme-lwk', LK.colts + 250, 0.3)],
+};
+const LRB: Spec = {...LR_BASE, top: 'Would an NFL QB come rip cards with you?', punch: [LK.awesome, LK.colts],
+  strobes: [LK.yeah - STROBE_CUT], tints: [[LK.awesome, GREEN], [LK.colts, RED]], swish: [LK.lair],
+  music: {file: 'joyful-chess-slowed.mp3', from: 40500 - LK.awesome, level: 0.11}, musicLevel: quietBefore(LK.awesome, 0.11, 0.14),
+  box: (o) => <>{NAME(o, LK.lair)}
+    <Stack o={o} to={LAIR35_MS} title="THE INVITE:" x={40} y={40} rows={[[LK.lair, '1f4cd', 'THE LAIR, FLORIDA'], [LK.golf, '26f3', 'A ROUND OF GOLF'], [LK.chill, '1f0cf', 'RIP CARDS + CHILL'], [LK.awesome, '1f525', 'HIS ANSWER: AWESOME']]} />
+    <Pop o={o} at={LK.colts} to={LAIR35_MS} code="1f480" x={780} y={600} size={170} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', LK.lair, 0.25, 1200), sfx('jorho-pop', LK.golf, 0.25), sfx('jorho-pop', LK.chill, 0.25), sfx('anime-wow', LK.awesome, 0.22, 1500),
+    sfx('error', LK.colts, 0.3)],
+};
+const lrc = teaserOf(lr, [19000, 20850]); const LO = 1850;
+const LRC: Spec = {...LR_BASE, tl: lrc, top: 'Why did he bring up the Colts?', words: wordsAll(lairWords, lrc, {}, {Lair: '#F9FC35', awesome: '#58EE28', Jacksonville: '#21F5E6', 'Colts.': '#FF5A5A', Colts: '#FF5A5A'}),
+  shots: shiftShots(LR_BASE.shots, LO, 'L'), punch: [LK.awesome + LO, LK.colts + LO], strobes: [LO - STROBE_CUT, LK.yeah + LO - STROBE_CUT], tints: [[LK.awesome + LO, GREEN], [LK.colts + LO, RED]], swish: [LK.lair + LO],
+  music: {file: 'Monkeys_Spinning_Monkeys.mp3', from: 0, level: 0.12}, musicLevel: quietBefore(LK.colts + LO, 0.12, 0.14),
+  box: (o) => <>{Lbig(o, 750, LO, 'WAIT… THE COLTS?', '1f633')}<Rewind o={o} at={LO} />{NAMEC(o, LO + 300, LK.lair + LO)}
+    {Lb33(o, LK.lair + LO, LK.awesome + LO, 'THE INVITE: COME TO THE LAIR', '1f4cd')}{Lb33(o, LK.awesome + LO, LK.colts + LO, 'HE SAID YES', '1f525')}{Lb33(o, LK.colts + LO, lrc.total, 'THERE IT IS', '1f480')}</>,
+  fx: [sfx('rev-whoosh', LO - 1000, 0.3), sfx('mg-click', LK.lair + LO, 0.25), sfx('mg-whoosh', LK.awesome + LO, 0.25), sfx('mg-shimmer', LK.welcome + LO, 0.25), sfx('taco-bell-bong', LK.colts + LO + 300, 0.3, 1500)],
+};
+export const JorhoLairA = () => <Jorho s={LRA} />; export const JorhoLairB = () => <Jorho s={LRB} />; export const JorhoLairC = () => <Jorho s={LRC} />;
+export const LAIRC_MS = lrc.total;
+
+// ---- Rogers Realm: away fans took over → "Traveling Trevor vs Rogers Realm" → "we should box him" ---------------------
+const rg = timeline([[0, 20450]]);
+export const ROG35_MS = rg.total;
+const RK = {eagles: 3020, insane: 4220, home: 6960, philly: 8840, listen: 9440, steelers: 10040, rogers: 11140, trevor: 12240, omg: 12760, box: 14580, take: 16100, versus: 18160, rogers2: 18420, happen: 20140};
+const RG_BASE = {tl: rg, src: 'g/v_rogers_realm.mp4', track: rogTrack as unknown as Track, wordY: 1170, wideX: 980, push: true, grade: NEUTRAL,
+  wideXAt: (o: number) => (o < RK.omg ? 980 : 720),
+  words: wordsFrom(rogWords, rg, {Rogers: 'Rogers'}, {Jags: '#21F5E6', Eagles: '#58EE28', Philly: '#58EE28', Steelers: '#F9FC35', Rogers: '#F9FC35', Realm: '#F9FC35', box: '#FF5A5A', Trevor: '#21F5E6'}),
+  shots: [[0, 'W'], [3780, 'M'], [RK.listen, 'R'], [RK.omg, 'W']] as Shot[]};
+const RGA: Spec = {...RG_BASE, top: 'This superfan feud NEEDS to happen', punch: [RK.home, RK.rogers, RK.box, RK.versus],
+  strobes: [RK.omg - STROBE_CUT], tints: [[RK.philly, RED], [RK.box, GREEN]], swish: [RK.listen, RK.versus],
+  music: {file: 'montagem-uranium.mp3', from: 37000 - RK.box, level: 0.1}, musicLevel: quietBefore(RK.box, 0.1, 0.15),
+  box: (o) => <>{NAME(o, RK.eagles)}{Lb33(o, RK.eagles, RK.listen, 'AWAY FANS TOOK OVER THE JAGS\' HOME GAME', '1f4e3')}
+    {Lb33(o, RK.listen, RK.box, "ROGERS REALM = AARON RODGERS' BIGGEST FAN", '1f3c8')}{Lb33(o, RK.box, RK.versus, 'FIGHT NIGHT?', '1f94a')}
+    <Pop o={o} at={RK.box} to={RK.versus} code="1f94a" x={780} y={600} size={180} />{Lb33(o, RK.versus, ROG35_MS, 'TRAVELING TREVOR VS ROGERS REALM', '1f94a')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', RK.eagles, 0.3, 900), sfx('meme-dundun', RK.home, 0.3, 800), sfx('jorho-pop', RK.rogers, 0.25), sfx('meme-build', RK.box - 1450, 0.3),
+    sfx('meme-orch', RK.box, 0.4), sfx('boxing-bell', RK.take, 0.3, 1200), sfx('meme-impact', RK.versus, 0.3)],
+};
+const RGB: Spec = {...RG_BASE, top: "Who wins: Trevor's superfan or Rodgers' superfan?", punch: [RK.rogers, RK.box, RK.versus],
+  strobes: [RK.omg - STROBE_CUT], tints: [[RK.box, GREEN]], swish: [RK.listen],
+  music: {file: 'funk-sigilo.mp3', from: 36900 - RK.box, level: 0.1}, musicLevel: quietBefore(RK.box, 0.1, 0.14),
+  box: (o) => <>{NAME(o, RK.eagles)}{Lb33(o, RK.eagles, RK.rogers, 'THE JAGS\' HOME CROWD GOT OUT-CHEERED', '1f4e3')}
+    <Stack o={o} to={ROG35_MS} title="THE MATCHUP:" x={40} y={40} rows={[[RK.rogers, '1f3c8', "ROGERS REALM (RODGERS FAN)"], [RK.trevor, '1f451', 'TRAVELING TREVOR'], [RK.box, '1f94a', 'IN A BOXING RING?'], [RK.happen, '2753', 'YOUR PICK?']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', RK.eagles, 0.25, 1200), sfx('jorho-pop', RK.rogers, 0.3), sfx('jorho-pop', RK.trevor, 0.3), sfx('boxing-bell', RK.box, 0.3, 1200),
+    sfx('anime-wow', RK.versus, 0.2, 1400), sfx('jorho-pop', RK.happen, 0.3)],
+};
+const rgc = teaserOf(rg, [13600, 16780]); const GO35 = 3180;
+const RGC: Spec = {...RG_BASE, tl: rgc, top: 'Who are they about to fight?', words: wordsAll(rogWords, rgc, {}, {Jags: '#21F5E6', Eagles: '#58EE28', Rogers: '#F9FC35', Realm: '#F9FC35', box: '#FF5A5A', Trevor: '#21F5E6'}),
+  wideXAt: (o) => (o < GO35 ? 720 : RG_BASE.wideXAt(o - GO35)), shots: shiftShots(RG_BASE.shots, GO35, 'W'), punch: [RK.rogers + GO35, RK.box + GO35],
+  strobes: [GO35 - STROBE_CUT, RK.rogers + GO35 - STROBE_CUT], tints: [[RK.rogers + GO35, GREEN]], swish: [RK.listen + GO35],
+  music: {file: 'vem-pere-reka.mp3', from: 21100 - (RK.rogers + GO35), level: 0.1}, musicLevel: quietBefore(RK.rogers + GO35, 0.1, 0.15, 600),
+  box: (o) => <>{Lbig(o, 750, GO35, 'WHO ARE THEY FIGHTING?', '1f94a')}<Rewind o={o} at={GO35} />{NAMEC(o, GO35 + 300, RK.listen + GO35)}
+    {Lb33(o, RK.listen + GO35, RK.rogers + GO35, 'THE OPPONENT IS…', '23f3')}{Lb33(o, RK.rogers + GO35, rgc.total, "ROGERS REALM: AARON RODGERS' SUPERFAN", '1f3c8')}<Burst o={o} at={RK.rogers + GO35} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', GO35 - 1000, 0.3), sfx('mg-click', RK.eagles + GO35, 0.25), sfx('heartbeat-loud', RK.home + GO35, 0.14, 4000), sfx('cinematic-suspense-riser', RK.rogers + GO35, 0.25),
+    sfx('mg-boom', RK.rogers + GO35, 0.18), sfx('boxing-bell', RK.box + GO35, 0.25, 1200), sfx('mg-shimmer', RK.versus + GO35, 0.25)],
+};
+export const JorhoRogersA = () => <Jorho s={RGA} />; export const JorhoRogersB = () => <Jorho s={RGB} />; export const JorhoRogersC = () => <Jorho s={RGC} />;
+export const ROGC_MS = rgc.total;
+
+// ---- Pre-snap: how often does he know who's open before the snap? → "50 to 65%" → "it ends up going there" ------------
+const ps = timeline([[0, 3420], [3460, 5760], [8300, 9050], [9450, 12450], [14850, 17850], [19750, 23050], [30500, 34800]]);
+export const PS35_MS = ps.total;
+const SK = {pre: 1640, open: 5420, how: 5820, would: 6860, fifty: 9060, seventy: 9980, f65: 12100, know: 13160, here: 14600, there: 15520, coverage: 15810, move: 17350, cover: 18610, move2: 19690};
+const PS_BASE = {tl: ps, src: 'g/v_presnap.mp4', track: psTrack as unknown as Track, wordY: 1170, wideX: 980, push: true, grade: NEUTRAL,
+  words: wordsFrom(psWords, ps, {'-snaps': 'snaps', pre: 'pre-'}, {open: '#58EE28', '50': '#F9FC35', '70,': '#F9FC35', '65': '#58EE28', here: '#21F5E6', 'there.': '#FF5A5A', coverage: '#F9FC35'}),
+  shots: [[0, 'W'], [1640, 'L'], [ps.segOut[3], 'M'], [ps.segOut[5], 'W'], [ps.segOut[6], 'M']] as Shot[]};
+const PSA: Spec = {...PS_BASE, top: 'An NFL QB admits his reads go wrong THIS often', punch: [SK.fifty, SK.f65, SK.there, SK.move2],
+  strobes: [ps.segOut[3] - STROBE_CUT], tints: [[SK.f65, GREEN], [SK.there, RED]], swish: [SK.know, SK.coverage],
+  music: {file: 'tipo-insta-buzeira.mp3', from: 19300 - SK.fifty, level: 0.1}, musicLevel: quietBefore(SK.fifty, 0.1, 0.13, 600),
+  box: (o) => <>{NAME(o, SK.pre)}{Lb33(o, SK.pre, SK.would, 'PRE-SNAP = BEFORE THE BALL IS HIKED', '1f3c8')}{Lb33(o, SK.would, SK.know, o < SK.f65 ? 'HIS GUESS…' : 'HIS GUESS: 50–65%', '1f3af')}
+    {Lb33(o, SK.know, SK.coverage, 'THE PLAN vs WHAT HAPPENS', '274c')}{Lb33(o, SK.coverage, PS35_MS, 'DEFENSE CHANGES → MOVE ON', '1f3c3')}</>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('meme-jet', SK.pre, 0.3, 900), sfx('clock-tick', SK.would, 0.3), sfx('meme-orch', SK.fifty, 0.35), sfx('jorho-pop', SK.f65, 0.3),
+    sfx('meme-bonk', SK.there, 0.3), sfx('meme-impact', SK.move2, 0.3)],
+};
+const PSB: Spec = {...PS_BASE, top: "Guess: how often does an NFL QB's first read work?", punch: [SK.fifty, SK.f65, SK.there],
+  strobes: [ps.segOut[3] - STROBE_CUT], tints: [[SK.f65, GREEN], [SK.there, RED]], swish: [SK.coverage],
+  music: {file: 'lose-you-adturnup.mp3', from: 12000 - SK.fifty, level: 0.1}, musicLevel: quietBefore(SK.fifty, 0.1, 0.13, 600),
+  box: (o) => <>{NAME(o, SK.pre)}{Lb33(o, SK.pre, SK.f65, 'GUESS BEFORE HE ANSWERS', '1f914')}
+    <Stack o={o} to={PS35_MS} title="HIS NUMBERS:" x={40} y={40} rows={[[SK.f65, '1f3af', 'READ IS RIGHT: 50–65%'], [SK.there, '274c', 'THE REST: GOES ELSEWHERE'], [SK.coverage, '1f3c3', 'DEFENSE CHANGES → MOVE ON']]} /></>,
+  fx: [sfx('jorho-pop', 350, 0.25), sfx('ding-2', SK.pre, 0.25, 1200), sfx('clock-tick', SK.would, 0.3), sfx('clock-tick', SK.would + 700, 0.3), sfx('ding-2', SK.f65, 0.3, 1400),
+    sfx('error', SK.there, 0.3), sfx('jorho-pop', SK.coverage, 0.3)],
+};
+const psc = teaserOf(ps, [19750, 23050]); const SO = 3300;
+const PSC: Spec = {...PS_BASE, tl: psc, top: 'How often does an NFL play go wrong before the snap?', words: wordsAll(psWords, psc, {'-snaps': 'snaps', pre: 'pre-'}, {'50': '#F9FC35', '65': '#58EE28', here: '#21F5E6', 'there.': '#FF5A5A'}),
+  shots: shiftShots(PS_BASE.shots, SO, 'M'), punch: [SK.fifty + SO, SK.f65 + SO], strobes: [SO - STROBE_CUT, SK.fifty + SO - STROBE_CUT], tints: [[SK.f65 + SO, GREEN]], swish: [SK.coverage + SO],
+  music: {file: 'interstellar-piano.mp3', from: 232200 - (SK.fifty + SO), level: 0.15}, musicLevel: quietBefore(SK.fifty + SO, 0.15, 0.19, 600),
+  box: (o) => <>{Lbig(o, 750, SO, 'HOW OFTEN DOES THIS HAPPEN?', '1f914')}<Rewind o={o} at={SO} />{NAMEC(o, SO + 300, SK.pre + SO)}
+    {Lb33(o, SK.pre + SO, SK.fifty + SO, 'THE QUESTION: HOW OFTEN IS HE RIGHT?', '23f3')}{Lb33(o, SK.fifty + SO, psc.total, 'HIS ANSWER: 50–65% OF THE TIME', '1f3af')}<Burst o={o} at={SK.f65 + SO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', SO - 1000, 0.3), sfx('mg-click', SK.pre + SO, 0.25), sfx('heartbeat-loud', SK.how + SO, 0.14, 3200), sfx('cinematic-suspense-riser', SK.fifty + SO, 0.25),
+    sfx('mg-boom', SK.fifty + SO, 0.16), sfx('mg-shimmer', SK.f65 + SO, 0.25), sfx('mg-whoosh', SK.coverage + SO, 0.2)],
+};
+export const JorhoPresnapA = () => <Jorho s={PSA} />; export const JorhoPresnapB = () => <Jorho s={PSB} />; export const JorhoPresnapC = () => <Jorho s={PSC} />;
+export const PSC_MS = psc.total;
+
+// ---- Entrance: "All hail the king" ×3 → Trevor walks in → a full bow → replay ---------------------------------------
+const en = timeline([[0, 13700], [9300, 11300]]);
+export const EN35_MS = en.total;
+const EK = {hail: 700, hail2: 2500, hail3: 5500, enter: 7200, shake: 8400, bow: 9600, boys: 9800, here: 12800, replay: 13700};
+const EN_BASE = {tl: en, src: 'g/u5_trevor_enters.mp4', track: entTrack as unknown as Track, wordY: 1170, wideX: 980, push: true, grade: NEUTRAL,
+  wideXAt: (o: number) => (o < EK.enter ? 980 : 1180), words: wordsAll(entWords, en, {}, {hail: '#F9FC35', king: '#58EE28', 'king.': '#58EE28', Boys: '#21F5E6'}),
+  shots: [[0, 'W']] as Shot[]};
+const ENA: Spec = {...EN_BASE, top: 'How they welcomed an NFL QB to the stream', punch: [EK.hail, EK.hail2, EK.hail3, EK.bow, EK.replay + 300],
+  strobes: [EK.enter - STROBE_CUT, EK.replay - STROBE_CUT], tints: [[EK.enter, GREEN], [EK.bow, GREEN]], swish: [EK.replay],
+  music: {file: 'joyful-chess-slowed.mp3', from: 40500 - EK.enter, level: 0.11}, musicLevel: quietBefore(EK.enter, 0.11, 0.16, 500),
+  box: (o) => <>{Lb33(o, 300, EK.enter, 'WAITING FOR HIM…', '23f3')}{Lb33(o, EK.enter, EK.bow, "HE'S HERE", '1f451')}<Pop o={o} at={EK.enter} to={EK.bow} code="1f451" x={800} y={560} size={180} />
+    {Lb33(o, EK.bow, EK.replay, 'A FULL BOW??', '1f62d')}{Lb33(o, EK.replay, EN35_MS, 'REPLAY', '23ea')}</>,
+  fx: [sfx('meme-jet', 300, 0.25, 900), sfx('crowd-cheer', EK.hail2, 0.1, 2500), sfx('meme-build', EK.enter - 1450, 0.3), sfx('meme-orch', EK.enter, 0.4), sfx('meme-tada', EK.bow, 0.4),
+    sfx('rev-whoosh', EK.replay - 1000, 0.3), sfx('meme-impact', EK.replay + 300, 0.3)],
+};
+const ENB: Spec = {...EN_BASE, top: 'Would you bow if an NFL QB walked in?', punch: [EK.hail, EK.bow, EK.replay + 300],
+  strobes: [EK.enter - STROBE_CUT, EK.replay - STROBE_CUT], tints: [[EK.bow, GREEN]], swish: [EK.replay],
+  music: {file: 'montagem-pegadora.mp3', from: 15700 - EK.enter, level: 0.1}, musicLevel: quietBefore(EK.enter, 0.1, 0.14, 500),
+  box: (o) => <><Stack o={o} to={EN35_MS} title="THE WELCOME:" x={40} y={600} rows={[[EK.hail, '1f4e3', '"ALL HAIL THE KING" ×3'], [EK.enter, '1f451', 'HE WALKS IN'], [EK.bow, '1f64f', 'A FULL BOW'], [EK.replay, '2753', 'WOULD YOU BOW?']]} /></>,
+  fx: [sfx('ding-2', EK.hail, 0.25, 1200), sfx('clock-tick', EK.hail3, 0.3), sfx('ding-2', EK.enter, 0.3, 1400), sfx('anime-wow', EK.bow, 0.22, 1500), sfx('rev-whoosh', EK.replay - 1000, 0.3), sfx('jorho-pop', EK.replay, 0.3)],
+};
+const enc = timeline([[9300, 10900], [0, 13700]]); const EO = 1600;
+const ENC: Spec = {...EN_BASE, tl: enc, top: 'Two grown men bowed to an NFL QB', words: wordsAll(entWords, enc, {}, {hail: '#F9FC35', king: '#58EE28', 'king.': '#58EE28', Boys: '#21F5E6'}),
+  wideXAt: (o) => (o < EO ? 1180 : o < EK.enter + EO ? 980 : 1180), punch: [EK.hail + EO, EK.bow + EO], strobes: [EO - STROBE_CUT, EK.enter + EO - STROBE_CUT], tints: [[EK.enter + EO, GREEN]], swish: [EK.enter + EO],
+  music: {file: 'spooky-phonk-fennecxx.mp3', from: 0, level: 0.1, }, musicLevel: (o) => (o < EO ? 0.06 : 0.1),
+  box: (o) => <>{Lbig(o, 750, EO, 'HOW DID WE GET HERE?', '1f62d')}<Rewind o={o} at={EO} />{Lb33(o, EO + 300, EK.enter + EO, 'THE CHANT BEFORE HE WALKS IN', '1f4e3')}
+    {Lb33(o, EK.enter + EO, enc.total, 'THE KING HAS ARRIVED', '1f451')}<Burst o={o} at={EK.enter + EO} x={880} y={860} /></>,
+  fx: [sfx('rev-whoosh', EO - 1000, 0.3), sfx('heartbeat-loud', EK.hail3 + EO - 1500, 0.14, 2500), sfx('cinematic-suspense-riser', EK.enter + EO, 0.25), sfx('mg-boom', EK.enter + EO, 0.18),
+    sfx('mg-shimmer', EK.bow + EO, 0.3)],
+};
+export const JorhoEnterA = () => <Jorho s={ENA} />; export const JorhoEnterB = () => <Jorho s={ENB} />; export const JorhoEnterC = () => <Jorho s={ENC} />;
+export const ENC_MS = enc.total;
