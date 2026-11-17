@@ -6,14 +6,14 @@
 import type {ReactNode} from 'react';
 import {AbsoluteFill, Img, OffthreadVideo, Sequence, interpolate, spring, staticFile, useCurrentFrame} from 'remotion';
 import {FPS, Music, SfxTrack, f, sfx, type Sfx} from '../e3/kit';
-import {Blurs, HookAudio, HookView, HostAudio, StreamView, cardTimeline, type CSeg} from '../e3/cardkit';
+import {HookAudio, HostAudio, StreamView, cardTimeline, type CSeg} from '../e3/cardkit';
 
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 type Word = {text: string; startMs: number};
 type Tok = [string, string?]; // text, colour
 export type PullSpec = {
   src: string;
-  hook: {kind: 'clip'; file: string; ms: number; text: string} | {kind: 'cold'; src: [number, number]; text: string};
+  hook: {kind: 'clip'; file: string; ms: number; text: string} | {kind: 'cold'; src: [number, number]; text: string; blur?: {src: [number, number]; box: [number, number, number, number]}[]};
   segs: CSeg[];
   reveal: number; // source ms of the reveal frame
   zoom: [number, number]; // card position on the stream (px) for the reveal punch-in
@@ -28,6 +28,9 @@ export type PullSpec = {
 };
 
 const RED = '#E8202A', GREEN = '#17A34A';
+// blur ONLY the card (user 2026-11-17): a tight rounded box the size of the card, never the hands or a big area
+const CardBlur = ({box}: {box: [number, number, number, number]}) => <div style={{position: 'absolute', left: box[0], top: box[1], width: box[2], height: box[3], borderRadius: 16,
+  backdropFilter: 'blur(26px)', WebkitBackdropFilter: 'blur(26px)', background: 'rgba(20,20,20,0.12)'}} />;
 const emoji = (code: string, s: number) => <Img src={staticFile(`emoji-ios/${code}.png`)} style={{width: s, height: s, verticalAlign: '-8px', marginLeft: 6}} />;
 
 // one white box over the stream's ticker strip, black heavy type, 1–2 coloured words (creator style)
@@ -110,16 +113,20 @@ export const Pull = ({s}: {s: PullSpec}) => {
   ];
   let hookView: ReactNode = null;
   if (o < hookMs) {
+    const pk = 1.45 + 0.05 * (o / hookMs);
     hookView = s.hook.kind === 'clip'
-      ? <HookView file={s.hook.file} w={720} from={0} cover={[40, 900, 640, 280]} push={1.04 + 0.05 * (o / hookMs)} />
-      // cold open on the stream's own reaction: only the hosts' cam, zoomed, so the card stays hidden
-      : <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
-        <div style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transformOrigin: '0 0',
-          transform: `translate(${540 - 540 * (2.5 + 0.08 * (o / hookMs))}px, ${1000 - 280 * (2.5 + 0.08 * (o / hookMs))}px) scale(${2.5 + 0.08 * (o / hookMs)})`}}>
-          <OffthreadVideo src={staticFile(s.src)} muted trimBefore={f(s.hook.src[0])} style={{width: 1080, height: 1920}} />
+      // the hook clip's own caption sits at y 900–1170 (of 1280): scale from the top so it falls below the frame, no blur box
+      ? <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+        <div style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transformOrigin: '50% 0', transform: `scale(${pk})`}}>
+          <OffthreadVideo src={staticFile(s.hook.file)} muted style={{width: 1080, height: 1920}} />
         </div>
-        {/* everything below the hosts' cam (stream y > 470) is the card cam: keep it hidden */}
-        <div style={{position: 'absolute', left: 0, right: 0, top: 1000 + (470 - 280) * 2.5, bottom: 0, background: '#000'}} />
+      </AbsoluteFill>
+      // cold open on the stream's own reaction: the whole stream frame, only the card blurred
+      : <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
+        <div style={{position: 'absolute', inset: 0, transformOrigin: '50% 40%', transform: `scale(${1 + 0.04 * (o / hookMs)})`}}>
+          <OffthreadVideo src={staticFile(s.src)} muted trimBefore={f(s.hook.src[0])} style={{width: 1080, height: 1920}} />
+          {(s.hook.blur ?? []).filter((b) => { const t = (s.hook as {src: [number, number]}).src[0] + o; return t >= b.src[0] && t < b.src[1]; }).map((b, i) => <CardBlur key={i} box={b.box} />)}
+        </div>
       </AbsoluteFill>;
   }
   const hookCap = o < hookMs ? <div style={{position: 'absolute', left: 40, right: 40, top: 1180, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 74,
@@ -128,7 +135,7 @@ export const Pull = ({s}: {s: PullSpec}) => {
     {o >= hookMs && <AbsoluteFill style={{transformOrigin: `${s.zoom[0]}px ${s.zoom[1]}px`, transform: `translateX(${whip * 60 + shake}px) scale(${z})`,
       filter: `${whip ? `blur(${whip * 14}px)` : ''} saturate(1.08) contrast(1.04)`}}>
       <StreamView src={s.src} srcW={1080} tl={tl} />
-      <Blurs tl={tl} o={o} srcW={1080} boxes={s.blur} />
+      {s.blur.filter((b) => { const t = tl.srcAt(o); return t >= b.src[0] && t < b.src[1]; }).map((b, i) => <CardBlur key={i} box={b.box} />)}
     </AbsoluteFill>}
     {hookView}
     <Banner lines={banner} k={bannerK} />

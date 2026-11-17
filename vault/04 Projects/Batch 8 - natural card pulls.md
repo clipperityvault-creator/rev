@@ -28,4 +28,4 @@ Dropped: LeBron Black /10 (no clean on-camera reveal; the reaction is Grant begg
 - No AI narration (ElevenLabs not connected, and AI voice tested worst).
 
 ## Feedback log
-- (waiting)
+1. User: don't blur hands/unopened cards; no big blur boxes, blur just the card (also in the intro). → `CardBlur` (tight box, measured on grid frames), no pre-reveal blur (backs/base/foam-covered slab), B cold opens show the full stream with only the card blurred, hook clips scaled from the top so their caption is off-screen. Re-rendered all 15.
