@@ -1,0 +1,847 @@
+[
+ {
+  "text": "That",
+  "startMs": 0,
+  "endMs": 160
+ },
+ {
+  "text": "go",
+  "startMs": 160,
+  "endMs": 400
+ },
+ {
+  "text": "crazy",
+  "startMs": 400,
+  "endMs": 820
+ },
+ {
+  "text": "though.",
+  "startMs": 820,
+  "endMs": 1060
+ },
+ {
+  "text": "One",
+  "startMs": 1560,
+  "endMs": 1580
+ },
+ {
+  "text": "time",
+  "startMs": 1580,
+  "endMs": 1880
+ },
+ {
+  "text": "us.",
+  "startMs": 1880,
+  "endMs": 2080
+ },
+ {
+  "text": "Whoa,",
+  "startMs": 2200,
+  "endMs": 2320
+ },
+ {
+  "text": "selections",
+  "startMs": 2900,
+  "endMs": 2900
+ },
+ {
+  "text": "black",
+  "startMs": 2900,
+  "endMs": 3300
+ },
+ {
+  "text": "auto.",
+  "startMs": 3300,
+  "endMs": 3680
+ },
+ {
+  "text": "Selections",
+  "startMs": 4820,
+  "endMs": 5380
+ },
+ {
+  "text": "black",
+  "startMs": 5380,
+  "endMs": 5760
+ },
+ {
+  "text": "auto.",
+  "startMs": 5760,
+  "endMs": 6220
+ },
+ {
+  "text": "Come",
+  "startMs": 6540,
+  "endMs": 6600
+ },
+ {
+  "text": "on.",
+  "startMs": 6600,
+  "endMs": 6780
+ },
+ {
+  "text": "Oh,",
+  "startMs": 7240,
+  "endMs": 7420
+ },
+ {
+  "text": "no,",
+  "startMs": 7880,
+  "endMs": 8000
+ },
+ {
+  "text": "no.",
+  "startMs": 8560,
+  "endMs": 8560
+ },
+ {
+  "text": "Jordan",
+  "startMs": 9740,
+  "endMs": 10040
+ },
+ {
+  "text": "William.",
+  "startMs": 10040,
+  "endMs": 10760
+ },
+ {
+  "text": "There's",
+  "startMs": 11920,
+  "endMs": 12580
+ },
+ {
+  "text": "a",
+  "startMs": 12580,
+  "endMs": 12780
+ },
+ {
+  "text": "Suzuki",
+  "startMs": 12780,
+  "endMs": 13260
+ },
+ {
+  "text": "to",
+  "startMs": 13260,
+  "endMs": 13540
+ },
+ {
+  "text": "25.",
+  "startMs": 13540,
+  "endMs": 14020
+ },
+ {
+  "text": "Uh",
+  "startMs": 14340,
+  "endMs": 14380
+ },
+ {
+  "text": "-oh.",
+  "startMs": 14380,
+  "endMs": 14640
+ },
+ {
+  "text": "Uh",
+  "startMs": 15480,
+  "endMs": 15520
+ },
+ {
+  "text": "-oh.",
+  "startMs": 15520,
+  "endMs": 15860
+ },
+ {
+  "text": "Spaghetti",
+  "startMs": 16340,
+  "endMs": 16780
+ },
+ {
+  "text": "-Oh.",
+  "startMs": 16780,
+  "endMs": 17540
+ },
+ {
+  "text": "Marcelo",
+  "startMs": 19020,
+  "endMs": 19560
+ },
+ {
+  "text": "is",
+  "startMs": 19560,
+  "endMs": 19680
+ },
+ {
+  "text": "that?",
+  "startMs": 19680,
+  "endMs": 19840
+ },
+ {
+  "text": "Kevin",
+  "startMs": 20500,
+  "endMs": 20640
+ },
+ {
+  "text": "McCongle",
+  "startMs": 20640,
+  "endMs": 21360
+ },
+ {
+  "text": "white",
+  "startMs": 21360,
+  "endMs": 21660
+ },
+ {
+  "text": "to",
+  "startMs": 21660,
+  "endMs": 21880
+ },
+ {
+  "text": "30",
+  "startMs": 21880,
+  "endMs": 22260
+ },
+ {
+  "text": "nasty.",
+  "startMs": 22260,
+  "endMs": 22880
+ },
+ {
+  "text": "Ew.",
+  "startMs": 23620,
+  "endMs": 23800
+ },
+ {
+  "text": "Ew.",
+  "startMs": 24420,
+  "endMs": 24420
+ },
+ {
+  "text": "If",
+  "startMs": 25400,
+  "endMs": 25500
+ },
+ {
+  "text": "he",
+  "startMs": 25500,
+  "endMs": 25620
+ },
+ {
+  "text": "hits",
+  "startMs": 25620,
+  "endMs": 25780
+ },
+ {
+  "text": "double",
+  "startMs": 25780,
+  "endMs": 26080
+ },
+ {
+  "text": "showy",
+  "startMs": 26080,
+  "endMs": 26520
+ },
+ {
+  "text": "black,",
+  "startMs": 26520,
+  "endMs": 26920
+ },
+ {
+  "text": "that's,",
+  "startMs": 27160,
+  "endMs": 27520
+ },
+ {
+  "text": "nah,",
+  "startMs": 28100,
+  "endMs": 28240
+ },
+ {
+  "text": "he",
+  "startMs": 28300,
+  "endMs": 28380
+ },
+ {
+  "text": "should",
+  "startMs": 28380,
+  "endMs": 28500
+ },
+ {
+  "text": "just",
+  "startMs": 28500,
+  "endMs": 28700
+ },
+ {
+  "text": "click.",
+  "startMs": 28700,
+  "endMs": 28960
+ },
+ {
+  "text": "Yeah,",
+  "startMs": 28960,
+  "endMs": 29660
+ },
+ {
+  "text": "he's",
+  "startMs": 30040,
+  "endMs": 30180
+ },
+ {
+  "text": "just",
+  "startMs": 30180,
+  "endMs": 30360
+ },
+ {
+  "text": "retired.",
+  "startMs": 30360,
+  "endMs": 30900
+ },
+ {
+  "text": "Aberg.",
+  "startMs": 31040,
+  "endMs": 31560
+ },
+ {
+  "text": "Aberg.",
+  "startMs": 31900,
+  "endMs": 32400
+ },
+ {
+  "text": "Uh",
+  "startMs": 33760,
+  "endMs": 33920
+ },
+ {
+  "text": "-oh.",
+  "startMs": 33920,
+  "endMs": 34740
+ },
+ {
+  "text": "Uh",
+  "startMs": 35580,
+  "endMs": 35580
+ },
+ {
+  "text": "-oh.",
+  "startMs": 35580,
+  "endMs": 36880
+ },
+ {
+  "text": "Chase",
+  "startMs": 37660,
+  "endMs": 37900
+ },
+ {
+  "text": "Burns,",
+  "startMs": 37900,
+  "endMs": 38360
+ },
+ {
+  "text": "Carter,",
+  "startMs": 38920,
+  "endMs": 38940
+ },
+ {
+  "text": "Royce.",
+  "startMs": 39220,
+  "endMs": 39700
+ },
+ {
+  "text": "It",
+  "startMs": 40500,
+  "endMs": 40600
+ },
+ {
+  "text": "is",
+  "startMs": 40600,
+  "endMs": 40760
+ },
+ {
+  "text": "Black",
+  "startMs": 40760,
+  "endMs": 41180
+ },
+ {
+  "text": "Auto",
+  "startMs": 41180,
+  "endMs": 41620
+ },
+ {
+  "text": "to",
+  "startMs": 41620,
+  "endMs": 41860
+ },
+ {
+  "text": "10",
+  "startMs": 41860,
+  "endMs": 42180
+ },
+ {
+  "text": "right",
+  "startMs": 42180,
+  "endMs": 42560
+ },
+ {
+  "text": "here,",
+  "startMs": 42560,
+  "endMs": 42880
+ },
+ {
+  "text": "right",
+  "startMs": 43100,
+  "endMs": 43300
+ },
+ {
+  "text": "now.",
+  "startMs": 43300,
+  "endMs": 43820
+ },
+ {
+  "text": "Stephen,",
+  "startMs": 44280,
+  "endMs": 44560
+ },
+ {
+  "text": "Ogosaurus.",
+  "startMs": 44740,
+  "endMs": 45200
+ },
+ {
+  "text": "And",
+  "startMs": 46460,
+  "endMs": 46520
+ },
+ {
+  "text": "there",
+  "startMs": 46520,
+  "endMs": 46660
+ },
+ {
+  "text": "is",
+  "startMs": 46660,
+  "endMs": 46800
+ },
+ {
+  "text": "Hunter",
+  "startMs": 46800,
+  "endMs": 47160
+ },
+ {
+  "text": "Brown",
+  "startMs": 47160,
+  "endMs": 47620
+ },
+ {
+  "text": "to",
+  "startMs": 47620,
+  "endMs": 47860
+ },
+ {
+  "text": "Fitty.",
+  "startMs": 47860,
+  "endMs": 48140
+ },
+ {
+  "text": "Here",
+  "startMs": 48380,
+  "endMs": 48500
+ },
+ {
+  "text": "we",
+  "startMs": 48500,
+  "endMs": 48620
+ },
+ {
+  "text": "go.",
+  "startMs": 48620,
+  "endMs": 48900
+ },
+ {
+  "text": "Bergey.",
+  "startMs": 50760,
+  "endMs": 51440
+ },
+ {
+  "text": "Bergolysis.",
+  "startMs": 53360,
+  "endMs": 54040
+ },
+ {
+  "text": "We",
+  "startMs": 54420,
+  "endMs": 54600
+ },
+ {
+  "text": "sweat",
+  "startMs": 54600,
+  "endMs": 54860
+ },
+ {
+  "text": "from",
+  "startMs": 54860,
+  "endMs": 55040
+ },
+ {
+  "text": "the",
+  "startMs": 55040,
+  "endMs": 55240
+ },
+ {
+  "text": "side.",
+  "startMs": 55240,
+  "endMs": 55520
+ },
+ {
+  "text": "Who",
+  "startMs": 62160,
+  "endMs": 62780
+ },
+ {
+  "text": "is",
+  "startMs": 62780,
+  "endMs": 62920
+ },
+ {
+  "text": "that?",
+  "startMs": 62920,
+  "endMs": 63120
+ },
+ {
+  "text": "Is",
+  "startMs": 63640,
+  "endMs": 63760
+ },
+ {
+  "text": "that",
+  "startMs": 63760,
+  "endMs": 63860
+ },
+ {
+  "text": "him,",
+  "startMs": 63860,
+  "endMs": 64140
+ },
+ {
+  "text": "bro?",
+  "startMs": 64360,
+  "endMs": 64360
+ },
+ {
+  "text": "No",
+  "startMs": 64520,
+  "endMs": 64680
+ },
+ {
+  "text": "way",
+  "startMs": 64680,
+  "endMs": 64820
+ },
+ {
+  "text": "that's",
+  "startMs": 64820,
+  "endMs": 65100
+ },
+ {
+  "text": "in",
+  "startMs": 65100,
+  "endMs": 65220
+ },
+ {
+  "text": "a",
+  "startMs": 65220,
+  "endMs": 65340
+ },
+ {
+  "text": "way.",
+  "startMs": 65340,
+  "endMs": 65520
+ },
+ {
+  "text": "Oh",
+  "startMs": 67140,
+  "endMs": 67640
+ },
+ {
+  "text": "my",
+  "startMs": 67640,
+  "endMs": 68380
+ },
+ {
+  "text": "God.",
+  "startMs": 68380,
+  "endMs": 69280
+ },
+ {
+  "text": "Aberg!",
+  "startMs": 69920,
+  "endMs": 70320
+ },
+ {
+  "text": "Oh",
+  "startMs": 70880,
+  "endMs": 71240
+ },
+ {
+  "text": "my",
+  "startMs": 71240,
+  "endMs": 72480
+ },
+ {
+  "text": "goodness",
+  "startMs": 72480,
+  "endMs": 73140
+ },
+ {
+  "text": "gracious,",
+  "startMs": 73140,
+  "endMs": 73900
+ },
+ {
+  "text": "Mama.",
+  "startMs": 74120,
+  "endMs": 74540
+ },
+ {
+  "text": "Daddy",
+  "startMs": 75280,
+  "endMs": 75500
+ },
+ {
+  "text": "just",
+  "startMs": 75500,
+  "endMs": 75840
+ },
+ {
+  "text": "made",
+  "startMs": 75840,
+  "endMs": 76140
+ },
+ {
+  "text": "a",
+  "startMs": 76140,
+  "endMs": 76340
+ },
+ {
+  "text": "mess.",
+  "startMs": 76340,
+  "endMs": 76700
+ },
+ {
+  "text": "Overeat",
+  "startMs": 77200,
+  "endMs": 77620
+ },
+ {
+  "text": "your",
+  "startMs": 77620,
+  "endMs": 77880
+ },
+ {
+  "text": "paper",
+  "startMs": 77880,
+  "endMs": 78260
+ },
+ {
+  "text": "towels",
+  "startMs": 78260,
+  "endMs": 78720
+ },
+ {
+  "text": "and",
+  "startMs": 78720,
+  "endMs": 78940
+ },
+ {
+  "text": "toilet",
+  "startMs": 78940,
+  "endMs": 79260
+ },
+ {
+  "text": "paper",
+  "startMs": 79260,
+  "endMs": 79680
+ },
+ {
+  "text": "because",
+  "startMs": 79680,
+  "endMs": 80520
+ },
+ {
+  "text": "the",
+  "startMs": 80520,
+  "endMs": 80720
+ },
+ {
+  "text": "carpet",
+  "startMs": 80720,
+  "endMs": 81120
+ },
+ {
+  "text": "going",
+  "startMs": 81120,
+  "endMs": 81440
+ },
+ {
+  "text": "to",
+  "startMs": 81440,
+  "endMs": 81460
+ },
+ {
+  "text": "be",
+  "startMs": 81460,
+  "endMs": 81660
+ },
+ {
+  "text": "wet",
+  "startMs": 81660,
+  "endMs": 81900
+ },
+ {
+  "text": "tonight.",
+  "startMs": 81900,
+  "endMs": 82300
+ },
+ {
+  "text": "Go",
+  "startMs": 82520,
+  "endMs": 82720
+ },
+ {
+  "text": "tony.",
+  "startMs": 82720,
+  "endMs": 83340
+ },
+ {
+  "text": "Oh,",
+  "startMs": 83640,
+  "endMs": 83820
+ },
+ {
+  "text": "my",
+  "startMs": 84000,
+  "endMs": 84180
+ },
+ {
+  "text": "God.",
+  "startMs": 84180,
+  "endMs": 84800
+ },
+ {
+  "text": "A.",
+  "startMs": 86100,
+  "endMs": 86200
+ },
+ {
+  "text": "Oh,",
+  "startMs": 86200,
+  "endMs": 86620
+ },
+ {
+  "text": "my",
+  "startMs": 86660,
+  "endMs": 86660
+ },
+ {
+  "text": "God,",
+  "startMs": 86660,
+  "endMs": 86660
+ },
+ {
+  "text": "Aberg.",
+  "startMs": 86660,
+  "endMs": 86680
+ },
+ {
+  "text": "No,",
+  "startMs": 88960,
+  "endMs": 89300
+ },
+ {
+  "text": "it's",
+  "startMs": 89420,
+  "endMs": 89540
+ },
+ {
+  "text": "not",
+  "startMs": 89540,
+  "endMs": 89720
+ },
+ {
+  "text": "cereal",
+  "startMs": 89720,
+  "endMs": 90240
+ },
+ {
+  "text": "anything.",
+  "startMs": 90240,
+  "endMs": 90740
+ },
+ {
+  "text": "He",
+  "startMs": 91580,
+  "endMs": 91820
+ },
+ {
+  "text": "has",
+  "startMs": 91820,
+  "endMs": 92080
+ },
+ {
+  "text": "Otani",
+  "startMs": 92080,
+  "endMs": 92560
+ },
+ {
+  "text": "for",
+  "startMs": 92560,
+  "endMs": 92700
+ },
+ {
+  "text": "the",
+  "startMs": 92700,
+  "endMs": 92840
+ },
+ {
+  "text": "entire",
+  "startMs": 92840,
+  "endMs": 93200
+ },
+ {
+  "text": "break.",
+  "startMs": 93200,
+  "endMs": 93680
+ },
+ {
+  "text": "Ew.",
+  "startMs": 94560,
+  "endMs": 94900
+ },
+ {
+  "text": "He's",
+  "startMs": 101500,
+  "endMs": 102180
+ },
+ {
+  "text": "getting",
+  "startMs": 102180,
+  "endMs": 102320
+ },
+ {
+  "text": "bolts",
+  "startMs": 102320,
+  "endMs": 102700
+ },
+ {
+  "text": "lobbed",
+  "startMs": 102700,
+  "endMs": 103020
+ },
+ {
+  "text": "up",
+  "startMs": 103020,
+  "endMs": 103120
+ },
+ {
+  "text": "for...",
+  "startMs": 103120,
+  "endMs": 103240
+ }
+]

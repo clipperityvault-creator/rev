@@ -9,6 +9,7 @@ This repo is a **Remotion + Whisper Shorts editing setup**, and this `vault/` fo
 Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot clipping style**, copying the references they gave and the patterns from researching 50 top Shorts. They give feedback on each version, so check the feedback log in the project note before editing again.
 
 ## User preferences
+- **Less obviously AI + good background music (2026-11-17):** "lessen the obviousness of AI and use good background music for retention". Look like the creator's own Shorts: real footage carries it, ONE white hook banner, plain captions, a player/card/price stack on the reveal, whip cuts. No label pills, checklists, sticker emoji, burst lines, rewind icons or a meme SFX on every beat. No AI narration (the AI-voice cold open got 28% stayed). One strong song (phonk for pulls) clearly audible (~0.18 under talk, ~0.3 after the drop), drop on the reveal, short silence before it. See [[Batch 8 - natural card pulls]].
 - **Retention sound design on every video (2026-11-15):** "the videos must have sound effects that can make people who are watching stay and watch til the end" + background music. Every beat gets a purposeful myinstants SFX (no dead stretches), with a riser/build into the payoff, and a music bed throughout.
 - **Frame the person who is ACTUALLY talking (2026-11-01).** Before picking shots, check who speaks each line: run `scripts/voice_diarize.py` (voice clusters) + `scripts/speaker_check.py` (mouth motion per seat), then confirm with a frame strip. Laughing fools the mouth check. If unsure, use the wide shot.
 - **Plain words only on screen (2026-11-01).** Captions and 3D text use words an average viewer knows. Swap hobby slang (auto → autograph, redeem → "why the wait", prism, numbered, etc.) for everyday words, or cut the line.
@@ -73,6 +74,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 5 - Jorho v33 5 clips x 3 variants]]: 15 Shorts, A/B/C variant recipe
   - [[Batch 6 - Jorho v34 retention pass]]: punch-ins, re-hook label, cold-open teaser + rewind
   - [[Batch 7 - Jorho v35 graded quality + retention]]: graded footage, 5 fresh clips
+  - [[Batch 8 - natural card pulls]]: less-AI card-pull style, 5 big pulls × 3
 
 ## Quick start (new session)
 1. Read [[NBA GOAT pick]] (feedback log) and [[Caption style]].

@@ -1,0 +1,537 @@
+[
+ {
+  "text": "And",
+  "startMs": 0,
+  "endMs": 360
+ },
+ {
+  "text": "Dave.",
+  "startMs": 360,
+  "endMs": 580
+ },
+ {
+  "text": "I",
+  "startMs": 2560,
+  "endMs": 2560
+ },
+ {
+  "text": "have",
+  "startMs": 2560,
+  "endMs": 2680
+ },
+ {
+  "text": "no",
+  "startMs": 2680,
+  "endMs": 2780
+ },
+ {
+  "text": "idea",
+  "startMs": 2780,
+  "endMs": 3040
+ },
+ {
+  "text": "who",
+  "startMs": 3040,
+  "endMs": 3180
+ },
+ {
+  "text": "it",
+  "startMs": 3180,
+  "endMs": 3280
+ },
+ {
+  "text": "is.",
+  "startMs": 3280,
+  "endMs": 3360
+ },
+ {
+  "text": "I",
+  "startMs": 3480,
+  "endMs": 3480
+ },
+ {
+  "text": "don't",
+  "startMs": 3480,
+  "endMs": 3600
+ },
+ {
+  "text": "even",
+  "startMs": 3600,
+  "endMs": 3740
+ },
+ {
+  "text": "look.",
+  "startMs": 3740,
+  "endMs": 4020
+ },
+ {
+  "text": "I",
+  "startMs": 4820,
+  "endMs": 4860
+ },
+ {
+  "text": "know",
+  "startMs": 4860,
+  "endMs": 5000
+ },
+ {
+  "text": "it's",
+  "startMs": 5000,
+  "endMs": 5140
+ },
+ {
+  "text": "NBA",
+  "startMs": 5140,
+  "endMs": 5520
+ },
+ {
+  "text": "black",
+  "startMs": 5520,
+  "endMs": 5800
+ },
+ {
+  "text": "to",
+  "startMs": 5800,
+  "endMs": 5960
+ },
+ {
+  "text": "10.",
+  "startMs": 5960,
+  "endMs": 6220
+ },
+ {
+  "text": "NBA,",
+  "startMs": 6440,
+  "endMs": 6640
+ },
+ {
+  "text": "though.",
+  "startMs": 6860,
+  "endMs": 6860
+ },
+ {
+  "text": "It's",
+  "startMs": 7760,
+  "endMs": 7780
+ },
+ {
+  "text": "half",
+  "startMs": 7780,
+  "endMs": 7940
+ },
+ {
+  "text": "the",
+  "startMs": 7940,
+  "endMs": 8080
+ },
+ {
+  "text": "battle.",
+  "startMs": 8080,
+  "endMs": 8400
+ },
+ {
+  "text": "Can't",
+  "startMs": 9900,
+  "endMs": 10340
+ },
+ {
+  "text": "be",
+  "startMs": 10340,
+  "endMs": 10440
+ },
+ {
+  "text": "good,",
+  "startMs": 10440,
+  "endMs": 10700
+ },
+ {
+  "text": "right?",
+  "startMs": 10820,
+  "endMs": 10980
+ },
+ {
+  "text": "Not",
+  "startMs": 11300,
+  "endMs": 11420
+ },
+ {
+  "text": "in",
+  "startMs": 11420,
+  "endMs": 11500
+ },
+ {
+  "text": "the",
+  "startMs": 11500,
+  "endMs": 11620
+ },
+ {
+  "text": "same",
+  "startMs": 11620,
+  "endMs": 11840
+ },
+ {
+  "text": "case",
+  "startMs": 11840,
+  "endMs": 12160
+ },
+ {
+  "text": "as",
+  "startMs": 12160,
+  "endMs": 12320
+ },
+ {
+  "text": "Wambi,",
+  "startMs": 12320,
+  "endMs": 12640
+ },
+ {
+  "text": "Harper,",
+  "startMs": 12740,
+  "endMs": 12980
+ },
+ {
+  "text": "Cooper.",
+  "startMs": 13220,
+  "endMs": 13540
+ },
+ {
+  "text": "It",
+  "startMs": 14120,
+  "endMs": 14560
+ },
+ {
+  "text": "just",
+  "startMs": 14560,
+  "endMs": 14640
+ },
+ {
+  "text": "can't",
+  "startMs": 14640,
+  "endMs": 14960
+ },
+ {
+  "text": "be.",
+  "startMs": 14960,
+  "endMs": 15120
+ },
+ {
+  "text": "You",
+  "startMs": 39100,
+  "endMs": 39580
+ },
+ {
+  "text": "said",
+  "startMs": 39580,
+  "endMs": 39960
+ },
+ {
+  "text": "product",
+  "startMs": 39960,
+  "endMs": 40220
+ },
+ {
+  "text": "of",
+  "startMs": 40220,
+  "endMs": 42680
+ },
+ {
+  "text": "the",
+  "startMs": 42680,
+  "endMs": 42880
+ },
+ {
+  "text": "hobby",
+  "startMs": 42880,
+  "endMs": 43120
+ },
+ {
+  "text": "of",
+  "startMs": 43120,
+  "endMs": 43120
+ },
+ {
+  "text": "the",
+  "startMs": 43120,
+  "endMs": 43220
+ },
+ {
+  "text": "hobby",
+  "startMs": 43220,
+  "endMs": 43220
+ },
+ {
+  "text": "history",
+  "startMs": 43220,
+  "endMs": 43800
+ },
+ {
+  "text": "Like",
+  "startMs": 43800,
+  "endMs": 44360
+ },
+ {
+  "text": "a",
+  "startMs": 44360,
+  "endMs": 44480
+ },
+ {
+  "text": "new",
+  "startMs": 44480,
+  "endMs": 44480
+ },
+ {
+  "text": "You",
+  "startMs": 44480,
+  "endMs": 45160
+ },
+ {
+  "text": "do",
+  "startMs": 45160,
+  "endMs": 46140
+ },
+ {
+  "text": "what",
+  "startMs": 46140,
+  "endMs": 46240
+ },
+ {
+  "text": "you",
+  "startMs": 46240,
+  "endMs": 46320
+ },
+ {
+  "text": "want",
+  "startMs": 46320,
+  "endMs": 46520
+ },
+ {
+  "text": "when",
+  "startMs": 46520,
+  "endMs": 46620
+ },
+ {
+  "text": "you",
+  "startMs": 46620,
+  "endMs": 46740
+ },
+ {
+  "text": "pop",
+  "startMs": 46740,
+  "endMs": 46960
+ },
+ {
+  "text": "You",
+  "startMs": 46960,
+  "endMs": 47400
+ },
+ {
+  "text": "don't",
+  "startMs": 47400,
+  "endMs": 47700
+ },
+ {
+  "text": "the",
+  "startMs": 47700,
+  "endMs": 47860
+ },
+ {
+  "text": "break",
+  "startMs": 47860,
+  "endMs": 47900
+ },
+ {
+  "text": "you",
+  "startMs": 47900,
+  "endMs": 48340
+ },
+ {
+  "text": "already",
+  "startMs": 48340,
+  "endMs": 48420
+ },
+ {
+  "text": "won",
+  "startMs": 48420,
+  "endMs": 48460
+ },
+ {
+  "text": "Dude",
+  "startMs": 50180,
+  "endMs": 50660
+ },
+ {
+  "text": "Lynn",
+  "startMs": 50660,
+  "endMs": 51140
+ },
+ {
+  "text": "We",
+  "startMs": 51140,
+  "endMs": 51340
+ },
+ {
+  "text": "talked",
+  "startMs": 51340,
+  "endMs": 51640
+ },
+ {
+  "text": "about",
+  "startMs": 51640,
+  "endMs": 51920
+ },
+ {
+  "text": "this",
+  "startMs": 51920,
+  "endMs": 52140
+ },
+ {
+  "text": "link",
+  "startMs": 52140,
+  "endMs": 52300
+ },
+ {
+  "text": "Get",
+  "startMs": 52300,
+  "endMs": 52440
+ },
+ {
+  "text": "the",
+  "startMs": 52440,
+  "endMs": 52600
+ },
+ {
+  "text": "Panini",
+  "startMs": 52600,
+  "endMs": 53000
+ },
+ {
+  "text": "one",
+  "startMs": 53000,
+  "endMs": 53380
+ },
+ {
+  "text": "out",
+  "startMs": 53380,
+  "endMs": 53600
+ },
+ {
+  "text": "Get",
+  "startMs": 54160,
+  "endMs": 54640
+ },
+ {
+  "text": "the",
+  "startMs": 54640,
+  "endMs": 54820
+ },
+ {
+  "text": "Panini",
+  "startMs": 54820,
+  "endMs": 55220
+ },
+ {
+  "text": "one",
+  "startMs": 55220,
+  "endMs": 55720
+ },
+ {
+  "text": "out",
+  "startMs": 55720,
+  "endMs": 55780
+ },
+ {
+  "text": "Lynn",
+  "startMs": 55780,
+  "endMs": 56160
+ },
+ {
+  "text": "Lynn",
+  "startMs": 56160,
+  "endMs": 56860
+ },
+ {
+  "text": "Lynn",
+  "startMs": 56860,
+  "endMs": 56880
+ },
+ {
+  "text": "Lynn",
+  "startMs": 56880,
+  "endMs": 56960
+ },
+ {
+  "text": "Lynn",
+  "startMs": 56960,
+  "endMs": 57260
+ },
+ {
+  "text": "Lynn,",
+  "startMs": 57260,
+  "endMs": 57480
+ },
+ {
+  "text": "Lynn,",
+  "startMs": 58300,
+  "endMs": 58320
+ },
+ {
+  "text": "Lynn,",
+  "startMs": 58820,
+  "endMs": 59020
+ },
+ {
+  "text": "please",
+  "startMs": 59240,
+  "endMs": 59340
+ },
+ {
+  "text": "make",
+  "startMs": 59340,
+  "endMs": 59760
+ },
+ {
+  "text": "a",
+  "startMs": 59760,
+  "endMs": 59880
+ },
+ {
+  "text": "deal",
+  "startMs": 59880,
+  "endMs": 60180
+ },
+ {
+  "text": "with",
+  "startMs": 60180,
+  "endMs": 60440
+ },
+ {
+  "text": "me.",
+  "startMs": 60440,
+  "endMs": 60740
+ },
+ {
+  "text": "Lynn,",
+  "startMs": 61600,
+  "endMs": 61600
+ },
+ {
+  "text": "please,",
+  "startMs": 62180,
+  "endMs": 62700
+ },
+ {
+  "text": "Lynn!",
+  "startMs": 63140,
+  "endMs": 63140
+ },
+ {
+  "text": "Please,",
+  "startMs": 63140,
+  "endMs": 63140
+ },
+ {
+  "text": "Lynn!",
+  "startMs": 63560,
+  "endMs": 63560
+ }
+]
