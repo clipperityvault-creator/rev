@@ -76,6 +76,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 6 - Jorho v34 retention pass]]: punch-ins, re-hook label, cold-open teaser + rewind
   - [[Batch 7 - Jorho v35 graded quality + retention]]: graded footage, 5 fresh clips
   - [[Batch 8 - natural card pulls]]: less-AI card-pull style, 5 big pulls × 3
+  - [[Reference card pull (6OkxaC1w9jA)]]: the user's reference card-pull look (`RefPull`), Flagg $445 → $9,300
 
 ## Quick start (new session)
 1. Read [[NBA GOAT pick]] (feedback log) and [[Caption style]].

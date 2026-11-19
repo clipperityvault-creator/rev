@@ -172,3 +172,4 @@
 - "Who Is That? Is That HIM?" 👀 (b8 OhtaniA)
 - The Pull That Made the Whole Room Scream 😱 (b8 OhtaniB)
 - Only 10 Exist… Wait for the Name ⚾ (b8 OhtaniC)
+- He Paid $445… and Pulled THIS 😳 (ref-style Flagg black /10)
