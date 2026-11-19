@@ -9,6 +9,7 @@ This repo is a **Remotion + Whisper Shorts editing setup**, and this `vault/` fo
 Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot clipping style**, copying the references they gave and the patterns from researching 50 top Shorts. They give feedback on each version, so check the feedback log in the project note before editing again.
 
 ## User preferences
+- **Already posted, skip (2026-11-19):** Kon Knueppel (the user posted it). Check this list before picking a pull.
 - **No more Cooper Flagg (2026-11-19):** "im done with cooper flag". Skip Flagg pulls/clips in future batches; pick other players from the sheet.
 - **Blur ONLY the card (2026-11-17):** "dont blur the hand or the card when its not opened yet or when you put it in intro just blur the card not a whole big box of blur". No blur on card backs, base cards or covered slabs; when the hit card shows before its reveal (e.g. a cold-open reaction), a tight rounded blur the size of the card only. Hook clips: no blurred caption box; frame the clip so its burned caption falls off-screen (scale ~1.45 from the top).
 - **Less obviously AI + good background music (2026-11-17):** "lessen the obviousness of AI and use good background music for retention". Look like the creator's own Shorts: real footage carries it, ONE white hook banner, plain captions, a player/card/price stack on the reveal, whip cuts. No label pills, checklists, sticker emoji, burst lines, rewind icons or a meme SFX on every beat. No AI narration (the AI-voice cold open got 28% stayed). One strong song (phonk for pulls) clearly audible (~0.18 under talk, ~0.3 after the drop), drop on the reveal, short silence before it. See [[Batch 8 - natural card pulls]].
@@ -77,6 +78,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 6 - Jorho v34 retention pass]]: punch-ins, re-hook label, cold-open teaser + rewind
   - [[Batch 7 - Jorho v35 graded quality + retention]]: graded footage, 5 fresh clips
   - [[Batch 8 - natural card pulls]]: less-AI card-pull style, 5 big pulls × 3
+  - [[Batch 9 - reference-style pulls]]: 5 pulls × 3 in the reference style
   - [[Reference card pull (6OkxaC1w9jA)]]: the user's reference card-pull look (`RefPull`), Flagg $445 → $9,300
 
 ## Quick start (new session)

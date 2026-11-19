@@ -156,3 +156,67 @@ export const FLAGG: RefSpec = {
 };
 export const PullFlaggRef = () => <RefPull s={FLAGG} />;
 export const FLAGG_REF_MS = refMs(FLAGG);
+
+// ==== Batch 9 (2026-11-19): 5 pulls × 3 in the reference style. Per version: different hook clip, title above it, song.
+import curry9W from '../plans/data/pulls/p9_curry_finishers.words.json';
+import lebron9W from '../plans/data/pulls/p9_lebron_alterego.words.json';
+import wemby9W from '../plans/data/pulls/p9_wemby_red5.words.json';
+import judge9W from '../plans/data/pulls/p9_judge_red55.words.json';
+import ferg9W from '../plans/data/pulls/p9_ferguson_red25.words.json';
+type HookKey = 'greatest' | 'goat' | 'holy' | 'product' | 'noWay';
+// band crops measured on each hook clip (faces in the band, their burned caption below it)
+const HK: Record<HookKey, Omit<RefSpec['hook'], 'title'>> = {
+  greatest: {file: 'hooks/the_greatest_player.mp4', ms: 3200, caption: ['GREATEST PLAYER', 'EVER?'], crop: [150, 712], scale: 1.6},
+  goat: {file: 'hooks/thats_the_goat.mp4', ms: 2900, caption: ["THAT'S THE", 'GOAT!'], crop: [230, 792], scale: 1.6},
+  holy: {file: 'hooks/holy_scream.mp4', ms: 2800, caption: ['OH MY…', 'GOD'], crop: [150, 712], scale: 1.6},
+  product: {file: 'hooks/this_product_is_unbelievable.mp4', ms: 1900, caption: ['THIS PRODUCT IS', 'UNBELIEVABLE'], crop: [380, 880], scale: 1.8},
+  noWay: {file: 'hooks/no_way_he_did_it.mp4', ms: 3800, caption: ['NO WAY', 'HE DID IT!'], crop: [470, 920], scale: 2.0},
+};
+type Base9 = Omit<RefSpec, 'hook' | 'music'>;
+const v9 = (b: Base9, hook: HookKey, title: string, file: string, drop: number): RefSpec => ({...b, hook: {...HK[hook], title}, music: {file, drop}});
+const Z = {origin: [540, 1500] as [number, number], scale: 1.18};
+
+const CURRY9: Base9 = {src: 'pulls/p9_curry_finishers.mp4', zoom: Z, words: curry9W, reveal: 27300,
+  segs: [{src: [7300, 11400]}, {src: [17100, 18600]}, {src: [25500, 27300], rate: 0.5}, {src: [27300, 32100]}, {src: [43400, 52200]}],
+  name: ['STEPH', 'CURRY', ' 1/1'], nameColors: ['#FFC72C', '#fff', '#FFD43B'],
+  arrows: [{src: [7300, 11400], at: [800, 1000], deg: 135}, {src: [29000, 32100], at: [734, 1342], deg: 135}],
+  fix: {'101': '1/1', "Finisher's": 'FINISHERS', edgecombe: 'EDGECOMBE', Vij: ''}, keys: ['1/1', 'FINISHERS', 'CURRY', 'BACK-TO-BACK', 'NASTY']};
+const LEBRON9: Base9 = {src: 'pulls/p9_lebron_alterego.mp4', zoom: Z, words: lebron9W, reveal: 12500,
+  segs: [{src: [6000, 8400]}, {src: [10200, 11500]}, {src: [11500, 12500], rate: 0.5}, {src: [12500, 18600]}, {src: [42800, 48700]}, {src: [54400, 59700]}],
+  name: ['LEBRON', 'ALTER EGO'], nameColors: ['#FDB927', '#fff'],
+  arrows: [{src: [42800, 48700], at: [713, 1283], deg: 135}],
+  fix: {'$33': '$33,000', ',000': '', ',000.': ''}, keys: ['IMPOSSIBLE', '$33,000', 'HISTORY', 'WAY']};
+const WEMBY9: Base9 = {src: 'pulls/p9_wemby_red5.mp4', zoom: Z, words: wemby9W, reveal: 91200,
+  segs: [{src: [8900, 13400]}, {src: [50300, 54000]}, {src: [55500, 58800]}, {src: [79100, 83500]}, {src: [89400, 91200], rate: 0.5}, {src: [91200, 96500]}],
+  name: ['WEMBY', 'RED AUTO', ' /5'], nameColors: ['#C4CED4', '#FF3B3B', '#FFD43B'],
+  arrows: [{src: [8900, 11800], at: [330, 1060], deg: 30}, {src: [94500, 96500], at: [562, 1126], deg: 135}],
+  fix: {papa: 'PAPA', NIL: 'NIL', WAH: 'WAH!'}, keys: ['RED', 'PAPA', 'SIX', 'FIGURES', 'NBA', 'EVE']};
+const JUDGE9: Base9 = {src: 'pulls/p9_judge_red55.mp4', zoom: Z, words: judge9W, reveal: 80800,
+  segs: [{src: [57200, 61800]}, {src: [65200, 72300]}, {src: [79600, 80800], rate: 0.5}, {src: [80800, 86000]}, {src: [88000, 92600]}],
+  name: ['AARON', 'JUDGE', ' 5/5'], nameColors: ['#6EA8FF', '#fff', '#FFD43B'],
+  arrows: [{src: [57200, 61800], at: [600, 960], deg: 135}, {src: [84000, 86000], at: [691, 802], deg: 135}],
+  fix: {Showay: 'OHTANI', '$12': '$12,000', '$7': '$7,000', ',000': '', ',000.': ''}, keys: ['RED', '$12,000', '$7,000', 'RISE', '10X', 'FIVE']};
+const FERG9: Base9 = {src: 'pulls/p9_ferguson_red25.mp4', zoom: Z, words: ferg9W, reveal: 8300,
+  segs: [{src: [2200, 6400]}, {src: [6400, 8300], rate: 0.5}, {src: [8300, 13900]}, {src: [18400, 27600]}],
+  name: ['SIR ALEX', 'FERGUSON', ' /5'], nameColors: ['#FF3B3B', '#fff', '#FFD43B'],
+  arrows: [{src: [6400, 8300], at: [650, 900], deg: 135}, {src: [10000, 13900], at: [648, 1298], deg: 135}],
+  fix: {Fargo: 'FERGUSON', '-Sin': '', Brie: 'BRIE'}, keys: ['RED', 'SIR', '6K', 'KNIGHTED', 'FERGUSON']};
+
+export const REF9: [string, RefSpec][] = [
+  ['RefCurryA', v9(CURRY9, 'greatest', 'BACK-TO-BACK 1 OF 1s', 'eclipser.mp3', 15800)],
+  ['RefCurryB', v9(CURRY9, 'goat', 'TWO 1 OF 1s. ONE CASE.', 'funk-do-balkan.mp3', 42000)],
+  ['RefCurryC', v9(CURRY9, 'noWay', 'THIS SHOULD BE ILLEGAL', 'acido-iii.mp3', 21700)],
+  ['RefLebronA', v9(LEBRON9, 'holy', 'HE CALLED IT, THEN HIT IT', 'montagem-uranium.mp3', 9300)],
+  ['RefLebronB', v9(LEBRON9, 'goat', 'A $33,000 OFFER ON THE SPOT', 'funk-abnormal.mp3', 10800)],
+  ['RefLebronC', v9(LEBRON9, 'product', 'THE IMPOSSIBLE PULL', 'funk-do-balkan.mp3', 11900)],
+  ['RefWembyA', v9(WEMBY9, 'product', 'RED OR PAPA?', 'acido-iii.mp3', 64200)],
+  ['RefWembyB', v9(WEMBY9, 'noWay', 'A SIX FIGURE SWEAT', 'vem-pere-reka.mp3', 63500)],
+  ['RefWembyC', v9(WEMBY9, 'holy', 'ONLY 5 OF THESE EXIST', 'montagem-uranium.mp3', 37000)],
+  ['RefJudgeA', v9(JUDGE9, 'greatest', 'ALL RISE…', 'tipo-insta-buzeira.mp3', 19300)],
+  ['RefJudgeB', v9(JUDGE9, 'holy', 'A $700 SPOT… FOR WHO?', 'funk-sigilo.mp3', 36900)],
+  ['RefJudgeC', v9(JUDGE9, 'goat', 'THE LAST ONE OF FIVE', 'montagem-pegadora.mp3', 60100)],
+  ['RefFergA', v9(FERG9, 'product', 'A KNIGHT IN THE PACK', 'amor-na-praia.mp3', 13500)],
+  ['RefFergB', v9(FERG9, 'goat', 'THE GOAT OF COACHES', 'eclipser.mp3', 21100)],
+  ['RefFergC', v9(FERG9, 'noWay', 'ONLY 5 EXIST… SIR!', 'funk-abnormal.mp3', 43700)],
+];
+export const REF9_COMPS: [string, () => JSX.Element, number][] = REF9.map(([id, s]) => [id, () => <RefPull s={s} />, refMs(s)]);
