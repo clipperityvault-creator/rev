@@ -9,6 +9,7 @@ This repo is a **Remotion + Whisper Shorts editing setup**, and this `vault/` fo
 Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot clipping style**, copying the references they gave and the patterns from researching 50 top Shorts. They give feedback on each version, so check the feedback log in the project note before editing again.
 
 ## User preferences
+- **Never repeat the main footage (2026-11-21):** "make sure the clips arent repeated … the hooks can repeat but the needed video cant". Each pull/clip is used in ONE video only (no A/B/C versions of the same pull, no reuse across batches). Hook clips may repeat. Inside a video, the teaser shot must not be the same moment as the reveal.
 - **Card pulls: 15–16 seconds (2026-11-21: "it must atleast be 15 seconds", 16 s max)** like refs PTBmw2npS9o / 33kmdagNFhM: blurred teaser of the card + hook text at frame 0, short hype cutaway, build-up, reveal with PLAYER/CARD/$PRICE, best reaction, done. Skip players the user doesn't know (e.g. Sir Alex Ferguson). See [[16s card pull (PTBmw2npS9o + 33kmdagNFhM)]].
 - **Already posted, skip (2026-11-19):** Kon Knueppel (the user posted it). Check this list before picking a pull.
 - **No more Cooper Flagg (2026-11-19):** "im done with cooper flag". Skip Flagg pulls/clips in future batches; pick other players from the sheet.
@@ -79,6 +80,8 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 6 - Jorho v34 retention pass]]: punch-ins, re-hook label, cold-open teaser + rewind
   - [[Batch 7 - Jorho v35 graded quality + retention]]: graded footage, 5 fresh clips
   - [[Batch 8 - natural card pulls]]: less-AI card-pull style, 5 big pulls × 3
+  - [[Batch 10 - one video per pull]]: 5 pulls, one video each
+  - [[Riddle card pull (4-2ECl4wWOs)]]: **style for the next batch**
   - [[Batch 9 - reference-style pulls]]: 5 pulls × 3 in the reference style
   - [[Reference card pull (6OkxaC1w9jA)]]: the user's reference card-pull look (`RefPull`), Flagg $445 → $9,300
 

@@ -1,0 +1,422 @@
+[
+ {
+  "text": "Hey,",
+  "startMs": 1700,
+  "endMs": 2420
+ },
+ {
+  "text": "call",
+  "startMs": 2700,
+  "endMs": 2700
+ },
+ {
+  "text": "me",
+  "startMs": 2700,
+  "endMs": 2860
+ },
+ {
+  "text": "Big",
+  "startMs": 2860,
+  "endMs": 3040
+ },
+ {
+  "text": "Oaks,",
+  "startMs": 3040,
+  "endMs": 3340
+ },
+ {
+  "text": "Jack.",
+  "startMs": 3340,
+  "endMs": 3560
+ },
+ {
+  "text": "Call",
+  "startMs": 3960,
+  "endMs": 4080
+ },
+ {
+  "text": "me",
+  "startMs": 4080,
+  "endMs": 4200
+ },
+ {
+  "text": "Big",
+  "startMs": 4200,
+  "endMs": 4360
+ },
+ {
+  "text": "Oaks.",
+  "startMs": 4360,
+  "endMs": 4540
+ },
+ {
+  "text": "It's",
+  "startMs": 4780,
+  "endMs": 4880
+ },
+ {
+  "text": "actually",
+  "startMs": 4880,
+  "endMs": 5140
+ },
+ {
+  "text": "crazy.",
+  "startMs": 5140,
+  "endMs": 5500
+ },
+ {
+  "text": "The",
+  "startMs": 5660,
+  "endMs": 5660
+ },
+ {
+  "text": "dent.",
+  "startMs": 5660,
+  "endMs": 5860
+ },
+ {
+  "text": "That",
+  "startMs": 7580,
+  "endMs": 8300
+ },
+ {
+  "text": "looked",
+  "startMs": 8300,
+  "endMs": 8520
+ },
+ {
+  "text": "diffy.",
+  "startMs": 8520,
+  "endMs": 8880
+ },
+ {
+  "text": "That",
+  "startMs": 9320,
+  "endMs": 9460
+ },
+ {
+  "text": "looked",
+  "startMs": 9460,
+  "endMs": 9720
+ },
+ {
+  "text": "diffy.",
+  "startMs": 9720,
+  "endMs": 10100
+ },
+ {
+  "text": "What",
+  "startMs": 10180,
+  "endMs": 10280
+ },
+ {
+  "text": "we",
+  "startMs": 10280,
+  "endMs": 10380
+ },
+ {
+  "text": "got",
+  "startMs": 10380,
+  "endMs": 10520
+ },
+ {
+  "text": "here?",
+  "startMs": 10520,
+  "endMs": 10760
+ },
+ {
+  "text": "Bucks.",
+  "startMs": 12860,
+  "endMs": 13340
+ },
+ {
+  "text": "Yo!",
+  "startMs": 14740,
+  "endMs": 15220
+ },
+ {
+  "text": "Release",
+  "startMs": 18300,
+  "endMs": 18660
+ },
+ {
+  "text": "day?",
+  "startMs": 18660,
+  "endMs": 19380
+ },
+ {
+  "text": "Commutable.",
+  "startMs": 20100,
+  "endMs": 20820
+ },
+ {
+  "text": "Thomas",
+  "startMs": 21940,
+  "endMs": 22660
+ },
+ {
+  "text": "Edison",
+  "startMs": 22660,
+  "endMs": 23380
+ },
+ {
+  "text": "Brady?",
+  "startMs": 23380,
+  "endMs": 24300
+ },
+ {
+  "text": "Wow.",
+  "startMs": 25120,
+  "endMs": 25600
+ },
+ {
+  "text": "Auto",
+  "startMs": 26540,
+  "endMs": 26860
+ },
+ {
+  "text": "to",
+  "startMs": 26860,
+  "endMs": 27200
+ },
+ {
+  "text": "50.",
+  "startMs": 27200,
+  "endMs": 27860
+ },
+ {
+  "text": "Stop",
+  "startMs": 28260,
+  "endMs": 28460
+ },
+ {
+  "text": "and",
+  "startMs": 28460,
+  "endMs": 28840
+ },
+ {
+  "text": "shut",
+  "startMs": 28840,
+  "endMs": 29140
+ },
+ {
+  "text": "it",
+  "startMs": 29140,
+  "endMs": 29340
+ },
+ {
+  "text": "down.",
+  "startMs": 29340,
+  "endMs": 29780
+ },
+ {
+  "text": "Oh,",
+  "startMs": 30000,
+  "endMs": 30320
+ },
+ {
+  "text": "shut",
+  "startMs": 30940,
+  "endMs": 31120
+ },
+ {
+  "text": "it",
+  "startMs": 31120,
+  "endMs": 31340
+ },
+ {
+  "text": "down!",
+  "startMs": 31340,
+  "endMs": 32040
+ },
+ {
+  "text": "Holy,",
+  "startMs": 32720,
+  "endMs": 33240
+ },
+ {
+  "text": "holy,",
+  "startMs": 34600,
+  "endMs": 34600
+ },
+ {
+  "text": "holy.",
+  "startMs": 35880,
+  "endMs": 35900
+ },
+ {
+  "text": "Come",
+  "startMs": 36580,
+  "endMs": 36620
+ },
+ {
+  "text": "on,",
+  "startMs": 36620,
+  "endMs": 36800
+ },
+ {
+  "text": "buggy.",
+  "startMs": 37040,
+  "endMs": 37220
+ },
+ {
+  "text": "You",
+  "startMs": 38100,
+  "endMs": 38100
+ },
+ {
+  "text": "said",
+  "startMs": 38100,
+  "endMs": 38240
+ },
+ {
+  "text": "trash",
+  "startMs": 38240,
+  "endMs": 38620
+ },
+ {
+  "text": "can,",
+  "startMs": 38620,
+  "endMs": 38800
+ },
+ {
+  "text": "you",
+  "startMs": 38980,
+  "endMs": 38980
+ },
+ {
+  "text": "got",
+  "startMs": 38980,
+  "endMs": 39100
+ },
+ {
+  "text": "no",
+  "startMs": 39100,
+  "endMs": 39280
+ },
+ {
+  "text": "back",
+  "startMs": 39280,
+  "endMs": 39520
+ },
+ {
+  "text": "to.",
+  "startMs": 39520,
+  "endMs": 39700
+ },
+ {
+  "text": "Holy",
+  "startMs": 39760,
+  "endMs": 39760
+ },
+ {
+  "text": "crap.",
+  "startMs": 39760,
+  "endMs": 40020
+ },
+ {
+  "text": "Shut",
+  "startMs": 40280,
+  "endMs": 40280
+ },
+ {
+  "text": "it",
+  "startMs": 40280,
+  "endMs": 40440
+ },
+ {
+  "text": "down!",
+  "startMs": 40440,
+  "endMs": 40720
+ },
+ {
+  "text": "So",
+  "startMs": 41000,
+  "endMs": 41100
+ },
+ {
+  "text": "that",
+  "startMs": 41100,
+  "endMs": 41500
+ },
+ {
+  "text": "is",
+  "startMs": 41500,
+  "endMs": 41920
+ },
+ {
+  "text": "spot.",
+  "startMs": 41920,
+  "endMs": 42400
+ },
+ {
+  "text": "Number",
+  "startMs": 43480,
+  "endMs": 43520
+ },
+ {
+  "text": "four.",
+  "startMs": 43520,
+  "endMs": 44040
+ },
+ {
+  "text": "Shut",
+  "startMs": 45880,
+  "endMs": 46060
+ },
+ {
+  "text": "it",
+  "startMs": 46060,
+  "endMs": 46600
+ },
+ {
+  "text": "down.",
+  "startMs": 46600,
+  "endMs": 47160
+ },
+ {
+  "text": "Wow.",
+  "startMs": 47540,
+  "endMs": 47720
+ },
+ {
+  "text": "Number",
+  "startMs": 49020,
+  "endMs": 49020
+ },
+ {
+  "text": "four.",
+  "startMs": 49020,
+  "endMs": 49560
+ },
+ {
+  "text": "Brady",
+  "startMs": 49740,
+  "endMs": 49820
+ },
+ {
+  "text": "on",
+  "startMs": 49820,
+  "endMs": 50380
+ },
+ {
+  "text": "car,",
+  "startMs": 50380,
+  "endMs": 50820
+ },
+ {
+  "text": "go",
+  "startMs": 51080,
+  "endMs": 51220
+ },
+ {
+  "text": "to",
+  "startMs": 51220,
+  "endMs": 51500
+ },
+ {
+  "text": "50.",
+  "startMs": 51500,
+  "endMs": 52100
+ }
+]

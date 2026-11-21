@@ -25,6 +25,7 @@ import {RoadsterShort, RoadsterStills, ROADSTER_MS} from './inside/RoadsterShort
 import {GLASS_MEMORY_MS, GlassMemory} from './glass/memory';
 import {PULLS} from './pulls/specs';
 import {SHORT_COMPS} from './pulls/shorts';
+import {B10_COMPS} from './pulls/batch10';
 import {PullFlaggRef, FLAGG_REF_MS, REF9_COMPS} from './pulls/RefPull';
 import {GOAT31_MS, JorhoGoat31, JorhoTiger32, TIGER32_MS, JorhoPack32, PACK32_MS, JorhoAntA, JorhoAntB, JorhoAntC, JorhoFansA, JorhoFansB, JorhoFansC, JorhoTicketA, JorhoTicketB, JorhoTicketC, JorhoJoshA, JorhoJoshB, JorhoJoshC, JorhoNeckA, JorhoNeckB, JorhoNeckC, JOSHC_MS, EN35_MS, ENC_MS, JorhoEnterA, JorhoEnterB, JorhoEnterC, JorhoLairA, JorhoLairB, JorhoLairC, JorhoNtA, JorhoNtB, JorhoNtC, JorhoPresnapA, JorhoPresnapB, JorhoPresnapC, JorhoRogersA, JorhoRogersB, JorhoRogersC, LAIR35_MS, LAIRC_MS, NT35_MS, NTC_MS, PS35_MS, PSC_MS, ROG35_MS, ROGC_MS, CELLYC_MS, COEN34_MS, COENC_MS, GOLFC_MS, JorhoCellyA, JorhoCellyB, JorhoCellyC, JorhoCoenA, JorhoCoenB, JorhoCoenC, JorhoGolfA, JorhoGolfB, JorhoGolfC, JorhoPeytonA, JorhoPeytonB, JorhoPeytonC, JorhoRedeemA, JorhoRedeemB, JorhoRedeemC, PEYTONC_MS, REDEEMC_MS, GOAT30_MS, JorhoGoat30, GOAT28_MS, JorhoGoat28, GOAT26_MS, JorhoGoat26, RED25_MS, JorhoRedeem25, GOAT24_MS, JorhoGoat24, GOAT22_MS, JorhoGoat22, GOAT21A_MS, JorhoGoat21A, GOAT21B_MS, JorhoGoat21B, GOAT19_MS, JorhoGoat19, JorhoGoatInk, JorhoGoatJourney, JorhoGoatPixel, JorhoGoatCollage, JorhoGoatNeon, JorhoGoatPremium, JorhoGoat14, JorhoGoatArcade, JorhoGoatChalk, JorhoGoatChat, JorhoGoatComic, JorhoGoatWhiteboard, JorhoGoat12, JorhoTT11, TT11_MS, GOLF10_MS, JorhoGolf10, JorhoPlaybook10, PB10_MS, JorhoLefty9, JorhoLefty8, LEFTY8_MS, CELLY7_MS, GIFT7_MS, JorhoCelly7, JorhoGift7, JorhoNeck7, NECK7_MS, JOSH3D_MS, JorhoGoat3D, JorhoJosh3D, JorhoRedeem3D, REDEEM3D_MS, GOAT_MS, JorhoGoat, JorhoPen, JorhoPen3D, PEN_MS, JorhoLefty, JorhoPlaybook, LEFTY_J_MS, PLAYBOOK_J_MS, COEN_MS, GOLF_MS, JorhoCoen, JorhoGolf, JorhoPeyton, JorhoRedeem, PEYTON_MS, REDEEM_MS} from './jorho/clips';
 
@@ -103,6 +104,7 @@ export const RemotionRoot = () => (
     <Composition key={id} id={id} component={C} fps={30} width={1080} height={1920} durationInFrames={Math.round((ms / 1000) * 30)} />))}
   <Composition id="PullFlaggRef" component={PullFlaggRef} fps={30} width={1080} height={1920} durationInFrames={Math.round((FLAGG_REF_MS / 1000) * 30)} />
   {REF9_COMPS.map(([id, C, ms]) => <Composition key={id} id={id} component={C} fps={30} width={1080} height={1920} durationInFrames={Math.round((ms / 1000) * 30)} />)}
+  {B10_COMPS.map(([id, C, ms]) => <Composition key={id} id={id} component={C} fps={30} width={1080} height={1920} durationInFrames={Math.round((ms / 1000) * 30)} />)}
   {SHORT_COMPS.map(([id, C, ms]) => <Composition key={id} id={id} component={C} fps={30} width={1080} height={1920} durationInFrames={Math.round((ms / 1000) * 30)} />)}
   {PULLS.map(([id, C, ms]) => <Composition key={id} id={id} component={C} fps={30} width={1080} height={1920} durationInFrames={Math.round((ms / 1000) * 30)} />)}
   </>

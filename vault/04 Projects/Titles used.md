@@ -200,3 +200,8 @@
 - A $700 Spot Hit the Last One of Five ⚾ (16s JudgeA)
 - This $700 Spot Hit 🔥 (16s JudgeB)
 - Ohtani or Judge? $12K or $7K 🤔 (16s JudgeC)
+- Only 50 Exist… of the GOAT 🐐 (b10 brady)
+- This Card Got a $30,000 Offer on the Spot 💰 (b10 wemby)
+- They Saved the Best Pull for the Last Case 🔥 (b10 ohtani)
+- "Show Us an NBA Auto"… Then THIS 👑 (b10 lebron)
+- Back-to-Back Kaijus in the Same Case?! 🤯 (b10 allen)
