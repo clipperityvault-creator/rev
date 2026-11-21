@@ -5,7 +5,7 @@
 //  · captions: white, uppercase, one green keyword · reveal: flash + punch, PLAYER / CARD / $PRICE stacked, phonk drop
 //  · style 'box' (ref 1): white box banner, black type, red + green keywords; 'plain' (ref 2): bold white text + green $,
 //    red circle around the teaser card
-import {AbsoluteFill, Audio, OffthreadVideo, Sequence, interpolate, spring, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, interpolate, spring, staticFile, useCurrentFrame} from 'remotion';
 import {FPS, Music, SfxTrack, f, sfx} from '../e3/kit';
 
 type Word = {text: string; startMs: number};
@@ -18,7 +18,8 @@ export type ShortSpec = {
   src: string; segs: Seg[]; reveal: number; words: Word[]; fix?: Record<string, string>; keys?: string[];
   style: 'box' | 'plain'; hookText: Tok[][]; textMs: number; // hook text stays this long
   title: [string, string, string]; arrows: {src: [number, number]; at: [number, number]; deg: number}[];
-  music: {file: string; drop: number};
+  music: {file: string; drop: number; beat?: number}; // drop = first beat of the drop (measured), beat = ms per beat after it
+  pops?: {src: number; code: string; x: number; y: number}[]; // iOS emoji pop-ups on key words (source ms, screen px)
 };
 const R = '#E8202A', G = '#22C55E', GREEN = '#33E62E';
 const stroke = '0 0 2px #000, 3px 3px 0 #000, -3px 3px 0 #000, 3px -3px 0 #000, -3px -3px 0 #000, 0 6px 10px rgba(0,0,0,.7)';
@@ -66,13 +67,23 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
   // camera: pushed in on the card cam, slow push in slow-mo, punch on the reveal
   const slowI = s.segs.findIndex((g) => g.kind === 'stream' && (g.rate ?? 1) < 1);
   const sp = slowI >= 0 && i === slowI ? 0.08 * (o - tl.out[slowI]) / (rv - tl.out[slowI]) : 0;
-  const z = Z.s + sp + (o >= rv && o < rv + 1500 ? interpolate(o, [rv, rv + 110, rv + 1500], [0.1, 0.22, 0], {extrapolateRight: 'clamp'}) : 0);
+  // beat pulses after the drop (locked to the song's measured beat grid), screen shake on the reveal
+  const beat = s.music.beat ?? 0;
+  const pulse = beat && o >= rv ? (() => { const k = Math.floor((o - rv) / beat); const d = o - rv - k * beat; return k >= 1 && k <= 10 ? 0.035 * Math.exp(-d / 110) : 0; })() : 0;
+  const z = Z.s + sp + pulse + (o >= rv && o < rv + 1500 ? interpolate(o, [rv, rv + 110, rv + 1500], [0.1, 0.22, 0], {extrapolateRight: 'clamp'}) : 0);
+  const shake = o >= rv && o < rv + 420 ? Math.sin(o / 16) * 16 * (1 - (o - rv) / 420) : 0;
   const toScreen = (x: number, y: number): [number, number] => [Z.o[0] + (x - Z.o[0]) * z, Z.o[1] + (y - Z.o[1]) * z];
   const whip = tl.out.slice(1).reduce((m, t, j) => ((s.segs[j + 1] as {rate?: number}).rate ?? 1) === 1 && Math.abs(o - t) < 90 ? Math.max(m, 1 - Math.abs(o - t) / 90) : m, 0);
   const flash = o >= rv && o < rv + 220 ? 1 - (o - rv) / 220 : 0;
   const src = seg.kind === 'stream' ? seg.src[0] + (o - tl.out[i]) * (seg.rate ?? 1) : -1;
   const arrow = seg.kind === 'stream' && !seg.blur ? s.arrows.find((a) => src >= a.src[0] && src < a.src[1]) : undefined;
   const titleK = o >= rv + 150 ? (d: number) => spring({frame: f(o - rv - 150) - d, fps: FPS, config: {damping: 12, stiffness: 210}}) : () => 0;
+  // the price counts up when it lands (e.g. $0 → $30,000+)
+  const price = (() => { const m = s.title[2].match(/\d[\d,]*/); if (!m) return s.title[2]; const n = Number(m[0].replace(/,/g, ''));
+    const k = Math.min(1, Math.max(0, (o - rv - 420) / 650)); const v = Math.round(n * (1 - (1 - k) ** 3));
+    return s.title[2].replace(m[0], v.toLocaleString('en-US')); })();
+  const slowSeg = slowI >= 0 ? s.segs[slowI] as Extract<Seg, {kind: 'stream'}> : undefined;
+  const slowFrom = slowI >= 0 ? tl.out[slowI] : -1;
   const music = (t: number) => (t < rv - 300 ? 0.2 : t < rv ? 0 : 0.32) * Math.min(1, (tl.total - t) / 400);
   return <AbsoluteFill style={{background: '#000'}}>
     {s.segs.map((g, k) => {
@@ -83,7 +94,7 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
           <OffthreadVideo src={staticFile(g.file)} style={{width: 1080, height: 1920}} /></div></AbsoluteFill>
       </Sequence>;
       return <Sequence key={k} from={f(tl.out[k])} durationInFrames={dur} layout="none">
-        <AbsoluteFill style={{transformOrigin: `${Z.o[0]}px ${Z.o[1]}px`, transform: `translateX(${whip * 50}px) scale(${z})`, filter: `${whip ? `blur(${whip * 12}px) ` : ''}saturate(1.2) contrast(1.08)`}}>
+        <AbsoluteFill style={{transformOrigin: `${Z.o[0]}px ${Z.o[1]}px`, transform: `translate(${whip * 50 + shake}px, ${shake * 0.6}px) scale(${z})`, filter: `${whip ? `blur(${whip * 12}px) ` : ''}saturate(1.2) contrast(1.08)`}}>
           <OffthreadVideo src={staticFile(s.src)} muted trimBefore={f(g.src[0])} playbackRate={g.rate ?? 1} style={{width: 1080, height: 1920}} />
           {g.blur && <div style={{position: 'absolute', left: g.blur[0], top: g.blur[1], width: g.blur[2], height: g.blur[3], borderRadius: 16, backdropFilter: 'blur(26px)', WebkitBackdropFilter: 'blur(26px)', background: 'rgba(20,20,20,.12)'}} />}
         </AbsoluteFill>
@@ -110,14 +121,30 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
     {o >= rv && <div style={{position: 'absolute', left: 20, right: 20, top: 250, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, lineHeight: 1.02}}>
       <div style={{fontSize: 84, color: '#fff', textShadow: stroke, transform: `scale(${titleK(0)})`}}>{s.title[0]}</div>
       <div style={{fontSize: 68, color: R, textShadow: stroke, transform: `scale(${titleK(4)})`}}>{s.title[1]}</div>
-      <div style={{fontSize: 92, color: G, textShadow: stroke, transform: `scale(${titleK(8)})`}}>{s.title[2]}</div>
+      <div style={{fontSize: 92, color: G, textShadow: stroke, transform: `scale(${titleK(8) * (1 + pulse * 2)})`}}>{price}</div>
     </div>}
+    {/* WAIT FOR IT during the slow-mo */}
+    {slowSeg && o >= slowFrom && o < rv && <div style={{position: 'absolute', left: 0, right: 0, top: 1000, textAlign: 'center', opacity: Math.floor((o - slowFrom) / 160) % 2 ? 0.55 : 1}}>
+      <span style={{display: 'inline-block', background: '#FFD43B', color: '#111', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 64, padding: '10px 26px', borderRadius: 16,
+        boxShadow: '0 6px 16px rgba(0,0,0,.5)', transform: `scale(${1 + 0.05 * Math.sin((o - slowFrom) / 60)})`}}>WAIT FOR IT… <Img src={staticFile('emoji-ios/1f440.png')} style={{width: 60, height: 60, verticalAlign: '-10px'}} /></span></div>}
+    {/* emoji pop-ups on key words */}
+    {(s.pops ?? []).map((p, j) => { const at = tl.outOf(p.src); if (at < 0 || o < at || o > at + 1300) return null;
+      const k = spring({frame: f(o - at), fps: FPS, config: {damping: 9, stiffness: 220}}); const out = Math.min(1, (at + 1300 - o) / 200);
+      return <div key={j} style={{position: 'absolute', left: p.x - 90, top: p.y - 90, width: 180, height: 180, transform: `scale(${k * out}) rotate(${(1 - k) * -25 + Math.sin((o - at) / 140) * 6}deg)`,
+        filter: 'drop-shadow(0 8px 12px rgba(0,0,0,.55))'}}><Img src={staticFile(`emoji-ios/${p.code}.png`)} style={{width: 180, height: 180}} /></div>; })}
+    {/* reveal burst: money + fire fly out from the card */}
+    {o >= rv && o < rv + 1100 && ['1f4b0', '1f525', '1f4b8', '1f631', '1f4b0', '2728', '1f525', '1f4b8'].map((c, j) => {
+      const t = (o - rv) / 1100, a = (j / 8) * Math.PI * 2 + 0.4, d = 140 + 520 * (1 - (1 - t) ** 2);
+      return <Img key={j} src={staticFile(`emoji-ios/${c}.png`)} style={{position: 'absolute', left: 540 + Math.cos(a) * d - 55, top: 1150 + Math.sin(a) * d * 0.9 + 260 * t * t - 55, width: 110, height: 110,
+        opacity: 1 - t * t, transform: `rotate(${(j % 2 ? 1 : -1) * t * 120}deg)`}} />; })}
     {flash > 0 && <AbsoluteFill style={{background: '#fff', opacity: flash}} />}
     {/* stream audio (slow-mo muted), hook audio comes with its OffthreadVideo */}
     {s.segs.map((g, k) => g.kind === 'stream' && (g.rate ?? 1) === 1 ? <Sequence key={`a${k}`} from={f(tl.out[k])} durationInFrames={f(tl.out[k] + g.src[1] - g.src[0]) - f(tl.out[k])}>
       <Audio src={staticFile(s.src)} trimBefore={f(g.src[0])} volume={(fr) => Math.min(1, (fr + 1) / 2)} /></Sequence> : null)}
     <Music file={s.music.file} songFrom={s.music.drop - rv} level={music} />
     <SfxTrack list={[...tl.out.slice(1).map((t) => sfx('fast-whoosh', t, 0.2)), sfx('cinematic-suspense-riser', rv, 0.15), sfx('camera-shutter', rv, 0.25), sfx('cha-ching', rv + 900, 0.25),
-      ...s.segs.flatMap((g, k) => (g.kind === 'stream' && g.circle ? [sfx('jorho-pop', tl.out[k] + 50, 0.25)] : []))]} />
+      ...s.segs.flatMap((g, k) => (g.kind === 'stream' && g.circle ? [sfx('jorho-pop', tl.out[k] + 50, 0.25)] : [])),
+      ...(s.pops ?? []).map((p) => sfx('jorho-pop', tl.outOf(p.src), 0.28)).filter((x) => x.at >= 0),
+      ...(slowSeg ? [sfx('heartbeat-loud', slowFrom, 0.22, rv - slowFrom)] : [])]} />
   </AbsoluteFill>;
 };

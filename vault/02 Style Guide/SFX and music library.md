@@ -86,3 +86,14 @@ Drop times (s) from `scripts/find_drops.py`; the first one ≥ the run-up you ne
 | blue-yung-kai.mp3 | Yung Kai – Blue (official audio) | beat in at **23.5** (≈80 BPM, 0.74 s per 2 beats) | wholesome podcast / W Speed |
 
 **Rule (user, 2026-10-25): never use the same song for every video.** Rotate card phonk, and pick podcast music by mood.
+
+## Measured drops + beat grid (2026-11-21) — USE THESE, the find_drops.py values were off
+User: "fix … the timing of the beats when revealing the cards". Measured with librosa (energy jump + beat_track); value = first beat of the drop.
+| file | drop (s) | beat (ms) | note |
+|---|---|---|---|
+| eclipser.mp3 | **12.666** | 534 | old value 15.8 was wrong (near-silence 11.6–12.4 s, then the boom) |
+| acido-iii.mp3 | **21.073** | 628 | old 21.7 was 0.6 s late |
+| montagem-uranium.mp3 | 36.983 | 650 | |
+| funk-sigilo.mp3 | 36.936 | 660 | |
+| funk-abnormal.mp3 | 43.663 | 348 | |
+Re-measure any other song the same way before using it (drop = biggest energy jump, then snap to the first beat).
