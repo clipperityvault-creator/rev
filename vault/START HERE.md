@@ -83,6 +83,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
   - [[Batch 7 - Jorho v35 graded quality + retention]]: graded footage, 5 fresh clips
   - [[Batch 8 - natural card pulls]]: less-AI card-pull style, 5 big pulls × 3
   - [[Batch 10 - one video per pull]]: 5 pulls, one video each
+  - [[Batch 11 - v36 Trevor interviews from user refs]]: all 19 Trevor clips, refs' music, reaction bubble, aura
   - [[Riddle card pull (4-2ECl4wWOs)]]: **style for the next batch**
   - [[Batch 9 - reference-style pulls]]: 5 pulls × 3 in the reference style
   - [[Reference card pull (6OkxaC1w9jA)]]: the user's reference card-pull look (`RefPull`), Flagg $445 → $9,300

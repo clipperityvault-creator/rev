@@ -1,0 +1,17 @@
+---
+tags: [project, jorho, trevor, batch]
+date: 2026-11-21
+---
+# Batch 11: all 19 Trevor interview clips re-edited (v36)
+
+User (2026-11-21) sent 4 reference edits (Messenger uploads, 18.6–19.4 s each, same footage): "edit all the trevor lawrence interview videos again … take inspiration from these edits … use what music they are using … not just pop ups but something unique".
+
+## What the refs are
+Jorho frame (black, box 417–1494, blurred box-opening intro), top line sentence-case + 💀 that teases without the name ("The #1 Football Player…"), one-word coloured captions, meme reaction cut-outs at the bottom of the box (soldier, crying guy, laughing guy with paper, headset streamer, two guys on phones), green/red tints, white flash, money-bill rain.
+
+## What we did (`src/jorho/clips.tsx` section v36, comps `V36<Name>`)
+- **Music = the refs' own beds**: demucs htdemucs two-stems → `no_vocals` → `public/music/refbg1-4.wav` (loudnorm −20, gitignored). Clean beds (no SFX spikes). The songs are not in our library (chroma match < 0.23). Level per clip = 15 dB under that clip's voice LUFS (`src/jorho/v36_music.json`), looped.
+- **Did NOT copy the refs' meme cut-outs** (another editor's assets; auto-cutting them grabbed Trevor + their captions). Instead: auto cut-outs of whoever is named (first mention → `img/jorho/*.png`).
+- **Unique**: live **REACTION BUBBLE** (circle, top-right of the box) with the other person's real face at the same moment (from the seat track; centre = track y + 0.45·w, scale 150/w); **AURA ±N counter** with rizz / trombone SFX; emoji pops on every tint; 💵 rain on money clips.
+- New tease top lines (no name). Long clips trimmed by whole sentences (`cutSpec`): Playbook, Ant, Celly, Ticket. Lengths 15.2–20.5 s.
+- Bubbles off for Neck (wrong seat track), Enter and NT (people standing/moving).

@@ -61,7 +61,7 @@ const shotAt = (shots: Shot[], o: number) => shots.reduce<Seat>((w, [t, s]) => (
 type Spec = {
   tl: TL; src: string; track: Track; top: string; words: Word[]; wordY: number; wideX: number; shots: Shot[];
   strobes: number[]; beeps?: number[]; tints: [number, string][]; swish: number[]; cut?: {file: string; from: number; to: number; x: number; h: number};
-  music: {file: string; from: number; level: number};
+  music: {file: string; from: number; level: number; loop?: boolean};
   box?: (o: number) => ReactNode; over?: (o: number) => ReactNode; fx?: Sfx[];
   intro?: {theme: Theme; to: number; bg: (o: number) => ReactNode; fg?: (o: number) => ReactNode};
   wideXAt?: (o: number) => number; punch?: number[]; mattes?: Matte[]; behind?: (o: number) => ReactNode; push?: boolean; capsOff?: [number, number][]; faceY?: (o: number) => number; grade?: string; musicLevel?: (o: number) => number; noIntro?: boolean; mirror?: boolean;
@@ -84,7 +84,7 @@ const Jorho = ({s}: {s: Spec}) => {
       {!(s.capsOff ?? []).some(([a, b]) => o >= a && o < b) && <OneWord o={o} words={s.words} y={s.wordY} />}
       {s.over?.(o)}
       <SpeechTrack src={s.src} tl={s.tl} />
-      <Music file={s.music.file} songFrom={s.music.from} level={(t) => (s.musicLevel ? s.musicLevel(t) : s.music.level) * Math.min(1, (s.tl.total - t) / 400)} />
+      <Music file={s.music.file} songFrom={s.music.from} loop={s.music.loop} level={(t) => (s.musicLevel ? s.musicLevel(t) : s.music.level) * Math.min(1, (s.tl.total - t) / 400)} />
       <SfxTrack list={[
         sfx('jorho-ting', 0, 0.55),
         ...s.strobes.map((t) => sfx('jorho-flash', t, 0.7)),
@@ -1757,3 +1757,115 @@ const ENC: Spec = {...EN_BASE, tl: enc, top: 'Two grown men bowed to an NFL QB',
 };
 export const JorhoEnterA = () => <Jorho s={ENA} />; export const JorhoEnterB = () => <Jorho s={ENB} />; export const JorhoEnterC = () => <Jorho s={ENC} />;
 export const ENC_MS = enc.total;
+
+
+// ==== v36 (2026-11-21): all 19 Trevor interview clips re-edited after the user's 4 reference edits (Jorho frame, teaser top
+// line, one-word coloured captions, tints/flashes, cut-outs, money rain) + the references' own music beds (extracted with
+// demucs → public/music/refbg1-4.wav, set 15 dB under the voices). Unique extras that keep it moving:
+//   · live REACTION BUBBLE: a circle with the other person's real face reacting at the punchline (same moment, no repeat)
+//   · AURA counter (+/−) on the big moments · auto cut-outs of whoever is named · emoji pops on every tint
+import type {Seg as TSeg} from '../e3/kit';
+import {Sequence} from 'remotion';
+import {f} from '../e3/kit';
+import v36Music from './v36_music.json';
+
+// keep only some output windows of a spec (whole sentences), remapping every timed field
+const cutSpec = (s: Spec, keep: [number, number][]): Spec => {
+  const segs: TSeg[] = []; const map: [number, number, number][] = []; let t = 0;
+  keep.forEach(([a, b]) => { map.push([a, b, t]); t += b - a;
+    s.tl.segs.forEach((g, i) => { const so = s.tl.segOut[i], len = g[1] - g[0], lo = Math.max(a, so), hi = Math.min(b, so + len); if (hi > lo) segs.push([g[0] + lo - so, g[0] + hi - so]); }); });
+  const tl = timeline(segs);
+  const mv = (x: number) => { for (const [a, b, n] of map) if (x >= a && x < b) return n + x - a; return -1; };
+  const inv = (x: number) => { for (const [a, b, n] of map) if (x >= n && x < n + b - a) return a + x - n; return keep[keep.length - 1][1]; };
+  const ok = (x: number) => x >= 0;
+  const shots: Shot[] = map.flatMap(([a, b, n]) => [[n, shotAt(s.shots, a)] as Shot, ...s.shots.filter(([x]) => x > a && x < b).map(([x, w]) => [n + x - a, w] as Shot)]);
+  return {...s, tl, words: s.words.map((w) => ({...w, at: mv(w.at)})).filter((w) => ok(w.at)), shots,
+    strobes: s.strobes.map(mv).filter(ok), tints: s.tints.map(([x, c]) => [mv(x), c] as [number, string]).filter(([x]) => ok(x)), swish: s.swish.map(mv).filter(ok),
+    beeps: s.beeps?.map(mv).filter(ok), capsOff: s.capsOff?.map(([a, b]) => [mv(a), mv(b)] as [number, number]).filter(([a]) => ok(a)),
+    wideXAt: s.wideXAt ? (o) => s.wideXAt!(inv(o)) : undefined, faceY: s.faceY ? (o) => s.faceY!(inv(o)) : undefined, cut: undefined};
+};
+
+const NAMES: [RegExp, string][] = [[/^(Peyton|Manning)$/i, 'peyton.png'], [/^Tiger('s)?$/i, 'tiger.png'], [/^Richardson('s)?,?$/i, 'richardson.png'], [/^Mills$/i, 'mills.png'],
+  [/^Glennon$/i, 'glennon.png'], [/^Dellavedova$/i, 'della.png'], [/^Coen$/i, 'coen.png'], [/^Hines$/i, 'hines_allen.png']];
+
+const Aura = ({o, at, v}: {o: number; at: number; v: number}) => {
+  if (o < at || o > at + 1700) return null;
+  const k = Math.min(1, (o - at) / 550), n = Math.round(v * (1 - (1 - k) ** 3)), plus = v > 0;
+  const p = pop(o, at), out = Math.min(1, (at + 1700 - o) / 200);
+  return <div style={{position: 'absolute', left: 40, top: 40, transform: `scale(${p * out}) rotate(-4deg)`, transformOrigin: '0 0', background: plus ? '#1FC75A' : '#E8202A', color: '#fff',
+    fontFamily: 'Montserrat', fontWeight: 900, fontSize: 52, padding: '10px 22px', borderRadius: 16, border: '5px solid #fff', boxShadow: '0 8px 18px rgba(0,0,0,.5)', whiteSpace: 'nowrap'}}>
+    AURA {plus ? '+' : '−'}{Math.abs(n).toLocaleString('en-US')} {emo(plus ? '1f525' : '1f480', 50)}</div>;
+};
+
+// the other person's real face, live, in a circle (same moment of the source, never a repeat)
+const Bubble = ({o, at, to, s, seat}: {o: number; at: number; to: number; s: Spec; seat: 'L' | 'M' | 'R'}) => {
+  if (o < at || o >= to) return null;
+  const arr = (s.track as unknown as Record<string, number[][]>)[seat]; if (!arr) return null;
+  const src = s.tl.srcAt(at), tr = s.track as unknown as {stepMs: number; fromMs: number};
+  const [x, y, w] = arr[Math.max(0, Math.min(arr.length - 1, Math.round((src - tr.fromMs) / tr.stepMs)))];
+  const D = 320, k = 150 / Math.max(80, w), p = pop(o, at), out = Math.min(1, (to - o) / 160);
+  return <div style={{position: 'absolute', left: 1080 - D - 36, top: 36, width: D, height: D, borderRadius: '50%', overflow: 'hidden', border: '8px solid #fff', boxShadow: '0 10px 24px rgba(0,0,0,.6)',
+    transform: `scale(${p * out})`, transformOrigin: '80% 20%', background: '#000'}}>
+    <Sequence from={f(at)} durationInFrames={f(to - at)} layout="none">
+      <OffthreadVideo src={staticFile(s.src)} muted trimBefore={f(src)} style={{position: 'absolute', left: D / 2 - x * k, top: D / 2 - (y + 0.45 * w) * k, width: 1920 * k, height: 1080 * k}} />
+    </Sequence>
+    <div style={{position: 'absolute', left: 0, right: 0, bottom: 14, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 30, color: '#fff', textShadow: '0 2px 6px #000'}}>REACTION {emo('1f440', 30)}</div>
+  </div>;
+};
+
+type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]};
+const v36 = (base: Spec, c: V36): Spec => {
+  const s0 = c.keep ? cutSpec(base, c.keep) : base;
+  const total = s0.tl.total, m = v36Music[c.key];
+  const greens = s0.tints.filter(([, col]) => col === GREEN).map(([t]) => t), reds = s0.tints.filter(([, col]) => col === RED).map(([t]) => t);
+  // cut-outs of whoever is named (first mention, 1.8 s)
+  const cuts: {file: string; at: number}[] = [];
+  NAMES.forEach(([re, file]) => { const w = s0.words.find((x) => re.test(x.text)); if (w && !cuts.some((q) => q.file === file)) cuts.push({file, at: w.at}); });
+  cuts.sort((a, b) => a.at - b.at);
+  // emoji pops on every tint, alternating sides; aura on the first win / first fail
+  const pops = s0.tints.slice(0, 5).map(([t, col], j) => ({at: t, code: col === RED ? ['1f480', '1f62d', '1f62c'][j % 3] : ['1f525', '1f4af', '1f92f'][j % 3], x: j % 2 ? 790 : 70, y: 470}));
+  const auras: {at: number; v: number}[] = [...(greens[0] !== undefined ? [{at: greens[0] + 250, v: c.aura?.[0] ?? 1000}] : []), ...(reds[0] !== undefined ? [{at: reds[0] + 250, v: c.aura?.[1] ?? -500}] : [])];
+  // reaction bubbles at the first two green moments: show Trevor (M) unless he is on screen, then the left host
+  const bubbles = (c.bubbles === false ? [] : greens.slice(0, 2)).map((t) => {
+    const i = s0.tl.segOut.reduce((k, x, j) => (t >= x ? j : k), 0), segEnd = s0.tl.segOut[i] + s0.tl.segs[i][1] - s0.tl.segs[i][0];
+    const seat: 'L' | 'M' | 'R' = shotAt(s0.shots, t) === 'M' ? 'L' : 'M';
+    return {at: t + 120, to: Math.min(t + 1700, segEnd - 60), seat};
+  }).filter((b) => b.to - b.at > 600);
+  const money = c.money && greens[0] !== undefined ? greens[0] : undefined;
+  return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, musicLevel: undefined, push: true,
+    music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},
+    box: (o) => <>
+      {cuts.map((q, j) => o >= q.at && o < q.at + 1800 + 260 ? <Cutout key={j} o={o} file={q.file} from={q.at} to={q.at + 1800} x={j % 2 ? 620 : 40} h={520} /> : null)}
+      {money !== undefined && <Rain o={o} at={money} to={money + 1600} code="1f4b5" n={16} />}
+      {pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
+      {bubbles.map((b, j) => <Bubble key={j} o={o} at={b.at} to={b.to} s={s0} seat={b.seat} />)}
+      {auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} />)}
+    </>,
+    fx: [...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
+      ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
+  };
+  void total;
+};
+
+export const V36: [string, Spec][] = [
+  ['V36Playbook', v36(PB10, {key: 'pb', top: 'Imagine learning 10 brand new plays every single week', keep: [[0, 11350], [17450, 23500]]})],
+  ['V36Goat', v36(GOAT26, {key: 'goat', top: 'His NBA GOAT answer made the whole table go silent', aura: [1000, -1000]})],
+  ['V36Presnap', v36(PSA, {key: 'presnap', top: 'Even the best QBs guess wrong this often'})],
+  ['V36Ant', v36(T1A, {key: 'ant', top: 'When your autograph gets compared to an ant', keep: [[2380, 9350], [10180, 22640]]})],
+  ['V36Golf', v36(GA, {key: 'golf', top: 'His first pick for his golf group is not even a golfer'})],
+  ['V36Fans', v36(TTA, {key: 'fans', top: 'When the guy you dress up as calls you whacked'})],
+  ['V36Coen', v36(CNA, {key: 'coen', top: 'One coach fixed his whole game in a single year'})],
+  ['V36Ticket', v36(G7A, {key: 'ticket', top: 'Gifting a QB his own autograph is crazy work', keep: [[0, 2150], [5300, 21000]]})],
+  ['V36Slab', v36(TIGER32, {key: 'slab', top: "This card has pieces of Tiger's real shirt inside", money: true})],
+  ['V36Josh', v36(J5A, {key: 'josh', top: 'The most confusing pull in football history'})],
+  ['V36Neck', v36(N6A, {key: 'neck', top: 'Bro got roasted for his neck in the middle of a stream', bubbles: false})],
+  ['V36Lair', v36(LRA, {key: 'lair', top: 'Never say Colts in front of a Jags QB'})],
+  ['V36Rogers', v36(RGA, {key: 'rogers', top: 'Superfan vs superfan boxing match incoming'})],
+  ['V36Celly', v36(CYA, {key: 'celly', top: 'Only card collectors will understand this celebration', keep: [[0, 7000], [8450, 21150]]})],
+  ['V36Packs', v36(PACK32, {key: 'packs', top: 'A whole pack of one player is actually crazy'})],
+  ['V36Nt', v36(NTA, {key: 'nt', top: 'Bro watched $19,500 disappear in one sentence', money: true, aura: [1000, -19500], bubbles: false})],
+  ['V36Enter', v36(ENA, {key: 'enter', top: 'They really bowed the second he walked in', bubbles: false})],
+  ['V36Redeem', v36(RDA, {key: 'redeem', top: 'This is why card collectors lose their minds', money: true})],
+  ['V36Peyton', v36(PA, {key: 'peyton', top: 'A 5x MVP called him about his handwriting'})],
+];
+export const V36_COMPS: [string, () => JSX.Element, number][] = V36.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);
