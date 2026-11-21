@@ -13,13 +13,15 @@ type Tok = [string, string?];
 type Box = [number, number, number, number];
 export type Seg =
   | {kind: 'stream'; src: [number, number]; rate?: number; blur?: Box; circle?: [number, number, number]}
-  | {kind: 'hook'; file: string; ms: number; caption: string};
+  | {kind: 'hook'; file: string; ms: number; caption: string; scale?: number}; // scale from the top, enough to push its burned caption off-screen
 export type ShortSpec = {
   src: string; segs: Seg[]; reveal: number; words: Word[]; fix?: Record<string, string>; keys?: string[];
   style: 'box' | 'plain'; hookText: Tok[][]; textMs: number; // hook text stays this long
   title: [string, string, string]; arrows: {src: [number, number]; at: [number, number]; deg: number}[];
-  music: {file: string; drop: number; beat?: number}; // drop = first beat of the drop (measured), beat = ms per beat after it
+  music: {file: string; drop: number; beat?: number; level?: number}; // level = steady gain that puts the song 15 dB under the stream's voices (user: "-15dB") // drop = first beat of the drop (measured), beat = ms per beat after it
   pops?: {src: number; code: string; x: number; y: number}[]; // iOS emoji pop-ups on key words (source ms, screen px)
+  env?: {stepMs: number; v: number[]}; // voice/scream activity of the stream audio (0..1) → music ducks under it
+  react?: [number, number]; // source window: punch in on the hosts' cam for their real reaction
 };
 const R = '#E8202A', G = '#22C55E', GREEN = '#33E62E';
 const stroke = '0 0 2px #000, 3px 3px 0 #000, -3px 3px 0 #000, 3px -3px 0 #000, -3px -3px 0 #000, 0 6px 10px rgba(0,0,0,.7)';
@@ -72,6 +74,8 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
   const pulse = beat && o >= rv ? (() => { const k = Math.floor((o - rv) / beat); const d = o - rv - k * beat; return k >= 1 && k <= 10 ? 0.035 * Math.exp(-d / 110) : 0; })() : 0;
   const z = Z.s + sp + pulse + (o >= rv && o < rv + 1500 ? interpolate(o, [rv, rv + 110, rv + 1500], [0.1, 0.22, 0], {extrapolateRight: 'clamp'}) : 0);
   const shake = o >= rv && o < rv + 420 ? Math.sin(o / 16) * 16 * (1 - (o - rv) / 420) : 0;
+  const srcNow = seg.kind === 'stream' && !seg.blur ? seg.src[0] + (o - tl.out[i]) * (seg.rate ?? 1) : -1;
+  const reactK = s.react && srcNow >= s.react[0] && srcNow < s.react[1] ? Math.min(1, (srcNow - s.react[0]) / 160, (s.react[1] - srcNow) / 160) : 0;
   const toScreen = (x: number, y: number): [number, number] => [Z.o[0] + (x - Z.o[0]) * z, Z.o[1] + (y - Z.o[1]) * z];
   const whip = tl.out.slice(1).reduce((m, t, j) => ((s.segs[j + 1] as {rate?: number}).rate ?? 1) === 1 && Math.abs(o - t) < 90 ? Math.max(m, 1 - Math.abs(o - t) / 90) : m, 0);
   const flash = o >= rv && o < rv + 220 ? 1 - (o - rv) / 220 : 0;
@@ -84,17 +88,22 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
     return s.title[2].replace(m[0], v.toLocaleString('en-US')); })();
   const slowSeg = slowI >= 0 ? s.segs[slowI] as Extract<Seg, {kind: 'stream'}> : undefined;
   const slowFrom = slowI >= 0 ? tl.out[slowI] : -1;
-  const music = (t: number) => (t < rv - 300 ? 0.2 : t < rv ? 0 : 0.32) * Math.min(1, (tl.total - t) / 400);
+  // music ducks under the stream's own voices/screams (env) and under hook clips, so the raw audio is never covered
+  const act = (t: number) => { const k = tl.at(t), g = s.segs[k]; if (g.kind === 'hook') return 1; if ((g.rate ?? 1) !== 1 || g.blur || !s.env) return g.blur ? 0.6 : 0;
+    const src = g.src[0] + (t - tl.out[k]); return s.env.v[Math.min(s.env.v.length - 1, Math.max(0, Math.round(src / s.env.stepMs)))] ?? 0; };
+  const music = (t: number) => (s.music.level !== undefined
+    ? (t >= rv - 300 && t < rv ? 0 : s.music.level)
+    : (t < rv - 300 ? 0.24 : t < rv ? 0 : t < rv + 700 ? 0.34 : 0.3) * (t >= rv && t < rv + 700 ? 1 : 1 - 0.62 * act(t))) * Math.min(1, (tl.total - t) / 400);
   return <AbsoluteFill style={{background: '#000'}}>
     {s.segs.map((g, k) => {
       const dur = f(k + 1 < s.segs.length ? tl.out[k + 1] : tl.total) - f(tl.out[k]);
       if (g.kind === 'hook') return <Sequence key={k} from={f(tl.out[k])} durationInFrames={dur} layout="none">
         {/* green-screen cutaway, scaled from the top so its burned caption is off-screen */}
-        <AbsoluteFill style={{overflow: 'hidden'}}><div style={{position: 'absolute', inset: 0, transformOrigin: '50% 0', transform: 'scale(1.45)'}}>
+        <AbsoluteFill style={{overflow: 'hidden'}}><div style={{position: 'absolute', inset: 0, transformOrigin: '50% 0', transform: `scale(${g.scale ?? 1.45})`}}>
           <OffthreadVideo src={staticFile(g.file)} style={{width: 1080, height: 1920}} /></div></AbsoluteFill>
       </Sequence>;
       return <Sequence key={k} from={f(tl.out[k])} durationInFrames={dur} layout="none">
-        <AbsoluteFill style={{transformOrigin: `${Z.o[0]}px ${Z.o[1]}px`, transform: `translate(${whip * 50 + shake}px, ${shake * 0.6}px) scale(${z})`, filter: `${whip ? `blur(${whip * 12}px) ` : ''}saturate(1.2) contrast(1.08)`}}>
+        <AbsoluteFill style={reactK > 0 ? {transformOrigin: '540px 120px', transform: `scale(${1 + 0.5 * reactK})`, filter: 'saturate(1.2) contrast(1.08)'} : {transformOrigin: `${Z.o[0]}px ${Z.o[1]}px`, transform: `translate(${whip * 50 + shake}px, ${shake * 0.6}px) scale(${z})`, filter: `${whip ? `blur(${whip * 12}px) ` : ''}saturate(1.2) contrast(1.08)`}}>
           <OffthreadVideo src={staticFile(s.src)} muted trimBefore={f(g.src[0])} playbackRate={g.rate ?? 1} style={{width: 1080, height: 1920}} />
           {g.blur && <div style={{position: 'absolute', left: g.blur[0], top: g.blur[1], width: g.blur[2], height: g.blur[3], borderRadius: 16, backdropFilter: 'blur(26px)', WebkitBackdropFilter: 'blur(26px)', background: 'rgba(20,20,20,.12)'}} />}
         </AbsoluteFill>
@@ -102,9 +111,9 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
           <circle cx={x} cy={y} r={r} fill="none" stroke="#F21D1D" strokeWidth={14} strokeDasharray={2 * Math.PI * r} strokeDashoffset={2 * Math.PI * r * (1 - Math.min(1, (o - tl.out[k]) / 350))} transform={`rotate(-90 ${x} ${y})`} /></svg>; })()}
       </Sequence>;
     })}
-    {arrow && (() => { const [x, y] = toScreen(arrow.at[0], arrow.at[1]); return <Arrow x={x} y={y} o={o} deg={arrow.deg} />; })()}
+    {arrow && reactK === 0 && (() => { const [x, y] = toScreen(arrow.at[0], arrow.at[1]); return <Arrow x={x} y={y} o={o} deg={arrow.deg} />; })()}
     {/* hook text from frame 0 */}
-    {o < s.textMs && (s.style === 'box'
+    {o < Math.max(s.textMs, rv) && (s.style === 'box'
       ? <div style={{position: 'absolute', left: 0, right: 0, top: 150, padding: '16px 24px', background: '#fff', textAlign: 'center', boxShadow: '0 6px 18px rgba(0,0,0,.35)'}}>
           {s.hookText.map((l, j) => <div key={j} style={{fontFamily: 'Montserrat', fontWeight: 900, fontSize: 64, lineHeight: 1.08, color: '#111', letterSpacing: -0.5}}>
             {l.map(([t, c], m) => <span key={m} style={{color: c ?? '#111'}}>{t}{m < l.length - 1 ? ' ' : ''}</span>)}</div>)}
@@ -115,10 +124,10 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
         </div>)}
     {seg.kind === 'hook' && <div style={{position: 'absolute', left: 30, right: 30, top: 1080, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 84, color: '#fff', textShadow: stroke}}>
       {seg.caption.split(' ').map((w, j, a) => <span key={j} style={{color: j === a.length - 1 ? GREEN : '#fff'}}>{w}{j < a.length - 1 ? ' ' : ''}</span>)}</div>}
-    {seg.kind === 'stream' && chunk && <div style={{position: 'absolute', left: 30, right: 30, top: 1180, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 84, lineHeight: 1.05, color: '#fff', textShadow: stroke,
+    {seg.kind === 'stream' && chunk && <div style={{position: 'absolute', left: 30, right: 30, top: 1180 - 300 * reactK, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, fontSize: 84, lineHeight: 1.05, color: '#fff', textShadow: stroke,
       transform: `scale(${0.85 + 0.15 * spring({frame: f(o - chunk.at), fps: FPS, config: {damping: 14, stiffness: 260}})})`}}>
       {chunk.ws.map((w, j) => <span key={j} style={{color: j === chunk.key ? GREEN : '#fff'}}>{w}{j < chunk.ws.length - 1 ? ' ' : ''}</span>)}</div>}
-    {o >= rv && <div style={{position: 'absolute', left: 20, right: 20, top: 250, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, lineHeight: 1.02}}>
+    {o >= rv && <div style={{position: 'absolute', left: 20, right: 20, top: 250 + 1150 * reactK, textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 900, lineHeight: 1.02}}>
       <div style={{fontSize: 84, color: '#fff', textShadow: stroke, transform: `scale(${titleK(0)})`}}>{s.title[0]}</div>
       <div style={{fontSize: 68, color: R, textShadow: stroke, transform: `scale(${titleK(4)})`}}>{s.title[1]}</div>
       <div style={{fontSize: 92, color: G, textShadow: stroke, transform: `scale(${titleK(8) * (1 + pulse * 2)})`}}>{price}</div>
@@ -140,7 +149,7 @@ export const ShortPull = ({s}: {s: ShortSpec}) => {
     {flash > 0 && <AbsoluteFill style={{background: '#fff', opacity: flash}} />}
     {/* stream audio (slow-mo muted), hook audio comes with its OffthreadVideo */}
     {s.segs.map((g, k) => g.kind === 'stream' && (g.rate ?? 1) === 1 ? <Sequence key={`a${k}`} from={f(tl.out[k])} durationInFrames={f(tl.out[k] + g.src[1] - g.src[0]) - f(tl.out[k])}>
-      <Audio src={staticFile(s.src)} trimBefore={f(g.src[0])} volume={(fr) => Math.min(1, (fr + 1) / 2)} /></Sequence> : null)}
+      <Audio src={staticFile(s.src)} trimBefore={f(g.src[0])} volume={(fr) => 1.25 * Math.min(1, (fr + 1) / 2)} /></Sequence> : null)}
     <Music file={s.music.file} songFrom={s.music.drop - rv} level={music} />
     <SfxTrack list={[...tl.out.slice(1).map((t) => sfx('fast-whoosh', t, 0.2)), sfx('cinematic-suspense-riser', rv, 0.15), sfx('camera-shutter', rv, 0.25), sfx('cha-ching', rv + 900, 0.25),
       ...s.segs.flatMap((g, k) => (g.kind === 'stream' && g.circle ? [sfx('jorho-pop', tl.out[k] + 50, 0.25)] : [])),
