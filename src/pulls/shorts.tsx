@@ -53,11 +53,13 @@ const JUDGE: Base = {src: 'pulls/p9_judge_red55.mp4', words: judgeW, reveal: 808
   arrows: [{src: [59200, 61800], at: [600, 960], deg: 135}],
   fix: {Showay: 'OHTANI', '$12': '$12,000', '$7': '$7,000', ',000': '', ',000.': ''}, keys: ['RED', '$12,000', '$7,000', 'RISE', 'OHTANI', 'JUDGE']};
 
+// LeBron A only: ends after "$33,000 cash" so it reaches 15 s (user 2026-11-21: min 15, max 16)
+const LEBRON_A: Base = {...LEBRON, story: [...LEBRON.story.slice(0, -1), {kind: 'stream', src: [45400, 49150]}]};
 export const SHORTS: [string, ShortSpec][] = [
   ['ShortCurryA', mk(CURRY, 'A', 'greatest', [[['TWO'], ['1 OF 1s', R], ['IN ONE CASE?!']], [['THE SECOND ONE IS'], ['HUGE', G]]], {file: 'eclipser.mp3', drop: 15800})],
   ['ShortCurryB', mk(CURRY, 'B', 'goat', [[['THIS CASE HAD']], [['TWO', GP], ['1 OF 1s', GP]]], {file: 'vem-pere-reka.mp3', drop: 21100})],
   ['ShortCurryC', mk(CURRY, 'C', 'noWay', [[['BACK-TO-BACK'], ['1 OF 1s', R]], [['WORTH UP TO'], ['$35,000', G]]], {file: 'acido-iii.mp3', drop: 21700})],
-  ['ShortLebronA', mk(LEBRON, 'A', 'holy', [[['A'], ['$33,000', G], ['OFFER…']], [['FOR'], ['ONE', R], ['CARD']]], {file: 'montagem-uranium.mp3', drop: 37000})],
+  ['ShortLebronA', mk(LEBRON_A, 'A', 'holy', [[['A'], ['$33,000', G], ['OFFER…']], [['FOR'], ['ONE', R], ['CARD']]], {file: 'montagem-uranium.mp3', drop: 37000})],
   ['ShortLebronB', mk(LEBRON, 'B', 'goat', [[['THIS CARD GOT A']], [['$33,000', GP], ['OFFER']]], {file: 'funk-do-balkan.mp3', drop: 42000})],
   ['ShortLebronC', mk(LEBRON, 'C', 'product', [[['HE CALLED IT'], ['SECONDS', R]], [['BEFORE HE'], ['PULLED IT', G]]], {file: 'funk-sigilo.mp3', drop: 36900})],
   ['ShortWembyA', mk(WEMBY, 'A', 'noWay', [[['ONLY'], ['5', R], ['OF THESE EXIST']], [['WORTH UP TO'], ['$40,000', G]]], {file: 'montagem-pegadora.mp3', drop: 15700})],
