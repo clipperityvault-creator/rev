@@ -9,6 +9,7 @@ This repo is a **Remotion + Whisper Shorts editing setup**, and this `vault/` fo
 Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot clipping style**, copying the references they gave and the patterns from researching 50 top Shorts. They give feedback on each version, so check the feedback log in the project note before editing again.
 
 ## User preferences
+- **Card pulls: 16 seconds max (2026-11-21)** like refs PTBmw2npS9o / 33kmdagNFhM: blurred teaser of the card + hook text at frame 0, short hype cutaway, build-up, reveal with PLAYER/CARD/$PRICE, best reaction, done. Skip players the user doesn't know (e.g. Sir Alex Ferguson). See [[16s card pull (PTBmw2npS9o + 33kmdagNFhM)]].
 - **Already posted, skip (2026-11-19):** Kon Knueppel (the user posted it). Check this list before picking a pull.
 - **No more Cooper Flagg (2026-11-19):** "im done with cooper flag". Skip Flagg pulls/clips in future batches; pick other players from the sheet.
 - **Blur ONLY the card (2026-11-17):** "dont blur the hand or the card when its not opened yet or when you put it in intro just blur the card not a whole big box of blur". No blur on card backs, base cards or covered slabs; when the hit card shows before its reveal (e.g. a cold-open reaction), a tight rounded blur the size of the card only. Hook clips: no blurred caption box; frame the clip so its burned caption falls off-screen (scale ~1.45 from the top).
