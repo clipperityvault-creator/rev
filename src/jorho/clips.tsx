@@ -1813,7 +1813,7 @@ const Bubble = ({o, at, to, s, seat}: {o: number; at: number; to: number; s: Spe
   </div>;
 };
 
-type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]};
+type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number};
 const v36 = (base: Spec, c: V36): Spec => {
   const s0 = c.keep ? cutSpec(base, c.keep) : base;
   const total = s0.tl.total, m = v36Music[c.key];
@@ -1832,7 +1832,12 @@ const v36 = (base: Spec, c: V36): Spec => {
     return {at: t + 120, to: Math.min(t + 1700, segEnd - 60), seat};
   }).filter((b) => b.to - b.at > 600);
   const money = c.money && greens[0] !== undefined ? greens[0] : undefined;
-  return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, musicLevel: undefined, push: true,
+  // the reveal (user 2026-11-22: "when revealing something you must add the riser effect"): first strobe, else first green moment
+  const rv = c.reveal ?? s0.strobes[0] ?? greens[0];
+  const RISE = 2600; // tension window before the reveal: riser builds, edges darken, music drops out for the last 450 ms
+  return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, push: true,
+    musicLevel: rv !== undefined ? (o) => (o >= rv - 450 && o < rv ? 0 : m.level) : undefined,
+    punch: rv !== undefined ? [...(s0.punch ?? []), rv] : s0.punch,
     music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},
     box: (o) => <>
       {cuts.map((q, j) => o >= q.at && o < q.at + 1800 + 260 ? <Cutout key={j} o={o} file={q.file} from={q.at} to={q.at + 1800} x={j % 2 ? 620 : 40} h={520} /> : null)}
@@ -1840,28 +1845,30 @@ const v36 = (base: Spec, c: V36): Spec => {
       {pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
       {bubbles.map((b, j) => <Bubble key={j} o={o} at={b.at} to={b.to} s={s0} seat={b.seat} />)}
       {auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} />)}
+      {rv !== undefined && o >= rv - RISE && o < rv + 120 && <div style={{position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: `radial-gradient(ellipse 70% 60% at 50% 42%, transparent ${45 - 25 * Math.min(1, (o - rv + RISE) / RISE)}%, rgba(0,0,0,${0.85 * Math.min(1, (o - rv + RISE) / RISE)}) 100%)`}} />}
     </>,
     fx: [...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
-      ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
+      ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...(rv !== undefined ? [sfx('cinematic-suspense-riser', rv, 0.3)] : []), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
   };
   void total;
 };
 
 export const V36: [string, Spec][] = [
-  ['V36Playbook', v36(PB10, {key: 'pb', top: 'Imagine learning 10 brand new plays every single week', keep: [[0, 11350], [17450, 23500]]})],
+  ['V36Playbook', v36(PB10, {key: 'pb', top: 'Imagine learning 10 brand new plays every single week', keep: [[0, 11350], [17450, 23500]], reveal: 15100})],
   ['V36Goat', v36(GOAT26, {key: 'goat', top: 'His NBA GOAT answer made the whole table go silent', aura: [1000, -1000]})],
   ['V36Presnap', v36(PSA, {key: 'presnap', top: 'Even the best QBs guess wrong this often'})],
   ['V36Ant', v36(T1A, {key: 'ant', top: 'When your autograph gets compared to an ant', keep: [[2380, 9350], [10180, 22640]]})],
-  ['V36Golf', v36(GA, {key: 'golf', top: 'His first pick for his golf group is not even a golfer'})],
+  ['V36Golf', v36(GA, {key: 'golf', top: 'His first pick for his golf group is not even a golfer', reveal: KGF.tiger})],
   ['V36Fans', v36(TTA, {key: 'fans', top: 'When the guy you dress up as calls you whacked'})],
-  ['V36Coen', v36(CNA, {key: 'coen', top: 'One coach fixed his whole game in a single year'})],
+  ['V36Coen', v36(CNA, {key: 'coen', top: 'One coach fixed his whole game in a single year', reveal: CK.definitely})],
   ['V36Ticket', v36(G7A, {key: 'ticket', top: 'Gifting a QB his own autograph is crazy work', keep: [[0, 2150], [5300, 21000]]})],
   ['V36Slab', v36(TIGER32, {key: 'slab', top: "This card has pieces of Tiger's real shirt inside", money: true})],
   ['V36Josh', v36(J5A, {key: 'josh', top: 'The most confusing pull in football history'})],
   ['V36Neck', v36(N6A, {key: 'neck', top: 'Bro got roasted for his neck in the middle of a stream', bubbles: false})],
   ['V36Lair', v36(LRA, {key: 'lair', top: 'Never say Colts in front of a Jags QB'})],
   ['V36Rogers', v36(RGA, {key: 'rogers', top: 'Superfan vs superfan boxing match incoming'})],
-  ['V36Celly', v36(CYA, {key: 'celly', top: 'Only card collectors will understand this celebration', keep: [[0, 7000], [8450, 21150]]})],
+  ['V36Celly', v36(CYA, {key: 'celly', top: 'Only card collectors will understand this celebration', keep: [[0, 7000], [8450, 21150]], reveal: KC7.t1 - 1450})],
   ['V36Packs', v36(PACK32, {key: 'packs', top: 'A whole pack of one player is actually crazy'})],
   ['V36Nt', v36(NTA, {key: 'nt', top: 'Bro watched $19,500 disappear in one sentence', money: true, aura: [1000, -19500], bubbles: false})],
   ['V36Enter', v36(ENA, {key: 'enter', top: 'They really bowed the second he walked in', bubbles: false})],
