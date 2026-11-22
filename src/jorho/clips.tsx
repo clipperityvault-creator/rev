@@ -1788,11 +1788,11 @@ const cutSpec = (s: Spec, keep: [number, number][]): Spec => {
 const NAMES: [RegExp, string][] = [[/^(Peyton|Manning)$/i, 'peyton.png'], [/^Tiger('s)?$/i, 'tiger.png'], [/^Richardson('s)?,?$/i, 'richardson.png'], [/^Mills$/i, 'mills.png'],
   [/^Glennon$/i, 'glennon.png'], [/^Dellavedova$/i, 'della.png'], [/^Coen$/i, 'coen.png'], [/^Hines$/i, 'hines_allen.png']];
 
-const Aura = ({o, at, v}: {o: number; at: number; v: number}) => {
+const Aura = ({o, at, v, y = 40}: {o: number; at: number; v: number; y?: number}) => {
   if (o < at || o > at + 1700) return null;
   const k = Math.min(1, (o - at) / 550), n = Math.round(v * (1 - (1 - k) ** 3)), plus = v > 0;
   const p = pop(o, at), out = Math.min(1, (at + 1700 - o) / 200);
-  return <div style={{position: 'absolute', left: 40, top: 40, transform: `scale(${p * out}) rotate(-4deg)`, transformOrigin: '0 0', background: plus ? '#1FC75A' : '#E8202A', color: '#fff',
+  return <div style={{position: 'absolute', left: 40, top: y, transform: `scale(${p * out}) rotate(-4deg)`, transformOrigin: '0 0', background: plus ? '#1FC75A' : '#E8202A', color: '#fff',
     fontFamily: 'Montserrat', fontWeight: 900, fontSize: 52, padding: '10px 22px', borderRadius: 16, border: '5px solid #fff', boxShadow: '0 8px 18px rgba(0,0,0,.5)', whiteSpace: 'nowrap'}}>
     AURA {plus ? '+' : '−'}{Math.abs(n).toLocaleString('en-US')} {emo(plus ? '1f525' : '1f480', 50)}</div>;
 };
@@ -1818,37 +1818,67 @@ const v36 = (base: Spec, c: V36): Spec => {
   const s0 = c.keep ? cutSpec(base, c.keep) : base;
   const total = s0.tl.total, m = v36Music[c.key];
   const greens = s0.tints.filter(([, col]) => col === GREEN).map(([t]) => t), reds = s0.tints.filter(([, col]) => col === RED).map(([t]) => t);
+  // the reveal (user 2026-11-22: "when revealing something you must add the riser effect"): first strobe, else first green moment
+  const rv = c.reveal ?? s0.strobes[0] ?? greens[0];
+  const RISE = 2600; // tension window before the reveal: riser builds, edges darken, music drops out for the last 450 ms
   // cut-outs of whoever is named (first mention, 1.8 s)
   const cuts: {file: string; at: number}[] = [];
   NAMES.forEach(([re, file]) => { const w = s0.words.find((x) => re.test(x.text)); if (w && !cuts.some((q) => q.file === file)) cuts.push({file, at: w.at}); });
   cuts.sort((a, b) => a.at - b.at);
   // emoji pops on every tint, alternating sides; aura on the first win / first fail
   const pops = s0.tints.slice(0, 5).map(([t, col], j) => ({at: t, code: col === RED ? ['1f480', '1f62d', '1f62c'][j % 3] : ['1f525', '1f4af', '1f92f'][j % 3], x: j % 2 ? 790 : 70, y: 470}));
-  const auras: {at: number; v: number}[] = [...(greens[0] !== undefined ? [{at: greens[0] + 250, v: c.aura?.[0] ?? 1000}] : []), ...(reds[0] !== undefined ? [{at: reds[0] + 250, v: c.aura?.[1] ?? -500}] : [])];
+  const auraAt = rv ?? greens[0];
+  const auras: {at: number; v: number}[] = c.aura && c.aura[1] < 0 && reds[0] !== undefined && c.aura[1] < -5000
+    ? [{at: (c.reveal ?? reds[0]) + 250, v: c.aura[1]}]
+    : auraAt !== undefined ? [{at: auraAt + 300, v: c.aura?.[0] ?? 1000}] : [];
   // reaction bubbles at the first two green moments: show Trevor (M) unless he is on screen, then the left host
-  const bubbles = (c.bubbles === false ? [] : greens.slice(0, 2)).map((t) => {
+  const bubbles = (c.bubbles === false ? [] : [rv ?? greens[0]].filter((x) => x !== undefined)).map((t) => {
     const i = s0.tl.segOut.reduce((k, x, j) => (t >= x ? j : k), 0), segEnd = s0.tl.segOut[i] + s0.tl.segs[i][1] - s0.tl.segs[i][0];
     const seat: 'L' | 'M' | 'R' = shotAt(s0.shots, t) === 'M' ? 'L' : 'M';
     return {at: t + 120, to: Math.min(t + 1700, segEnd - 60), seat};
   }).filter((b) => b.to - b.at > 600);
   const money = c.money && greens[0] !== undefined ? greens[0] : undefined;
-  // the reveal (user 2026-11-22: "when revealing something you must add the riser effect"): first strobe, else first green moment
-  const rv = c.reveal ?? s0.strobes[0] ?? greens[0];
-  const RISE = 2600; // tension window before the reveal: riser builds, edges darken, music drops out for the last 450 ms
+  // GAP FILLER (review 2026-11-22): the first pass had 5–10 s stretches with only captions. Any gap > 2.4 s between
+  // visual events gets a keyword emoji pop (if a word in it matches) or a punch-in on its most colourful word.
+  const KEY_EMOJI: [RegExp, string][] = [[/play|playbook|offense|install/i, '1f4cb'], [/golf|tiger|course/i, '26f3'], [/jesus|god/i, '1f64f'], [/money|\$|bucks|thousand|000/i, '1f4b0'],
+    [/card|pack|rip|slab/i, '1f0cf'], [/ticket|clemson|championship|national/i, '1f39f'], [/sign|autograph|auto|signature|pen/i, '270d'], [/call|called|text|phone/i, '1f4de'],
+    [/coach|coen|staff|system/i, '1f9e0'], [/fan|fans|jax|crowd|cheer|insane/i, '1f4e3'], [/neck/i, '1f992'], [/king|hail/i, '1f451'], [/goat|greatest/i, '1f410'],
+    [/weird|whacked|crazy/i, '1f92a'], [/time|week|year|season/i, '23f3'], [/think|know|guess|percent|open/i, '1f914'], [/funny|laugh/i, '1f602'], [/box|fight|take him/i, '1f94a']];
+  const baseEvents = [0, ...s0.tints.map(([t]) => t), ...s0.strobes, ...cuts.map((q) => q.at), ...s0.shots.filter(([t, w], j) => j > 0 && w !== s0.shots[j - 1][1]).map(([t]) => t), ...(rv !== undefined ? [rv - RISE, rv] : []), s0.tl.total].sort((a, b) => a - b);
+  const fill: {at: number; code?: string}[] = [];
+  for (let j = 0; j < baseEvents.length - 1; j++) {
+    let a0 = baseEvents[j]; const b0 = baseEvents[j + 1];
+    while (b0 - a0 > 2200) {
+      const mid = a0 + Math.min(1900, (b0 - a0) / 2);
+      const cand = s0.words.filter((w) => w.at > a0 + 800 && w.at < Math.min(b0 - 600, a0 + 2400));
+      if (!cand.length) break;
+      // alternate emoji / punch-in, and never the same emoji twice in one video
+      const lastWasEmoji = fill.length > 0 && !!fill[fill.length - 1].code;
+      const used = new Set(fill.map((x) => x.code));
+      const hit = lastWasEmoji ? undefined : cand.map((w) => ({w, e: KEY_EMOJI.find(([re]) => re.test(w.text))})).find((x) => x.e && !used.has(x.e[1]));
+      const pick = hit?.w ?? cand.reduce((b, w) => (Math.abs(w.at - mid) < Math.abs(b.at - mid) ? w : b), cand[0]);
+      fill.push({at: pick.at, code: hit?.e?.[1]}); a0 = pick.at;
+    }
+  }
+  const fillPops = fill.filter((x) => x.code).map((x, j) => ({at: x.at, code: x.code!, x: j % 2 ? 60 : 790, y: 480}));
+  const fillPunch = fill.filter((x) => !x.code).map((x) => x.at);
   return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, push: true,
     musicLevel: rv !== undefined ? (o) => (o >= rv - 450 && o < rv ? 0 : m.level) : undefined,
-    punch: rv !== undefined ? [...(s0.punch ?? []), rv] : s0.punch,
+    punch: [...(s0.punch ?? []), ...fillPunch, ...(rv !== undefined ? [rv] : [])],
     music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},
     box: (o) => <>
+      {/* keep the clip's own story graphics (labels, GOAT reel, burst) underneath — review 2026-11-22 */}
+      {s0.box?.(o)}
       {cuts.map((q, j) => o >= q.at && o < q.at + 1800 + 260 ? <Cutout key={j} o={o} file={q.file} from={q.at} to={q.at + 1800} x={j % 2 ? 620 : 40} h={520} /> : null)}
       {money !== undefined && <Rain o={o} at={money} to={money + 1600} code="1f4b5" n={16} />}
       {pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
+      {fillPops.map((p, j) => <Pop key={`f${j}`} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={190} />)}
       {bubbles.map((b, j) => <Bubble key={j} o={o} at={b.at} to={b.to} s={s0} seat={b.seat} />)}
-      {auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} />)}
+      {auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} y={150} />)}
       {rv !== undefined && o >= rv - RISE && o < rv + 120 && <div style={{position: 'absolute', inset: 0, pointerEvents: 'none',
         background: `radial-gradient(ellipse 70% 60% at 50% 42%, transparent ${45 - 25 * Math.min(1, (o - rv + RISE) / RISE)}%, rgba(0,0,0,${0.85 * Math.min(1, (o - rv + RISE) / RISE)}) 100%)`}} />}
     </>,
-    fx: [...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
+    fx: [...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...fillPops.map((p) => sfx('jorho-pop', p.at, 0.22)), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
       ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...(rv !== undefined ? [sfx('cinematic-suspense-riser', rv, 0.3)] : []), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
   };
   void total;
