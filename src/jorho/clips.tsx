@@ -1776,11 +1776,14 @@ const cutSpec = (s: Spec, keep: [number, number][]): Spec => {
     s.tl.segs.forEach((g, i) => { const so = s.tl.segOut[i], len = g[1] - g[0], lo = Math.max(a, so), hi = Math.min(b, so + len); if (hi > lo) segs.push([g[0] + lo - so, g[0] + hi - so]); }); });
   const tl = timeline(segs);
   const mv = (x: number) => { for (const [a, b, n] of map) if (x >= a && x < b) return n + x - a; return -1; };
+  // every output position of a source moment (a teaser window repeats it later, so events must appear in both)
+  const mvAll = (x: number) => map.filter(([a, b]) => x >= a && x < b).map(([a, , n]) => n + x - a);
   const inv = (x: number) => { for (const [a, b, n] of map) if (x >= n && x < n + b - a) return a + x - n; return keep[keep.length - 1][1]; };
   const ok = (x: number) => x >= 0;
   const shots: Shot[] = map.flatMap(([a, b, n]) => [[n, shotAt(s.shots, a)] as Shot, ...s.shots.filter(([x]) => x > a && x < b).map(([x, w]) => [n + x - a, w] as Shot)]);
-  return {...s, tl, words: s.words.map((w) => ({...w, at: mv(w.at)})).filter((w) => ok(w.at)), shots,
-    strobes: s.strobes.map(mv).filter(ok), tints: s.tints.map(([x, c]) => [mv(x), c] as [number, string]).filter(([x]) => ok(x)), swish: s.swish.map(mv).filter(ok),
+  return {...s, tl, words: s.words.flatMap((w) => mvAll(w.at).map((at) => ({...w, at}))).sort((p, q) => p.at - q.at), shots,
+    strobes: s.strobes.flatMap(mvAll), tints: s.tints.flatMap(([x, c]) => mvAll(x).map((t) => [t, c] as [number, string])), swish: s.swish.flatMap(mvAll),
+    punch: s.punch?.flatMap(mvAll), box: s.box ? (o) => s.box!(inv(o)) : undefined, fx: s.fx?.flatMap((q) => mvAll(q.at).map((at) => ({...q, at}))),
     beeps: s.beeps?.map(mv).filter(ok), capsOff: s.capsOff?.map(([a, b]) => [mv(a), mv(b)] as [number, number]).filter(([a]) => ok(a)),
     wideXAt: s.wideXAt ? (o) => s.wideXAt!(inv(o)) : undefined, faceY: s.faceY ? (o) => s.faceY!(inv(o)) : undefined, cut: undefined};
 };
@@ -1813,13 +1816,20 @@ const Bubble = ({o, at, to, s, seat}: {o: number; at: number; to: number; s: Spe
   </div>;
 };
 
-type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number};
+type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number;
+  // cold open (user data 2026-11-25: the cold-open edit got 1.1K views, the rest < 20): 'payoff' = tease the reveal itself, 'after' = tease the reaction right after it
+  tease?: 'payoff' | 'after'; teaseText?: string; teaseCode?: string; bed?: 1 | 2 | 3 | 4};
 const v36 = (base: Spec, c: V36): Spec => {
-  const s0 = c.keep ? cutSpec(base, c.keep) : base;
-  const total = s0.tl.total, m = v36Music[c.key];
+  const sK = c.keep ? cutSpec(base, c.keep) : base;
+  const rvK = c.reveal ?? sK.strobes[0] ?? sK.tints.find(([, col]) => col === GREEN)?.[0];
+  const tw: [number, number] | undefined = c.tease && rvK !== undefined
+    ? (c.tease === 'payoff' ? [Math.max(0, rvK - 350), Math.min(sK.tl.total, rvK + 1850)] : [Math.min(sK.tl.total - 2300, rvK + 900), Math.min(sK.tl.total, rvK + 3100)]) : undefined;
+  const TL0 = tw ? tw[1] - tw[0] : 0;
+  const s0 = tw ? cutSpec(sK, [tw, [0, sK.tl.total]]) : sK;
+  const total = s0.tl.total, m0 = v36Music[c.key], m = c.bed ? {...m0, bed: c.bed} : m0;
   const greens = s0.tints.filter(([, col]) => col === GREEN).map(([t]) => t), reds = s0.tints.filter(([, col]) => col === RED).map(([t]) => t);
   // the reveal (user 2026-11-22: "when revealing something you must add the riser effect"): first strobe, else first green moment
-  const rv = c.reveal ?? s0.strobes[0] ?? greens[0];
+  const rv = rvK !== undefined ? rvK + TL0 : undefined;
   const RISE = 2600; // tension window before the reveal: riser builds, edges darken, music drops out for the last 450 ms
   // cut-outs of whoever is named (first mention, 1.8 s)
   const cuts: {file: string; at: number}[] = [];
@@ -1868,7 +1878,9 @@ const v36 = (base: Spec, c: V36): Spec => {
     music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},
     box: (o) => <>
       {/* keep the clip's own story graphics (labels, GOAT reel, burst) underneath — review 2026-11-22 */}
-      {s0.box?.(o)}
+      {o >= TL0 && s0.box?.(o)}
+      {TL0 > 0 && Lbig(o, 300, TL0, c.teaseText ?? 'HOW DID WE GET HERE?', c.teaseCode ?? '1f440')}
+      {TL0 > 0 && <Rewind o={o} at={TL0} />}
       {cuts.map((q, j) => o >= q.at && o < q.at + 1800 + 260 ? <Cutout key={j} o={o} file={q.file} from={q.at} to={q.at + 1800} x={j % 2 ? 620 : 40} h={520} /> : null)}
       {money !== undefined && <Rain o={o} at={money} to={money + 1600} code="1f4b5" n={16} />}
       {pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
@@ -1878,7 +1890,7 @@ const v36 = (base: Spec, c: V36): Spec => {
       {rv !== undefined && o >= rv - RISE && o < rv + 120 && <div style={{position: 'absolute', inset: 0, pointerEvents: 'none',
         background: `radial-gradient(ellipse 70% 60% at 50% 42%, transparent ${45 - 25 * Math.min(1, (o - rv + RISE) / RISE)}%, rgba(0,0,0,${0.85 * Math.min(1, (o - rv + RISE) / RISE)}) 100%)`}} />}
     </>,
-    fx: [...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...fillPops.map((p) => sfx('jorho-pop', p.at, 0.22)), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
+    fx: [...(TL0 > 0 ? [sfx('rev-whoosh', TL0 - 900, 0.35), sfx('record-scratch', TL0, 0.3)] : []), ...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...fillPops.map((p) => sfx('jorho-pop', p.at, 0.22)), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
       ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...(rv !== undefined ? [sfx('cinematic-suspense-riser', rv, 0.3)] : []), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
   };
   void total;
@@ -1906,3 +1918,28 @@ export const V36: [string, Spec][] = [
   ['V36Peyton', v36(PA, {key: 'peyton', top: 'A 5x MVP called him about his handwriting'})],
 ];
 export const V36_COMPS: [string, () => JSX.Element, number][] = V36.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);
+
+// ==== v40 (2026-11-25): 2 new edits for each of the 9 unposted Trevor clips. Data: the cold-open edit (EnterC) got 1.1K views,
+// every story-order edit got 5–17. So both edits cold-open: A teases the payoff itself, B the room's reaction right after it.
+const nb = (k: keyof typeof v36Music, d: number) => ((((v36Music[k].bed + d - 1) % 4) + 1) as 1 | 2 | 3 | 4);
+export const V40: [string, Spec][] = [
+  ['V40GoatA', v36(GOAT26, {key: 'goat', top: 'He had 5 seconds to name his NBA GOAT and said THIS', aura: [1000, -1000], tease: 'payoff', teaseText: 'HE REALLY SAID THIS…', teaseCode: '1f480', bed: nb('goat', 1)})],
+  ['V40GoatB', v36(GOAT26, {key: 'goat', top: 'Nobody at the table saw this NBA GOAT pick coming', aura: [1000, -1000], tease: 'after', teaseText: 'WHY IS EVERYONE LAUGHING?', teaseCode: '1f602', bed: nb('goat', 2)})],
+  ['V40PeytonA', v36(PA, {key: 'peyton', top: 'Imagine Peyton Manning calling you about THIS', tease: 'payoff', teaseText: 'WHO CALLED HIM?', teaseCode: '1f4de', bed: nb('peyton', 1)})],
+  ['V40PeytonB', v36(PA, {key: 'peyton', top: 'The text an NFL legend sends him every season', tease: 'after', teaseText: 'WAIT… THEY TEXT?', teaseCode: '1f4f1', bed: nb('peyton', 2)})],
+  ['V40AntA', v36(T1A, {key: 'ant', top: 'This QB autograph is so small it looks like an ANT', keep: [[2380, 9350], [10180, 22640]], tease: 'payoff', teaseText: 'AN ANT?!', teaseCode: '1f41c', bed: nb('ant', 1)})],
+  ['V40AntB', v36(T1A, {key: 'ant', top: 'The autograph advice that came from a 5x MVP', keep: [[2380, 9350], [10180, 22640]], tease: 'after', teaseText: 'WHO TOLD HIM THAT?', teaseCode: '1f914', bed: nb('ant', 2)})],
+  ['V40FansA', v36(TTA, {key: 'fans', top: 'He found the fans who dress like him… on his For You page', tease: 'payoff', teaseText: 'HIS FIRST THOUGHT…', teaseCode: '1f480', bed: nb('fans', 1)})],
+  ['V40FansB', v36(TTA, {key: 'fans', top: 'His honest review of the fans who copy his hair', tease: 'after', teaseText: 'HE CHANGED HIS MIND?', teaseCode: '1f602', bed: nb('fans', 2)})],
+  ['V40TicketA', v36(G7A, {key: 'ticket', top: 'They gifted an NFL QB a ticket… signed by HIM', keep: [[0, 2150], [5300, 21000]], tease: 'payoff', teaseText: "WAIT… IT'S HIS OWN?", teaseCode: '1f39f', bed: nb('ticket', 1)})],
+  ['V40TicketB', v36(G7A, {key: 'ticket', top: "The one ticket he never kept from his title game", keep: [[0, 2150], [5300, 21000]], tease: 'after', teaseText: 'LOOK AT HIS FACE', teaseCode: '1f979', bed: nb('ticket', 2)})],
+  ['V40SlabA', v36(TIGER32, {key: 'slab', top: "Tiger Woods' real shirt is inside this card", money: true, tease: 'payoff', teaseText: "THAT'S TIGER'S SHIRT?!", teaseCode: '1f455', bed: nb('slab', 1)})],
+  ['V40SlabB', v36(TIGER32, {key: 'slab', top: 'He kept this card 4 years… then gave it away', money: true, tease: 'after', teaseText: 'WHO IS IT FOR?', teaseCode: '1f381', bed: nb('slab', 2)})],
+  ['V40NtA', v36(NTA, {key: 'nt', top: 'The card everyone chases… now worth almost nothing', money: true, aura: [1000, -19500], bubbles: false, tease: 'payoff', teaseText: 'WHOSE CARD IS IT?', teaseCode: '1f440', bed: nb('nt', 1)})],
+  ['V40NtB', v36(NTA, {key: 'nt', top: '$20,000 in 2021. Guess the price now', money: true, aura: [1000, -19500], bubbles: false, tease: 'after', teaseText: 'WAIT FOR THE PRICE…', teaseCode: '1f4c9', bed: nb('nt', 2)})],
+  ['V40PacksA', v36(PACK32, {key: 'packs', top: 'They pitched an NFL QB a pack of ONLY his cards', tease: 'payoff', teaseText: 'EVERY CARD IS… HIM?', teaseCode: '1f0cf', bed: nb('packs', 1)})],
+  ['V40PacksB', v36(PACK32, {key: 'packs', top: 'His reaction to a pack with only his face in it', tease: 'after', teaseText: 'HIS FACE SAYS IT ALL', teaseCode: '1f62c', bed: nb('packs', 2)})],
+  ['V40PlaybookA', v36(PB10, {key: 'pb', top: 'An NFL QB learns this many new plays EVERY week', keep: [[0, 11350], [17450, 23500]], reveal: 15100, tease: 'payoff', teaseText: 'EVERY. SINGLE. WEEK.', teaseCode: '1f4cb', bed: nb('pb', 1)})],
+  ['V40PlaybookB', v36(PB10, {key: 'pb', top: 'Could you learn an NFL playbook in one week?', keep: [[0, 11350], [17450, 23500]], reveal: 15100, tease: 'after', teaseText: 'HOW MANY PLAYS?!', teaseCode: '1f92f', bed: nb('pb', 2)})],
+];
+export const V40_COMPS: [string, () => JSX.Element, number][] = V40.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);

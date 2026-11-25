@@ -22,3 +22,6 @@ Jorho frame (black, box 417–1494, blurred box-opening intro), top line sentenc
 3. Reaction bubble → **one**, at the reveal.
 4. Regression found: the v36 layer had replaced each clip's own story graphics (GOAT slot reel + silence timer, CARD VALUE / REDEEM / PSA 10 explainer labels, Playbook flat diagram) → restored underneath (`s0.box`), AURA moved to y 150 so it doesn't cover the labels.
 5. Missing emoji PNGs (1f4cb, 1f92a) made stills fail → downloaded; checked every referenced emoji exists.
+
+## v40 follow-up (2026-11-25)
+User's channel data: the cold-open "enter" edit got 1.1K views vs 5–17 for the rest. So the 9 unposted topics (goat, peyton, ant, fans, ticket, slab, nt, packs, playbook) were re-edited as `V40_COMPS`: every edit opens on a teaser then ◀◀ rewind (rev-whoosh + record-scratch). A = teaser of the payoff, B = teaser of the reaction after it. `cutSpec` now remaps story graphics (`box`) through keep-cuts. All 18 mastered to −14 LUFS, 17–22 s.
