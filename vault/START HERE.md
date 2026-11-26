@@ -119,3 +119,11 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
 - **Top captions must be creative and NOT about Trevor (2026-11-01).** Write it like a meme about the topic or the player ("This man is better than MJ and LeBron combined", "Real ball knowledge is knowing who the GOAT is"), never "Trevor's NBA GOAT". Every clip gets a new one.
 - **Keep usage low (2026-11-01):** batch similar clips in one file, check ONE stills grid per batch, render in one queue, no re-checks unless something is clearly broken.
 - Campaign rule: Shorts must be 15 s+ (aim 16+). Never ship under 15 s.
+
+### Edit upgrades (2026-11-26, user) — apply to ALL edits from now on
+- **Meme pop-ups:** use well-known current memes as pop-ups (search for them). Every meme pop-up gets its matching meme sound, synced exactly to when it appears.
+- **No "scientific" overlays:** no percentages, stats, timers or numbers like "2.7s of silence".
+- **No rectangle label chips** in the top-right of the video box (they look boring and AI-made). Keep on-screen text to the top line + captions + memes.
+- **Colour flashes with SFX:** green flash → `cha-ching.mp3` or `ding-2.mp3`; red flash → `error.mp3`, `fahhh.mp3`/`meme-fahh.mp3`, or a shocked SFX. Never a flash without its sound.
+- **Less AI-looking** overall: fewer generic graphics, more human-style meme editing.
+- **Next:** the user will send 1–2 reference videos, then re-edit ALL the Trevor clips with these rules + the reference style.
