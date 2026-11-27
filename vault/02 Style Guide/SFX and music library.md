@@ -97,3 +97,8 @@ User: "fix … the timing of the beats when revealing the cards". Measured with 
 | funk-sigilo.mp3 | 36.936 | 660 | |
 | funk-abnormal.mp3 | 43.663 | 348 | |
 Re-measure any other song the same way before using it (drop = biggest energy jump, then snap to the first beat).
+
+## Meme pop-ups (v41, 2026-11-27)
+Images in `public/memes/` (imgflip templates, cropped). Each meme always plays its own sound, synced via measured attack in `PEAK` (src/e3/kit.tsx):
+rock→vine-boom · huh→huh-cat (attack 1380 ms!) · spongesad→spongebob-boowomp · bonk→meme-bonk · hamster/pablo→meme-violin (1140 ms) · cryingcat→meme-trombone · cinema→meme-orch · leocheers→meme-tada · leolaugh→sitcom-laugh (myinstants, 1320 ms) · harold→crickets · megamind→meme-dundun · monkeypuppet→taco-bell-bong · rollsafe→jeopardy-think · shocked→anime-wow · surprisedpikachu→meme-impact · chillguy→rizz-sound-effect.
+Flashes: green → cha-ching / ding-2, red → error / meme-fahh / gasp (myinstants). Note: `fahhh.mp3` has a 2.4 s silent lead-in, use `meme-fahh`.

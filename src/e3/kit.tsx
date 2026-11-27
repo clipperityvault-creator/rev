@@ -171,8 +171,11 @@ export const Captions = ({o, caps, off = [], top = 1560, style, keyColor = '#FFD
 export const PEAK: Record<string, number> = {
   'fast-whoosh': 550, 'mg-whoosh': 780, 'mg-swoosh': 0, 'mg-swoosh2': 0, 'mg-click': 300, 'mg-boom': 290, '808-boom': 120,
   'ding-2': 200, 'ding': 100, 'mg-shimmer': 700, 'camera-shutter': 30, 'pen-scribble': 0, 'phone-buzz': 0, 'keyboard-typing': 0,
-  'cha-ching': 100, 'crowd-cheer': 300, 'record-scratch': 50, 'anime-wow': 200, 'huh-cat': 100, 'error': 50, 'rizz-sound-effect': 100,
+  'cha-ching': 100, 'crowd-cheer': 300, 'record-scratch': 50, 'anime-wow': 200, 'huh-cat': 1380, 'error': 50, 'rizz-sound-effect': 100,
   'whoosh': 300, 'taco-bell-bong': 50, 'crickets': 0, 'air-horn': 50, 'spongebob-boowomp': 50, 'cinematic-suspense-riser': 6390,
+  // measured attacks (2026-11-27) so meme sounds land on the frame the meme pops
+  'meme-violin': 1140, 'sitcom-laugh': 1320, 'gasp': 120, 'meme-impact': 50, 'vine-boom': 86, 'meme-trombone': 120, 'meme-dundun': 36,
+  'jeopardy-think': 150, 'meme-fahh': 28, 'meme-orch': 7, 'meme-tada': 8, 'meme-bonk': 0, 'oh-hell-nah': 20,
 };
 export type Sfx = {file: string; at: number; vol: number; maxMs?: number};
 export const sfx = (file: string, at: number, vol: number, maxMs?: number): Sfx => ({file, at, vol, maxMs});

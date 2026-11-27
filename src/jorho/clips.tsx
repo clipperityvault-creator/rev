@@ -1769,6 +1769,35 @@ import {Sequence} from 'remotion';
 import {f} from '../e3/kit';
 import v36Music from './v36_music.json';
 
+type Meme = {img: string; sfx: string; vol: number; ms: number};
+// meme → its own sound (iconic pairs where one exists). Images: imgflip templates in public/memes, sounds: myinstants
+const MEMES: Record<string, Meme> = {
+  rock: {img: 'rock.jpg', sfx: 'vine-boom', vol: 0.32, ms: 1300}, huh: {img: 'huh.jpg', sfx: 'huh-cat', vol: 0.4, ms: 1500},
+  sponge: {img: 'spongesad.jpg', sfx: 'spongebob-boowomp', vol: 0.4, ms: 1300}, bonk: {img: 'bonk.jpg', sfx: 'meme-bonk', vol: 0.4, ms: 1000},
+  hamster: {img: 'hamster.jpg', sfx: 'meme-violin', vol: 0.3, ms: 1700}, cryingcat: {img: 'cryingcat.jpg', sfx: 'meme-trombone', vol: 0.3, ms: 1600},
+  cinema: {img: 'cinema.jpg', sfx: 'meme-orch', vol: 0.35, ms: 1300}, leocheers: {img: 'leocheers.jpg', sfx: 'meme-tada', vol: 0.3, ms: 1400},
+  leolaugh: {img: 'leolaugh.jpg', sfx: 'sitcom-laugh', vol: 0.3, ms: 1600}, harold: {img: 'harold.jpg', sfx: 'crickets', vol: 0.35, ms: 1600},
+  megamind: {img: 'megamind.jpg', sfx: 'meme-dundun', vol: 0.35, ms: 1300}, monkey: {img: 'monkeypuppet.jpg', sfx: 'taco-bell-bong', vol: 0.3, ms: 1300},
+  pablo: {img: 'pablo.jpg', sfx: 'meme-violin', vol: 0.3, ms: 1700}, rollsafe: {img: 'rollsafe.jpg', sfx: 'jeopardy-think', vol: 0.3, ms: 1500},
+  shocked: {img: 'shocked.jpg', sfx: 'anime-wow', vol: 0.32, ms: 1400}, pikachu: {img: 'surprisedpikachu.jpg', sfx: 'meme-impact', vol: 0.35, ms: 1300},
+  chill: {img: 'chillguy.jpg', sfx: 'rizz-sound-effect', vol: 0.3, ms: 1400},
+};
+const MEME_WORDS: [RegExp, string[]][] = [
+  [/^(think|guess|know|maybe|idea|thought|probably|figure)/i, ['rollsafe', 'megamind']], [/(laugh|funny|haha|joke|lol|hilarious)/i, ['leolaugh']],
+  [/^(weird|whacked|crazy|what|huh|why|wild|strange)/i, ['huh', 'monkey']], [/^(no|nah|never|bad|hate|dislike|worst|ew|nothing|wrong)\b/i, ['sponge', 'cryingcat', 'harold']],
+  [/(\$|money|thousand|bucks|expensive|worth|price|rich)/i, ['leocheers', 'pablo']], [/^(wait|waiting|years?|weeks?|forever|long|still|kept)\b/i, ['pablo', 'hamster']],
+  [/^(insane|incredible|amazing|awesome|greatest|goat|best|legend|unbelievable)/i, ['cinema', 'shocked']], [/^(cool|nice|smooth|chill|easy|love)/i, ['chill', 'rock']],
+  [/^(hit|smack|slap|fight|box|punch)/i, ['bonk']],
+];
+const MemePop = ({o, at, to, file, left}: {o: number; at: number; to: number; file: string; left: boolean}) => {
+  if (o < at || o >= to + 160) return null;
+  const p = pop(o, at), out = o > to ? 1 - (o - to) / 160 : 1, W = 400;
+  return <div style={{position: 'absolute', top: 470, [left ? 'left' : 'right']: 40, width: W, transform: `scale(${p * out}) rotate(${left ? -4 : 4}deg)`, transformOrigin: left ? '0 0' : '100% 0',
+    border: '7px solid #fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 12px 28px rgba(0,0,0,.6)', background: '#000', lineHeight: 0}}>
+    <Img src={staticFile(`memes/${file}`)} style={{width: '100%', height: 'auto', display: 'block'}} />
+  </div>;
+};
+
 // keep only some output windows of a spec (whole sentences), remapping every timed field
 const cutSpec = (s: Spec, keep: [number, number][]): Spec => {
   const segs: TSeg[] = []; const map: [number, number, number][] = []; let t = 0;
@@ -1818,7 +1847,9 @@ const Bubble = ({o, at, to, s, seat}: {o: number; at: number; to: number; s: Spe
 
 type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number;
   // cold open (user data 2026-11-25: the cold-open edit got 1.1K views, the rest < 20): 'payoff' = tease the reveal itself, 'after' = tease the reaction right after it
-  tease?: 'payoff' | 'after'; teaseText?: string; teaseCode?: string; bed?: 1 | 2 | 3 | 4};
+  tease?: 'payoff' | 'after'; teaseText?: string; teaseCode?: string; bed?: 1 | 2 | 3 | 4;
+  // v41 (user 2026-11-26): no label chips/stats/aura/bubble, meme pop-ups with their own synced sound, every flash has a sound
+  clean?: boolean; memeSeed?: number; memeFirst?: string};
 const v36 = (base: Spec, c: V36): Spec => {
   const sK = c.keep ? cutSpec(base, c.keep) : base;
   const rvK = c.reveal ?? sK.strobes[0] ?? sK.tints.find(([, col]) => col === GREEN)?.[0];
@@ -1870,6 +1901,33 @@ const v36 = (base: Spec, c: V36): Spec => {
       fill.push({at: pick.at, code: hit?.e?.[1]}); a0 = pick.at;
     }
   }
+  // v41 memes: one reaction meme after the reveal, then keyword-picked memes in the quiet gaps (never near a flash,
+  // never inside the riser build, never the same meme twice in a video)
+  const memes: {at: number; m: Meme; left: boolean}[] = [];
+  if (c.clean) {
+    const busy = [...s0.tints.map(([t]) => t), ...s0.strobes, ...cuts.map((q) => q.at)];
+    const free = (t: number, ms: number) => t > TL0 + 500 && t + ms < total - 300 && busy.every((b) => Math.abs(b - t) > 1100) &&
+      (rv === undefined || !(t > rv - RISE - 300 && t < rv + 700)) && memes.every((q) => Math.abs(q.at - t) > 2600);
+    const used = new Set<string>();
+    const take = (k: string, t: number) => { const m = MEMES[k]; if (!m || used.has(k) || !free(t, m.ms)) return false; used.add(k); memes.push({at: t, m, left: memes.length % 2 === 0}); return true; };
+    const seed = c.memeSeed ?? 0, rot = (a: string[]) => a.map((_, j) => a[(j + seed) % a.length]);
+    if (rv !== undefined) { const first = c.memeFirst ? [c.memeFirst] : rot(['shocked', 'pikachu', 'cinema', 'rock']); for (const k of first) if ([900, 1300, 1700, 2100].some((d) => take(k, rv + d))) break; }
+    for (const w of s0.words) {
+      if (memes.length >= 5) break;
+      const hit = MEME_WORDS.find(([re]) => re.test(w.text));
+      if (hit) for (const k of rot(hit[1])) if (take(k, w.at)) break;
+    }
+    // still a dead stretch > 3.2 s? drop a general reaction meme in the middle of it
+    for (let pass = 0; pass < 4 && memes.length < 5; pass++) {
+      const ev = [TL0, ...busy, ...memes.map((q) => q.at), total].sort((a, b) => a - b);
+      for (let j = 0; j < ev.length - 1 && memes.length < 5; j++) if (ev[j + 1] - ev[j] > 2700) {
+        const mid = (ev[j] + ev[j + 1]) / 2;
+        const ws = s0.words.filter((x) => x.at > ev[j] + 1150 && x.at < ev[j + 1] - 1150).sort((p, q) => Math.abs(p.at - mid) - Math.abs(q.at - mid));
+        wl: for (const w of ws) for (const k of rot(['monkey', 'rock', 'megamind', 'harold', 'leolaugh', 'huh', 'chill', 'pikachu'])) if (take(k, w.at)) break wl;
+      }
+    }
+    memes.sort((a, b) => a.at - b.at); memes.forEach((q, j) => { q.left = j % 2 === 0; });
+  }
   const fillPops = fill.filter((x) => x.code).map((x, j) => ({at: x.at, code: x.code!, x: j % 2 ? 60 : 790, y: 480}));
   const fillPunch = fill.filter((x) => !x.code).map((x) => x.at);
   return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, push: true,
@@ -1878,19 +1936,26 @@ const v36 = (base: Spec, c: V36): Spec => {
     music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},
     box: (o) => <>
       {/* keep the clip's own story graphics (labels, GOAT reel, burst) underneath — review 2026-11-22 */}
-      {o >= TL0 && s0.box?.(o)}
-      {TL0 > 0 && Lbig(o, 300, TL0, c.teaseText ?? 'HOW DID WE GET HERE?', c.teaseCode ?? '1f440')}
+      {!c.clean && o >= TL0 && s0.box?.(o)}
+      {!c.clean && TL0 > 0 && Lbig(o, 300, TL0, c.teaseText ?? 'HOW DID WE GET HERE?', c.teaseCode ?? '1f440')}
       {TL0 > 0 && <Rewind o={o} at={TL0} />}
       {cuts.map((q, j) => o >= q.at && o < q.at + 1800 + 260 ? <Cutout key={j} o={o} file={q.file} from={q.at} to={q.at + 1800} x={j % 2 ? 620 : 40} h={520} /> : null)}
       {money !== undefined && <Rain o={o} at={money} to={money + 1600} code="1f4b5" n={16} />}
-      {pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
-      {fillPops.map((p, j) => <Pop key={`f${j}`} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={190} />)}
-      {bubbles.map((b, j) => <Bubble key={j} o={o} at={b.at} to={b.to} s={s0} seat={b.seat} />)}
-      {auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} y={150} />)}
+      {!c.clean && pops.map((p, j) => <Pop key={j} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={150} />)}
+      {!c.clean && fillPops.map((p, j) => <Pop key={`f${j}`} o={o} at={p.at} to={p.at + 1100} code={p.code} x={p.x} y={p.y} size={190} />)}
+      {!c.clean && bubbles.map((b, j) => <Bubble key={j} o={o} at={b.at} to={b.to} s={s0} seat={b.seat} />)}
+      {!c.clean && auras.map((a, j) => <Aura key={j} o={o} at={a.at} v={a.v} y={150} />)}
+      {c.clean && memes.map((q, j) => <MemePop key={`m${j}`} o={o} at={q.at} to={q.at + q.m.ms} file={q.m.img} left={q.left} />)}
       {rv !== undefined && o >= rv - RISE && o < rv + 120 && <div style={{position: 'absolute', inset: 0, pointerEvents: 'none',
         background: `radial-gradient(ellipse 70% 60% at 50% 42%, transparent ${45 - 25 * Math.min(1, (o - rv + RISE) / RISE)}%, rgba(0,0,0,${0.85 * Math.min(1, (o - rv + RISE) / RISE)}) 100%)`}} />}
     </>,
-    fx: [...(TL0 > 0 ? [sfx('rev-whoosh', TL0 - 900, 0.35), sfx('record-scratch', TL0, 0.3)] : []), ...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...fillPops.map((p) => sfx('jorho-pop', p.at, 0.22)), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
+    fx: c.clean ? [...(TL0 > 0 ? [sfx('rev-whoosh', TL0 - 900, 0.35), sfx('record-scratch', TL0, 0.3)] : []), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)),
+      // every flash has its sound: green → cha-ching / ding, red → error / fahh / gasp
+      ...greens.map((t, j) => (j % 2 ? sfx('ding-2', t, 0.32, 1400) : sfx('cha-ching', t, 0.3, 1500))),
+      ...reds.map((t, j) => [sfx('error', t, 0.32), sfx('meme-fahh', t, 0.3, 1400), sfx('gasp', t, 0.35)][j % 3]),
+      ...memes.map((q) => sfx(q.m.sfx, q.at, q.m.vol, q.m.ms + 200)),
+      ...(rv !== undefined ? [sfx('cinematic-suspense-riser', rv, 0.3)] : []), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35))] :
+      [...(TL0 > 0 ? [sfx('rev-whoosh', TL0 - 900, 0.35), sfx('record-scratch', TL0, 0.3)] : []), ...pops.map((p) => sfx('jorho-pop', p.at, 0.28)), ...fillPops.map((p) => sfx('jorho-pop', p.at, 0.22)), ...fillPunch.map((t) => sfx('fast-whoosh', t, 0.12)), ...auras.map((a) => (a.v > 0 ? sfx('rizz-sound-effect', a.at, 0.3, 1500) : sfx('meme-trombone', a.at, 0.3, 1100))),
       ...bubbles.map((b) => sfx('camera-shutter', b.at, 0.25)), ...(rv !== undefined ? [sfx('cinematic-suspense-riser', rv, 0.3)] : []), ...cuts.map((q) => sfx('jorho-swish', q.at, 0.35)), ...(money !== undefined ? [sfx('cha-ching', money + 200, 0.3)] : [])],
   };
   void total;
@@ -1943,3 +2008,29 @@ export const V40: [string, Spec][] = [
   ['V40PlaybookB', v36(PB10, {key: 'pb', top: 'Could you learn an NFL playbook in one week?', keep: [[0, 11350], [17450, 23500]], reveal: 15100, tease: 'after', teaseText: 'HOW MANY PLAYS?!', teaseCode: '1f92f', bed: nb('pb', 2)})],
 ];
 export const V40_COMPS: [string, () => JSX.Element, number][] = V40.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);
+
+// ==== v41 (2026-11-27): all 19 Trevor clips re-edited with the user's 2026-11-26 rules — meme pop-ups with their own synced
+// sound, no label chips / stats / aura / reaction bubble, every red/green flash has its sound, cold open on the payoff.
+const v41 = (base: Spec, c: V36, seed: number, first: string) => v36(base, {...c, clean: true, tease: 'payoff', memeSeed: seed, memeFirst: first});
+export const V41: [string, Spec][] = [
+  ['V41Playbook', v41(PB10, {key: 'pb', top: 'NFL QBs have to memorize THIS every single week', keep: [[0, 11350], [17450, 23500]], reveal: 15100}, 0, 'pikachu')],
+  ['V41Goat', v41(GOAT26, {key: 'goat', top: 'He picked an NBA GOAT nobody saw coming'}, 1, 'shocked')],
+  ['V41Presnap', v41(PSA, {key: 'presnap', top: 'Even NFL QBs get fooled before the snap'}, 2, 'megamind')],
+  ['V41Ant', v41(T1A, {key: 'ant', top: 'His autograph got roasted for looking like an ant', keep: [[2380, 9350], [10180, 22640]]}, 3, 'leolaugh')],
+  ['V41Golf', v41(GA, {key: 'golf', top: 'His dream golf group is actually insane', reveal: KGF.tiger}, 4, 'cinema')],
+  ['V41Fans', v41(TTA, {key: 'fans', top: 'He saw the guys who dress up as him… and said THIS'}, 5, 'huh')],
+  ['V41Coen', v41(CNA, {key: 'coen', top: 'The coach who changed everything for him', reveal: CK.definitely}, 6, 'rock')],
+  ['V41Ticket', v41(G7A, {key: 'ticket', top: 'They handed him a ticket he signed himself', keep: [[0, 2150], [5300, 21000]]}, 7, 'pikachu')],
+  ['V41Slab', v41(TIGER32, {key: 'slab', top: 'This card has a piece of Tiger Woods inside', money: true}, 8, 'shocked')],
+  ['V41Josh', v41(J5A, {key: 'josh', top: 'He pulled Josh Allen… just not THAT Josh Allen'}, 9, 'huh')],
+  ['V41Neck', v41(N6A, {key: 'neck', top: 'Nobody expected a neck roast in the middle of a stream'}, 10, 'leolaugh')],
+  ['V41Lair', v41(LRA, {key: 'lair', top: 'The one team you never mention around him'}, 11, 'monkey')],
+  ['V41Rogers', v41(RGA, {key: 'rogers', top: 'These two superfans need to settle it in the ring'}, 12, 'bonk')],
+  ['V41Celly', v41(CYA, {key: 'celly', top: 'The card collector celebration he actually liked', keep: [[0, 7000], [8450, 21150]], reveal: KC7.t1 - 1450}, 13, 'rock')],
+  ['V41Packs', v41(PACK32, {key: 'packs', top: 'Would you buy a pack of only Trevor cards?'}, 14, 'megamind')],
+  ['V41Nt', v41(NTA, {key: 'nt', top: 'Watch this card lose almost all its value', money: true}, 15, 'cryingcat')],
+  ['V41Enter', v41(ENA, {key: 'enter', top: 'The welcome every NFL QB deserves'}, 16, 'cinema')],
+  ['V41Redeem', v41(RDA, {key: 'redeem', top: "The card fan problem he didn't know about", money: true}, 17, 'sponge')],
+  ['V41Peyton', v41(PA, {key: 'peyton', top: 'Peyton Manning has notes on his autograph'}, 18, 'shocked')],
+];
+export const V41_COMPS: [string, () => JSX.Element, number][] = V41.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);
