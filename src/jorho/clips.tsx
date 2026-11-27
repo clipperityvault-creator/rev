@@ -1782,6 +1782,8 @@ const MEMES: Record<string, Meme> = {
   shocked: {img: 'shocked.jpg', sfx: 'anime-wow', vol: 0.32, ms: 1400}, pikachu: {img: 'surprisedpikachu.jpg', sfx: 'meme-impact', vol: 0.35, ms: 1300},
   chill: {img: 'chillguy.jpg', sfx: 'rizz-sound-effect', vol: 0.3, ms: 1400},
 };
+// how often each meme is used across the batch, so the gap fillers spread out instead of repeating the same photos
+const MEME_USE: Record<string, number> = {};
 const MEME_WORDS: [RegExp, string[]][] = [
   [/^(think|guess|know|maybe|idea|thought|probably|figure)/i, ['rollsafe', 'megamind']], [/(laugh|funny|haha|joke|lol|hilarious)/i, ['leolaugh']],
   [/^(weird|whacked|crazy|what|huh|why|wild|strange)/i, ['huh', 'monkey']], [/^(no|nah|never|bad|hate|dislike|worst|ew|nothing|wrong)\b/i, ['sponge', 'cryingcat', 'harold']],
@@ -1864,7 +1866,8 @@ const v36 = (base: Spec, c: V36): Spec => {
   const RISE = 2600; // tension window before the reveal: riser builds, edges darken, music drops out for the last 450 ms
   // cut-outs of whoever is named (first mention, 1.8 s)
   const cuts: {file: string; at: number}[] = [];
-  NAMES.forEach(([re, file]) => { const w = s0.words.find((x) => re.test(x.text)); if (w && !cuts.some((q) => q.file === file)) cuts.push({file, at: w.at}); });
+  // v41 (user 2026-11-27): no photo stickers of the people being talked about at all
+  if (!c.clean) NAMES.forEach(([re, file]) => { const w = s0.words.find((x) => re.test(x.text)); if (w && !cuts.some((q) => q.file === file)) cuts.push({file, at: w.at}); });
   cuts.sort((a, b) => a.at - b.at);
   // emoji pops on every tint, alternating sides; aura on the first win / first fail
   const pops = s0.tints.slice(0, 5).map(([t, col], j) => ({at: t, code: col === RED ? ['1f480', '1f62d', '1f62c'][j % 3] : ['1f525', '1f4af', '1f92f'][j % 3], x: j % 2 ? 790 : 70, y: 470}));
@@ -1909,7 +1912,7 @@ const v36 = (base: Spec, c: V36): Spec => {
     const free = (t: number, ms: number) => t > TL0 + 500 && t + ms < total - 300 && busy.every((b) => Math.abs(b - t) > 1100) &&
       (rv === undefined || !(t > rv - RISE - 300 && t < rv + 700)) && memes.every((q) => Math.abs(q.at - t) > 2600);
     const used = new Set<string>();
-    const take = (k: string, t: number) => { const m = MEMES[k]; if (!m || used.has(k) || !free(t, m.ms)) return false; used.add(k); memes.push({at: t, m, left: memes.length % 2 === 0}); return true; };
+    const take = (k: string, t: number) => { const m = MEMES[k]; if (!m || used.has(k) || !free(t, m.ms)) return false; used.add(k); MEME_USE[k] = (MEME_USE[k] ?? 0) + 1; memes.push({at: t, m, left: memes.length % 2 === 0}); return true; };
     const seed = c.memeSeed ?? 0, rot = (a: string[]) => a.map((_, j) => a[(j + seed) % a.length]);
     if (rv !== undefined) { const first = c.memeFirst ? [c.memeFirst] : rot(['shocked', 'pikachu', 'cinema', 'rock']); for (const k of first) if ([900, 1300, 1700, 2100].some((d) => take(k, rv + d))) break; }
     for (const w of s0.words) {
@@ -1923,7 +1926,7 @@ const v36 = (base: Spec, c: V36): Spec => {
       for (let j = 0; j < ev.length - 1 && memes.length < 5; j++) if (ev[j + 1] - ev[j] > 2700) {
         const mid = (ev[j] + ev[j + 1]) / 2;
         const ws = s0.words.filter((x) => x.at > ev[j] + 1150 && x.at < ev[j + 1] - 1150).sort((p, q) => Math.abs(p.at - mid) - Math.abs(q.at - mid));
-        wl: for (const w of ws) for (const k of rot(['monkey', 'rock', 'megamind', 'harold', 'leolaugh', 'huh', 'chill', 'pikachu'])) if (take(k, w.at)) break wl;
+        wl: for (const w of ws) for (const k of Object.keys(MEMES).sort((p, q) => (MEME_USE[p] ?? 0) - (MEME_USE[q] ?? 0))) if (take(k, w.at)) break wl;
       }
     }
     memes.sort((a, b) => a.at - b.at); memes.forEach((q, j) => { q.left = j % 2 === 0; });
