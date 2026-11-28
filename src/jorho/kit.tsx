@@ -29,7 +29,7 @@ export const introFilter = (o: number) => {
   const bright = interpolate(f, [0, 4, 10, 18], [1.9, 1.45, 1.15, 1], clamp);
   return `blur(${blur}px) brightness(${bright}) contrast(${2 - bright * 0.9 > 0.6 ? 2 - bright * 0.9 : 0.6})`;
 };
-export const Frame = ({o, top, children, over, noIntro}: {o: number; top: string; children: ReactNode; over?: ReactNode; noIntro?: boolean}) => {
+export const Frame = ({o, top, children, over, noIntro, emoji = '1f480'}: {o: number; top: string; children: ReactNode; over?: ReactNode; noIntro?: boolean; emoji?: string}) => {
   const f = noIntro ? 999 : fr(o);
   const t = interpolate(f, INTRO_F, INTRO_TOP, clamp);
   const b = interpolate(f, INTRO_F, INTRO_BOT, clamp);
@@ -40,7 +40,7 @@ export const Frame = ({o, top, children, over, noIntro}: {o: number; top: string
     </div>
     <div style={{position: 'absolute', left: 0, width: W, bottom: 1920 - t + 3, display: 'flex', justifyContent: 'center'}}>
       <div style={{fontFamily: MONT, fontWeight: 700, fontSize: 58, lineHeight: '65px', color: 'white', textAlign: 'center', maxWidth: 900}}>
-        {top}<Img src={staticFile('emoji-ios/1f480.png')} style={{width: 50, height: 50, verticalAlign: '-6px', marginLeft: 4}} />
+        {top}<Img src={staticFile(`emoji-ios/${emoji}.png`)} style={{width: 50, height: 50, verticalAlign: '-6px', marginLeft: 4}} />
       </div>
     </div>
     {over}

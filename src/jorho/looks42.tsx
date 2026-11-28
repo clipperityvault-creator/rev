@@ -336,7 +336,7 @@ const LOOKS: Look[] = [
 ];
 
 // new titles (unique — logged in vault/04 Projects/Titles used.md)
-const TOP42: Record<string, [string, string]> = {
+export const TOP42: Record<string, [string, string]> = {
   // user 2026-11-28: titles name what actually happens in the clip (names, numbers, the joke), short and hooky like BBreaks_Grail
   V41Playbook: ['8 to 10 NEW plays every single week??', '1f480'], V41Goat: ['He really picked Dellavedova over MJ', '1f62d'],
   V41Presnap: ['Even Trevor gets fooled before the snap', '1f480'], V41Ant: ['Bro said his signature looks like an ant', '1f62d'],

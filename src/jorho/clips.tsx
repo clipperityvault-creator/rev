@@ -1848,12 +1848,12 @@ const Bubble = ({o, at, to, s, seat}: {o: number; at: number; to: number; s: Spe
   </div>;
 };
 
-type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number;
+export type V36 = {key: keyof typeof v36Music; top: string; keep?: [number, number][]; money?: boolean; bubbles?: boolean; aura?: [number, number]; reveal?: number;
   // cold open (user data 2026-11-25: the cold-open edit got 1.1K views, the rest < 20): 'payoff' = tease the reveal itself, 'after' = tease the reaction right after it
   tease?: 'payoff' | 'after'; teaseText?: string; teaseCode?: string; bed?: 1 | 2 | 3 | 4;
   // v41 (user 2026-11-26): no label chips/stats/aura/bubble, meme pop-ups with their own synced sound, every flash has a sound
   clean?: boolean; memeSeed?: number; memeFirst?: string};
-const v36 = (base: Spec, c: V36): Spec => {
+export const v36 = (base: Spec, c: V36): Spec => {
   const sK = c.keep ? cutSpec(base, c.keep) : base;
   const rvK = c.reveal ?? sK.strobes[0] ?? sK.tints.find(([, col]) => col === GREEN)?.[0];
   const tw: [number, number] | undefined = c.tease && rvK !== undefined
@@ -2017,25 +2017,27 @@ export const V40_COMPS: [string, () => JSX.Element, number][] = V40.map(([id, sp
 // ==== v41 (2026-11-27): all 19 Trevor clips re-edited with the user's 2026-11-26 rules — meme pop-ups with their own synced
 // sound, no label chips / stats / aura / reaction bubble, every red/green flash has its sound, cold open on the payoff.
 const v41 = (base: Spec, c: V36, seed: number, first: string) => v36(base, {...c, clean: true, tease: 'payoff', memeSeed: seed, memeFirst: first});
-export const V41: [string, Spec][] = [
-  ['V41Playbook', v41(PB10, {key: 'pb', top: 'NFL QBs have to memorize THIS every single week', keep: [[0, 11350], [17450, 23500]], reveal: 15100}, 0, 'pikachu')],
-  ['V41Goat', v41(GOAT26, {key: 'goat', top: 'He picked an NBA GOAT nobody saw coming'}, 1, 'shocked')],
-  ['V41Presnap', v41(PSA, {key: 'presnap', top: 'Even NFL QBs get fooled before the snap'}, 2, 'megamind')],
-  ['V41Ant', v41(T1A, {key: 'ant', top: 'His autograph got roasted for looking like an ant', keep: [[2380, 9350], [10180, 22640]]}, 3, 'leolaugh')],
-  ['V41Golf', v41(GA, {key: 'golf', top: 'His dream golf group is actually insane', reveal: KGF.tiger}, 4, 'cinema')],
-  ['V41Fans', v41(TTA, {key: 'fans', top: 'He saw the guys who dress up as him… and said THIS'}, 5, 'huh')],
-  ['V41Coen', v41(CNA, {key: 'coen', top: 'The coach who changed everything for him', reveal: CK.definitely}, 6, 'rock')],
-  ['V41Ticket', v41(G7A, {key: 'ticket', top: 'They handed him a ticket he signed himself', keep: [[0, 2150], [5300, 21000]]}, 7, 'pikachu')],
-  ['V41Slab', v41(TIGER32, {key: 'slab', top: 'This card has a piece of Tiger Woods inside', money: true}, 8, 'shocked')],
-  ['V41Josh', v41(J5A, {key: 'josh', top: 'He pulled Josh Allen… just not THAT Josh Allen'}, 9, 'huh')],
-  ['V41Neck', v41(N6A, {key: 'neck', top: 'Nobody expected a neck roast in the middle of a stream'}, 10, 'leolaugh')],
-  ['V41Lair', v41(LRA, {key: 'lair', top: 'The one team you never mention around him'}, 11, 'monkey')],
-  ['V41Rogers', v41(RGA, {key: 'rogers', top: 'These two superfans need to settle it in the ring'}, 12, 'bonk')],
-  ['V41Celly', v41(CYA, {key: 'celly', top: 'The card collector celebration he actually liked', keep: [[0, 7000], [8450, 21150]], reveal: KC7.t1 - 1450}, 13, 'rock')],
-  ['V41Packs', v41(PACK32, {key: 'packs', top: 'Would you buy a pack of only Trevor cards?'}, 14, 'megamind')],
-  ['V41Nt', v41(NTA, {key: 'nt', top: 'Watch this card lose almost all its value', money: true}, 15, 'cryingcat')],
-  ['V41Enter', v41(ENA, {key: 'enter', top: 'The welcome every NFL QB deserves'}, 16, 'cinema')],
-  ['V41Redeem', v41(RDA, {key: 'redeem', top: "The card fan problem he didn't know about", money: true}, 17, 'sponge')],
-  ['V41Peyton', v41(PA, {key: 'peyton', top: 'Peyton Manning has notes on his autograph'}, 18, 'shocked')],
+const cfg41 = (base: Spec, c: V36, seed: number, first: string) => ({base, c, seed, first});
+export const V41_CFG: [string, ReturnType<typeof cfg41>][] = [
+  ['V41Playbook', cfg41(PB10, {key: 'pb', top: 'NFL QBs have to memorize THIS every single week', keep: [[0, 11350], [17450, 23500]], reveal: 15100}, 0, 'pikachu')],
+  ['V41Goat', cfg41(GOAT26, {key: 'goat', top: 'He picked an NBA GOAT nobody saw coming'}, 1, 'shocked')],
+  ['V41Presnap', cfg41(PSA, {key: 'presnap', top: 'Even NFL QBs get fooled before the snap'}, 2, 'megamind')],
+  ['V41Ant', cfg41(T1A, {key: 'ant', top: 'His autograph got roasted for looking like an ant', keep: [[2380, 9350], [10180, 22640]]}, 3, 'leolaugh')],
+  ['V41Golf', cfg41(GA, {key: 'golf', top: 'His dream golf group is actually insane', reveal: KGF.tiger}, 4, 'cinema')],
+  ['V41Fans', cfg41(TTA, {key: 'fans', top: 'He saw the guys who dress up as him… and said THIS'}, 5, 'huh')],
+  ['V41Coen', cfg41(CNA, {key: 'coen', top: 'The coach who changed everything for him', reveal: CK.definitely}, 6, 'rock')],
+  ['V41Ticket', cfg41(G7A, {key: 'ticket', top: 'They handed him a ticket he signed himself', keep: [[0, 2150], [5300, 21000]]}, 7, 'pikachu')],
+  ['V41Slab', cfg41(TIGER32, {key: 'slab', top: 'This card has a piece of Tiger Woods inside', money: true}, 8, 'shocked')],
+  ['V41Josh', cfg41(J5A, {key: 'josh', top: 'He pulled Josh Allen… just not THAT Josh Allen'}, 9, 'huh')],
+  ['V41Neck', cfg41(N6A, {key: 'neck', top: 'Nobody expected a neck roast in the middle of a stream'}, 10, 'leolaugh')],
+  ['V41Lair', cfg41(LRA, {key: 'lair', top: 'The one team you never mention around him'}, 11, 'monkey')],
+  ['V41Rogers', cfg41(RGA, {key: 'rogers', top: 'These two superfans need to settle it in the ring'}, 12, 'bonk')],
+  ['V41Celly', cfg41(CYA, {key: 'celly', top: 'The card collector celebration he actually liked', keep: [[0, 7000], [8450, 21150]], reveal: KC7.t1 - 1450}, 13, 'rock')],
+  ['V41Packs', cfg41(PACK32, {key: 'packs', top: 'Would you buy a pack of only Trevor cards?'}, 14, 'megamind')],
+  ['V41Nt', cfg41(NTA, {key: 'nt', top: 'Watch this card lose almost all its value', money: true}, 15, 'cryingcat')],
+  ['V41Enter', cfg41(ENA, {key: 'enter', top: 'The welcome every NFL QB deserves'}, 16, 'cinema')],
+  ['V41Redeem', cfg41(RDA, {key: 'redeem', top: "The card fan problem he didn't know about", money: true}, 17, 'sponge')],
+  ['V41Peyton', cfg41(PA, {key: 'peyton', top: 'Peyton Manning has notes on his autograph'}, 18, 'shocked')],
 ];
+export const V41: [string, Spec][] = V41_CFG.map(([id, k]) => [id, v41(k.base, k.c, k.seed, k.first)]);
 export const V41_COMPS: [string, () => JSX.Element, number][] = V41.map(([id, sp]) => [id, () => <Jorho s={sp} />, sp.tl.total]);
