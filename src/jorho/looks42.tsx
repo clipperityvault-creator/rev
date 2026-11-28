@@ -338,7 +338,7 @@ const LOOKS: Look[] = [
 // new titles (unique — logged in vault/04 Projects/Titles used.md)
 export const TOP42: Record<string, [string, string]> = {
   // user 2026-11-28: titles name what actually happens in the clip (names, numbers, the joke), short and hooky like BBreaks_Grail
-  V41Playbook: ['8 to 10 NEW plays every single week??', '1f480'], V41Goat: ['He really picked Dellavedova over MJ', '1f62d'],
+  V41Playbook: ['8 to 10 NEW plays every single week??', '1f480'], V41Goat: ['Over Bron and MJ as GOAT?', '1f480'],
   V41Presnap: ['Even Trevor gets fooled before the snap', '1f480'], V41Ant: ['Bro said his signature looks like an ant', '1f62d'],
   V41Golf: ['Jesus and Tiger in the same golf group', '1f480'], V41Fans: ['Trevor reacts to the Traveling Trevors', '1f62d'],
   V41Coen: ['Liam Coen changed EVERYTHING for him', '1f480'], V41Ticket: ['They gave him his own signed natty ticket', '1f62d'],

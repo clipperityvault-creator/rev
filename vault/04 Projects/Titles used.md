@@ -307,3 +307,4 @@
 - All hail the king 👑 (enter)
 - Waiting on redemptions be like 😭 (redeem)
 - Him and Peyton Manning are actually close?? 💀 (peyton)
+- Over Bron and MJ as GOAT?💀 (v43 goat, replaces the Dellavedova title — user: don't reveal the answer before it plays)

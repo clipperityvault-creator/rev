@@ -40,7 +40,7 @@ export const Frame = ({o, top, children, over, noIntro, emoji = '1f480'}: {o: nu
     </div>
     <div style={{position: 'absolute', left: 0, width: W, bottom: 1920 - t + 3, display: 'flex', justifyContent: 'center'}}>
       <div style={{fontFamily: MONT, fontWeight: 700, fontSize: 58, lineHeight: '65px', color: 'white', textAlign: 'center', maxWidth: 900}}>
-        {top}<Img src={staticFile(`emoji-ios/${emoji}.png`)} style={{width: 50, height: 50, verticalAlign: '-6px', marginLeft: 4}} />
+        {top.split(' ').slice(0, -1).join(' ')} <span style={{whiteSpace: 'nowrap'}}>{top.split(' ').slice(-1)[0]}<Img src={staticFile(`emoji-ios/${emoji}.png`)} style={{width: 50, height: 50, verticalAlign: '-6px', marginLeft: 4}} /></span>
       </div>
     </div>
     {over}
