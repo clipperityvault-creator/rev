@@ -58,12 +58,13 @@ const inAny = (s: number, spans: [number, number][]) => spans.some(([a, b]) => s
 type Shot = [from: number, who: Seat]; // output time → framing (hard cuts only, like the refs)
 const shotAt = (shots: Shot[], o: number) => shots.reduce<Seat>((w, [t, s]) => (o >= t ? s : w), 'W');
 
-type Spec = {
+export type Spec = {
   tl: TL; src: string; track: Track; top: string; words: Word[]; wordY: number; wideX: number; shots: Shot[];
   strobes: number[]; beeps?: number[]; tints: [number, string][]; swish: number[]; cut?: {file: string; from: number; to: number; x: number; h: number};
   music: {file: string; from: number; level: number; loop?: boolean};
   box?: (o: number) => ReactNode; over?: (o: number) => ReactNode; fx?: Sfx[];
   intro?: {theme: Theme; to: number; bg: (o: number) => ReactNode; fg?: (o: number) => ReactNode};
+  meta?: {memes: {at: number; img: string; ms: number}[]; tl0: number; rv?: number; rise: number; money?: number};
   wideXAt?: (o: number) => number; punch?: number[]; mattes?: Matte[]; behind?: (o: number) => ReactNode; push?: boolean; capsOff?: [number, number][]; faceY?: (o: number) => number; grade?: string; musicLevel?: (o: number) => number; noIntro?: boolean; mirror?: boolean;
 };
 const Jorho = ({s}: {s: Spec}) => {
@@ -1934,6 +1935,7 @@ const v36 = (base: Spec, c: V36): Spec => {
   const fillPops = fill.filter((x) => x.code).map((x, j) => ({at: x.at, code: x.code!, x: j % 2 ? 60 : 790, y: 480}));
   const fillPunch = fill.filter((x) => !x.code).map((x) => x.at);
   return {...s0, top: c.top, cut: undefined, intro: undefined, over: undefined, behind: undefined, push: true,
+    meta: c.clean ? {memes: memes.map((q) => ({at: q.at, img: q.m.img, ms: q.m.ms})), tl0: TL0, rv, rise: RISE, money} : undefined,
     musicLevel: rv !== undefined ? (o) => (o >= rv - 450 && o < rv ? 0 : m.level) : undefined,
     punch: [...(s0.punch ?? []), ...fillPunch, ...(rv !== undefined ? [rv] : [])],
     music: {file: `refbg${m.bed}.wav`, from: 0, level: m.level, loop: true},

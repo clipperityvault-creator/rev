@@ -127,4 +127,5 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
 - **Colour flashes with SFX:** green flash → `cha-ching.mp3` or `ding-2.mp3`; red flash → `error.mp3`, `fahhh.mp3`/`meme-fahh.mp3`, or a shocked SFX. Never a flash without its sound.
 - **Less AI-looking** overall: fewer generic graphics, more human-style meme editing.
 - **No photo stickers of people** (the guests, or people they talk about like Peyton/Tiger/Dellavedova). And never show the same photo twice in a video (2026-11-27).
+- **Every video in a batch must look like a different editor made it** (2026-11-28): own layout, fonts, caption engine, hook style, flash, meme frame, rewind, grade, intro, signature sounds. Presets in `src/jorho/looks42.tsx` (19 looks).
 - **Next:** the user will send 1–2 reference videos, then re-edit ALL the Trevor clips with these rules + the reference style.
