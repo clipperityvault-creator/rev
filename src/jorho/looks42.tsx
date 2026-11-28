@@ -336,15 +336,19 @@ const LOOKS: Look[] = [
 ];
 
 // new titles (unique — logged in vault/04 Projects/Titles used.md)
-const TOP42: Record<string, string> = {
-  V41Playbook: 'Every week he gets a brand new homework pile', V41Goat: 'Ask a QB for his NBA GOAT and get THIS answer', V41Presnap: 'What an NFL QB is really doing before the snap',
-  V41Ant: 'Somebody really called his autograph an ant', V41Golf: 'Who he wants in his golf foursome is crazy', V41Fans: 'He met the fans who cosplay as him',
-  V41Coen: 'He gave his coach the biggest compliment', V41Ticket: 'The gift he never expected to get back', V41Slab: 'Tiger Woods wore this before it became a card',
-  V41Josh: 'Wrong Josh Allen pull of the year', V41Neck: "They roasted this guy's neck on live stream", V41Lair: 'Do NOT bring up this team around him',
-  V41Rogers: 'Superfan vs superfan who wins?', V41Celly: 'He finally picked his touchdown celebration', V41Packs: 'Imagine ripping a pack that is ALL him',
-  V41Nt: 'From $20,000 to this in a few years', V41Enter: 'They treated him like actual royalty', V41Redeem: 'Every card collector has felt this pain',
-  V41Peyton: 'Peyton Manning called him about his handwriting',
+const TOP42: Record<string, [string, string]> = {
+  // user 2026-11-28: titles name what actually happens in the clip (names, numbers, the joke), short and hooky like BBreaks_Grail
+  V41Playbook: ['8 to 10 NEW plays every single week??', '1f480'], V41Goat: ['He really picked Dellavedova over MJ', '1f62d'],
+  V41Presnap: ['Even Trevor gets fooled before the snap', '1f480'], V41Ant: ['Bro said his signature looks like an ant', '1f62d'],
+  V41Golf: ['Jesus and Tiger in the same golf group', '1f480'], V41Fans: ['Trevor reacts to the Traveling Trevors', '1f62d'],
+  V41Coen: ['Liam Coen changed EVERYTHING for him', '1f480'], V41Ticket: ['They gave him his own signed natty ticket', '1f62d'],
+  V41Slab: ["Tiger's actual shirt is in this card", '1f480'], V41Josh: ['Pulled Josh Allen… the WRONG one', '1f62d'],
+  V41Neck: ["Mike Glennon's neck caught a stray", '1f480'], V41Lair: ['He did NOT like hearing the Colts', '1f62d'],
+  V41Rogers: ['Traveling Trevors vs Rodgers Realm in the ring??', '1f480'], V41Celly: ['He picked the PSA 10 celebration', '1f62d'],
+  V41Packs: ['A pack where EVERY card is Trevor', '1f480'], V41Nt: ['Justin Fields RPA went from $20K to $500', '1f62d'],
+  V41Enter: ['All hail the king', '1f451'], V41Redeem: ['Waiting on redemptions be like', '1f62d'],
+  V41Peyton: ['Him and Peyton Manning are actually close??', '1f480'],
 };
-export const V42: [string, Spec, Look, string][] = V41.map(([id, s], i) => [id.replace('V41', 'V42'), {...s, top: TOP42[id] ?? s.top}, LOOKS[i % LOOKS.length], id]);
+export const V42: [string, Spec, Look, string][] = V41.map(([id, s], i) => [id.replace('V41', 'V42'), {...s, top: TOP42[id]?.[0] ?? s.top}, {...LOOKS[i % LOOKS.length], hook: {...LOOKS[i % LOOKS.length].hook, emoji: TOP42[id]?.[1]}}, id]);
 export const V42_COMPS: [string, () => JSX.Element, number][] = V42.map(([id, s, L, src]) => [id, () => <Styled s={s} L={L} id={src} />, s.tl.total]);
 void MONT; void clamp;
