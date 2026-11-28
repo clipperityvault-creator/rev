@@ -126,6 +126,7 @@ Edit podcast/streamer clips into viral vertical Shorts in a **meme / brainrot cl
 - **No rectangle label chips** in the top-right of the video box (they look boring and AI-made). Keep on-screen text to the top line + captions + memes.
 - **Colour flashes with SFX:** green flash → `cha-ching.mp3` or `ding-2.mp3`; red flash → `error.mp3`, `fahhh.mp3`/`meme-fahh.mp3`, or a shocked SFX. Never a flash without its sound.
 - **Less AI-looking** overall: fewer generic graphics, more human-style meme editing.
-- **No photo stickers of people** (the guests, or people they talk about like Peyton/Tiger/Dellavedova). And never show the same photo twice in a video (2026-11-27).
+- **People pop-ups ARE allowed** (corrected 2026-11-28): show the people mentioned (headshots in `public/people` from ESPN, `public/cutouts`), but never the same photo twice — each photo once per batch, first mention only. Like BBreaks_Grail: a GOAT collage (MJ/LeBron/Kobe/Curry) rising from the bottom.
 - **Every video in a batch must look like a different editor made it** (2026-11-28): own layout, fonts, caption engine, hook style, flash, meme frame, rewind, grade, intro, signature sounds. Presets in `src/jorho/looks42.tsx` (19 looks).
 - **Next:** the user will send 1–2 reference videos, then re-edit ALL the Trevor clips with these rules + the reference style.
+- **Why uniqueness matters (user 2026-11-28):** BBreaks_Grail posts the SAME Trevor GOAT clip many times (2.8K–23K views each) because every edit looks different: new title, new player photo collage, new layout. So every video must differ in some visible way.

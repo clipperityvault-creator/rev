@@ -161,8 +161,44 @@ const Rew = ({o, at, L, a}: {o: number; at: number; L: Look; a: Area}) => {
   }
 };
 
+
+// ---- people pop-ups (user 2026-11-28: pop-ups of the people mentioned are good, just never the same photo twice) ----
+// each photo is used once in the whole batch; first mention only. ESPN headshots in public/people, older cut-outs in public/cutouts
+const PEOPLE: Record<string, [RegExp, string[]][]> = {
+  V41Goat: [[/^Dellavedova$/i, ['cutouts/delly3.png']], [/^(NBA|greatest)$/i, ['cutouts/jordan.png', 'people/lebron_espn.png', 'people/kobe_espn.png', 'people/curry_espn.png']]],
+  V41Ant: [[/^Richardson/i, ['people/ar_espn.png']], [/^(Peyton|Manning)$/i, ['cutouts/peyton.png']]],
+  V41Peyton: [[/^(Peyton|Manning)$/i, ['people/peyton_espn.png']]],
+  V41Golf: [[/^Tiger/i, ['people/tiger_espn.png']]],
+  V41Slab: [[/^Tiger/i, ['cutouts/tiger.png']]],
+  V41Josh: [[/^Josh$/i, ['people/allen_bills.png']], [/^Hines$/i, ['people/hinesallen_espn.png']]],
+  V41Neck: [[/^Mills$/i, ['people/mills_espn.png']], [/^Glennon$/i, ['people/glennon_espn.png']]],
+  V41Rogers: [[/^Rogers$/i, ['people/rodgers_espn.png']]],
+  V41Nt: [[/^(Justin|Fields)/i, ['people/fields_espn.png']]],
+  V41Packs: [[/^(Lawrence|TLAW)$/i, ['people/lawrence_espn.png']]],
+};
+type Pp = {at: number; files: string[]};
+const peopleFor = (id: string, words: Word[]): Pp[] => {
+  const out: Pp[] = [];
+  for (const [re, files] of PEOPLE[id] ?? []) { const w = [...words].sort((p, q) => p.at - q.at).find((x) => re.test(x.text.replace(/[^A-Za-z']/g, ''))); if (w) out.push({at: w.at, files}); }
+  return out;
+};
+const People = ({o, p, L, a, j}: {o: number; p: Pp; L: Look; a: Area; j: number}) => {
+  const dur = p.files.length > 1 ? 2600 : 1900;
+  if (o < p.at || o >= p.at + dur + 200) return null;
+  const n = p.files.length, w = n > 1 ? Math.min(560, (a.w + (n - 1) * 140) / n) : 600, h = w * 436 / 600;
+  const out = o > p.at + dur ? 1 - (o - p.at - dur) / 200 : 1;
+  const ring = L.meme === 'comic' ? 'drop-shadow(6px 6px 0 #111)' : L.meme === 'gold' ? 'drop-shadow(0 0 14px #d8b25a)' : L.meme === 'tv' || L.meme === 'pixel' ? `drop-shadow(0 0 16px ${L.green})`
+    : L.meme === 'sticker' || L.meme === 'tape' ? 'drop-shadow(0 0 0 #fff) drop-shadow(5px 0 0 #fff) drop-shadow(-5px 0 0 #fff) drop-shadow(0 -5px 0 #fff)' : 'drop-shadow(0 10px 20px rgba(0,0,0,.7))';
+  return <div style={{position: 'absolute', left: a.x, top: a.y, width: a.w, height: a.h, overflow: 'hidden', borderRadius: L.radius, pointerEvents: 'none'}}>
+    {p.files.map((f, i) => {
+      const k = pop(o, p.at + i * 110, 13, 200);
+      const x = n > 1 ? i * (w - 140) + (a.w - (n * w - (n - 1) * 140)) / 2 : (j % 2 ? a.w - w - 10 : 10);
+      return <Img key={i} src={staticFile(f)} style={{position: 'absolute', left: x, top: a.h - h * k * out + 6, width: w, height: h, objectFit: 'contain', filter: ring, zIndex: n - Math.abs(i - (n - 1) / 2)}} />;
+    })}
+  </div>;
+};
 // ---- the renderer ------------------------------------------------------------------------------------------------
-const Styled = ({s, L}: {s: Spec; L: Look}) => {
+const Styled = ({s, L, id}: {s: Spec; L: Look; id: string}) => {
   const frame = useCurrentFrame();
   const o = (frame / FPS) * 1000;
   const a = areaOf(L), m = s.meta!;
@@ -208,6 +244,7 @@ const Styled = ({s, L}: {s: Spec; L: Look}) => {
     <Flash o={o} list={s.tints} L={L} a={a} />
     {m.tl0 > 0 && <Rew o={o} at={m.tl0} L={L} a={a} />}
     {m.money !== undefined && <Rain o={o} at={m.money} to={m.money + 1600} code="1f4b5" n={14} />}
+    {peopleFor(id, s.words).map((p, j) => <People key={`p${j}`} o={o} p={p} L={L} a={a} j={j} />)}
     {m.memes.map((q, j) => <MemeFrame key={j} o={o} at={q.at} to={q.at + q.ms} img={q.img} left={j % 2 === 0} L={L} a={a} j={j} />)}
     <HookText o={o} h={L.hook} text={s.top} />
     <Captions o={o} words={s.words} c={L.cap} />
@@ -219,6 +256,7 @@ const Styled = ({s, L}: {s: Spec; L: Look}) => {
       ...s.strobes.map((t) => sfx(L.snd.strobe, t, 0.55)),
       ...s.swish.map((t) => sfx(L.snd.swish, t, 0.4)),
       ...(s.fx ?? []),
+      ...peopleFor(id, s.words).map((p) => sfx(L.snd.swish, p.at, 0.4)),
     ]} />
   </AbsoluteFill>;
 };
@@ -307,6 +345,6 @@ const TOP42: Record<string, string> = {
   V41Nt: 'From $20,000 to this in a few years', V41Enter: 'They treated him like actual royalty', V41Redeem: 'Every card collector has felt this pain',
   V41Peyton: 'Peyton Manning called him about his handwriting',
 };
-export const V42: [string, Spec, Look][] = V41.map(([id, s], i) => [id.replace('V41', 'V42'), {...s, top: TOP42[id] ?? s.top}, LOOKS[i % LOOKS.length]]);
-export const V42_COMPS: [string, () => JSX.Element, number][] = V42.map(([id, s, L]) => [id, () => <Styled s={s} L={L} />, s.tl.total]);
+export const V42: [string, Spec, Look, string][] = V41.map(([id, s], i) => [id.replace('V41', 'V42'), {...s, top: TOP42[id] ?? s.top}, LOOKS[i % LOOKS.length], id]);
+export const V42_COMPS: [string, () => JSX.Element, number][] = V42.map(([id, s, L, src]) => [id, () => <Styled s={s} L={L} id={src} />, s.tl.total]);
 void MONT; void clamp;
